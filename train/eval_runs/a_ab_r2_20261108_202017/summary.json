@@ -1,0 +1,103 @@
+{
+  "label": "a_ab_r2",
+  "eval_set": "train\\data\\eval_questions_v4_100_revised.jsonl",
+  "n_queries": 100,
+  "variants": [
+    5,
+    8
+  ],
+  "prompt_variant": "v3",
+  "results": {
+    "5": {
+      "n": 100,
+      "passed": 70,
+      "pass_rate": 0.7,
+      "missed_points": 51,
+      "forbidden_questions": 5,
+      "refused": 1,
+      "refusal_rate": 0.01,
+      "gold_in_context": 71,
+      "gold_in_context_rate": 0.71,
+      "avg_answer_chars": 385.9,
+      "p50_elapsed_s": 3.76
+    },
+    "8": {
+      "n": 100,
+      "passed": 73,
+      "pass_rate": 0.73,
+      "missed_points": 54,
+      "forbidden_questions": 4,
+      "refused": 2,
+      "refusal_rate": 0.02,
+      "gold_in_context": 74,
+      "gold_in_context_rate": 0.74,
+      "avg_answer_chars": 422.6,
+      "p50_elapsed_s": 4.78
+    }
+  },
+  "comparisons": {
+    "5_vs_8": {
+      "n_common": 100,
+      "pass_up": 10,
+      "pass_down": 7,
+      "up_qids": [
+        "ev2-03",
+        "ev2-04",
+        "ev2-20",
+        "ev2-25",
+        "ev2-29",
+        "ev2-43",
+        "hq-02",
+        "hq-03",
+        "h2-01",
+        "h2-02"
+      ],
+      "down_qids": [
+        "ev2-05",
+        "ev2-15",
+        "hq-04",
+        "hq-08",
+        "gen-C08_s40-scenario",
+        "gen-C11_s61-paraphrase",
+        "gen-C14_s82-scenario"
+      ],
+      "mcnemar_p": 0.6291,
+      "delta_passed": 3,
+      "new_forbidden_qids": [
+        "hq-08",
+        "hq-10"
+      ],
+      "fixed_forbidden_qids": [
+        "ev2-29",
+        "ev2-43",
+        "h2-01"
+      ]
+    }
+  },
+  "gates": {
+    "5_vs_8": {
+      "checks": {
+        "pass_not_drop_2": true,
+        "forbidden_not_up": true,
+        "refused_not_up": false
+      },
+      "verdict": "FAIL",
+      "delta_passed": 3
+    }
+  },
+  "external_baseline": null,
+  "llm_ready": true,
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage",
+    "task_queue",
+    "checkpoint_saver"
+  ],
+  "generated_at": "2026-11-08T20:39:28+08:00"
+}

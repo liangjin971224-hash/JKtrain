@@ -1,0 +1,104 @@
+{
+  "label": "a_ab_r1",
+  "eval_set": "train\\data\\eval_questions_v4_100_revised.jsonl",
+  "n_queries": 100,
+  "variants": [
+    5,
+    8
+  ],
+  "prompt_variant": "v3",
+  "results": {
+    "5": {
+      "n": 100,
+      "passed": 73,
+      "pass_rate": 0.73,
+      "missed_points": 54,
+      "forbidden_questions": 3,
+      "refused": 1,
+      "refusal_rate": 0.01,
+      "gold_in_context": 71,
+      "gold_in_context_rate": 0.71,
+      "avg_answer_chars": 391.5,
+      "p50_elapsed_s": 3.35
+    },
+    "8": {
+      "n": 100,
+      "passed": 76,
+      "pass_rate": 0.76,
+      "missed_points": 46,
+      "forbidden_questions": 7,
+      "refused": 2,
+      "refusal_rate": 0.02,
+      "gold_in_context": 74,
+      "gold_in_context_rate": 0.74,
+      "avg_answer_chars": 455,
+      "p50_elapsed_s": 4.39
+    }
+  },
+  "comparisons": {
+    "5_vs_8": {
+      "n_common": 100,
+      "pass_up": 10,
+      "pass_down": 7,
+      "up_qids": [
+        "ev2-20",
+        "ev2-25",
+        "ev2-28",
+        "ev2-36",
+        "hq-03",
+        "h2-08",
+        "gen-C05_s19-scenario",
+        "gen-C07_s29-scenario",
+        "gen-C10_s53-scenario",
+        "gen-C12_s68-paraphrase"
+      ],
+      "down_qids": [
+        "ev2-05",
+        "ev2-14",
+        "ev2-21",
+        "ev2-29",
+        "ev2-39",
+        "hq-08",
+        "gen-C11_s61-paraphrase"
+      ],
+      "mcnemar_p": 0.6291,
+      "delta_passed": 3,
+      "new_forbidden_qids": [
+        "ev2-14",
+        "ev2-21",
+        "ev2-29",
+        "ev2-43",
+        "hq-08"
+      ],
+      "fixed_forbidden_qids": [
+        "h2-08"
+      ]
+    }
+  },
+  "gates": {
+    "5_vs_8": {
+      "checks": {
+        "pass_not_drop_2": true,
+        "forbidden_not_up": false,
+        "refused_not_up": false
+      },
+      "verdict": "FAIL",
+      "delta_passed": 3
+    }
+  },
+  "external_baseline": null,
+  "llm_ready": true,
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage",
+    "task_queue",
+    "checkpoint_saver"
+  ],
+  "generated_at": "2026-11-08T20:19:47+08:00"
+}

@@ -1,0 +1,73 @@
+{
+  "eval_set": "train\\data\\eval_questions_v4_100_revised.jsonl",
+  "rounds": 3,
+  "runs": [
+    "D:\\AI260803\\大健康企业内部培训\\train\\eval_runs\\a_ab_r1_20261108_200158",
+    "D:\\AI260803\\大健康企业内部培训\\train\\eval_runs\\a_ab_r2_20261108_202017",
+    "D:\\AI260803\\大健康企业内部培训\\train\\eval_runs\\a_ab_r3_20261108_204000"
+  ],
+  "case_questions": 31,
+  "median": {
+    "5": {
+      "passed": 72,
+      "min": 70,
+      "max": 73,
+      "forbidden": 4,
+      "refused": 1,
+      "avg_answer_chars": 391.2,
+      "p50_elapsed_s": 3.35
+    },
+    "8": {
+      "passed": 73,
+      "min": 73,
+      "max": 76,
+      "forbidden": 4,
+      "refused": 2,
+      "avg_answer_chars": 422.6,
+      "p50_elapsed_s": 4.39
+    }
+  },
+  "paired": {
+    "overall": [
+      {
+        "round": 1,
+        "a_only": 7,
+        "b_only": 10,
+        "p": 0.6291
+      },
+      {
+        "round": 2,
+        "a_only": 7,
+        "b_only": 10,
+        "p": 0.6291
+      },
+      {
+        "round": 3,
+        "a_only": 7,
+        "b_only": 8,
+        "p": 1.0
+      }
+    ],
+    "case": [
+      {
+        "round": 1,
+        "a_only": 1,
+        "b_only": 4,
+        "p": 0.375
+      },
+      {
+        "round": 2,
+        "a_only": 3,
+        "b_only": 0,
+        "p": 0.25
+      },
+      {
+        "round": 3,
+        "a_only": 2,
+        "b_only": 1,
+        "p": 1.0
+      }
+    ]
+  },
+  "generated_at": "2026-11-08T21:03:19+08:00"
+}

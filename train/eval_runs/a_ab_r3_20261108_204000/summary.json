@@ -1,0 +1,99 @@
+{
+  "label": "a_ab_r3",
+  "eval_set": "train\\data\\eval_questions_v4_100_revised.jsonl",
+  "n_queries": 100,
+  "variants": [
+    5,
+    8
+  ],
+  "prompt_variant": "v3",
+  "results": {
+    "5": {
+      "n": 100,
+      "passed": 72,
+      "pass_rate": 0.72,
+      "missed_points": 49,
+      "forbidden_questions": 4,
+      "refused": 3,
+      "refusal_rate": 0.03,
+      "gold_in_context": 71,
+      "gold_in_context_rate": 0.71,
+      "avg_answer_chars": 391.2,
+      "p50_elapsed_s": 3.25
+    },
+    "8": {
+      "n": 100,
+      "passed": 73,
+      "pass_rate": 0.73,
+      "missed_points": 52,
+      "forbidden_questions": 3,
+      "refused": 2,
+      "refusal_rate": 0.02,
+      "gold_in_context": 74,
+      "gold_in_context_rate": 0.74,
+      "avg_answer_chars": 413.5,
+      "p50_elapsed_s": 4.09
+    }
+  },
+  "comparisons": {
+    "5_vs_8": {
+      "n_common": 100,
+      "pass_up": 8,
+      "pass_down": 7,
+      "up_qids": [
+        "ev2-25",
+        "ev2-28",
+        "ev2-29",
+        "ev2-43",
+        "hq-05",
+        "hq-11",
+        "hq-12",
+        "gen-C16_s92-scenario"
+      ],
+      "down_qids": [
+        "ev2-01",
+        "ev2-15",
+        "ev2-23",
+        "ev2-42",
+        "hq-08",
+        "gen-C06_s23-scenario",
+        "gen-C14_s82-scenario"
+      ],
+      "mcnemar_p": 1.0,
+      "delta_passed": 1,
+      "new_forbidden_qids": [
+        "hq-08"
+      ],
+      "fixed_forbidden_qids": [
+        "ev2-29",
+        "ev2-43"
+      ]
+    }
+  },
+  "gates": {
+    "5_vs_8": {
+      "checks": {
+        "pass_not_drop_2": true,
+        "forbidden_not_up": true,
+        "refused_not_up": true
+      },
+      "verdict": "PASS",
+      "delta_passed": 1
+    }
+  },
+  "external_baseline": null,
+  "llm_ready": true,
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage",
+    "task_queue",
+    "checkpoint_saver"
+  ],
+  "generated_at": "2026-11-08T20:58:30+08:00"
+}
