@@ -1,0 +1,32 @@
+{
+  "label": "ft_v1_miss_attr",
+  "baseline_run": "..\\train\\eval_runs\\ft_v1_205_final_20261108_001356\\detail.jsonl",
+  "n_misses": 11,
+  "buckets": {
+    "1-5": 8,
+    "11-20": 1,
+    "6-10": 2
+  },
+  "causes": {
+    "fusion_missed": 8,
+    "ranking": 3
+  },
+  "by_collection": {
+    "health_training_docs": {
+      "fusion_missed": 5,
+      "ranking": 2
+    },
+    "health_case_library": {
+      "fusion_missed": 3,
+      "ranking": 1
+    }
+  },
+  "top_k": 50,
+  "thresholds": {
+    "min_vector_score": 0.5,
+    "min_keyword_score": 14.0,
+    "min_keyword_relative": 0.35,
+    "min_sparse_score": 0.02
+  },
+  "generated_at": "2026-11-08T15:38:31+08:00"
+}

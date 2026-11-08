@@ -1,0 +1,39 @@
+{
+  "label": "p1c_ho1_v2r",
+  "eval_set": "..\\train\\data\\heldout_questions.jsonl",
+  "n_queries": 12,
+  "variants": [
+    5
+  ],
+  "prompt_variant": "v2",
+  "results": {
+    "5": {
+      "n": 12,
+      "passed": 9,
+      "pass_rate": 0.75,
+      "missed_points": 2,
+      "forbidden_questions": 1,
+      "refused": 1,
+      "refusal_rate": 0.0833,
+      "gold_in_context": 0,
+      "gold_in_context_rate": 0.0,
+      "avg_answer_chars": 275.5,
+      "p50_elapsed_s": 5.0
+    }
+  },
+  "comparisons": {},
+  "gates": {},
+  "external_baseline": null,
+  "llm_ready": true,
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage"
+  ],
+  "generated_at": "2026-11-07T20:34:55+08:00"
+}

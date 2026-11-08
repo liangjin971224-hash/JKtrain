@@ -1,0 +1,39 @@
+{
+  "label": "a_100_qwen38flash_a2b",
+  "eval_set": "..\\train\\data\\eval_questions_v4_100_revised.jsonl",
+  "n_queries": 100,
+  "variants": [
+    5
+  ],
+  "prompt_variant": "v3",
+  "results": {
+    "5": {
+      "n": 100,
+      "passed": 72,
+      "pass_rate": 0.72,
+      "missed_points": 54,
+      "forbidden_questions": 4,
+      "refused": 2,
+      "refusal_rate": 0.02,
+      "gold_in_context": 71,
+      "gold_in_context_rate": 0.71,
+      "avg_answer_chars": 386.6,
+      "p50_elapsed_s": 3.8
+    }
+  },
+  "comparisons": {},
+  "gates": {},
+  "external_baseline": null,
+  "llm_ready": true,
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage"
+  ],
+  "generated_at": "2026-11-08T14:41:57+08:00"
+}

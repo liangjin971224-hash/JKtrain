@@ -1,0 +1,11 @@
+# 云端训练环境（2026-11-07 本地验证版本）
+# 注意：torch 由实例自带（CUDA 版），不要在这里重新安装/升级。
+FlagEmbedding==1.4.2
+transformers>=4.44,<6
+datasets>=2.19
+accelerate>=1.0
+peft>=0.13
+sentence-transformers>=3.0
+sentencepiece
+protobuf
+ir-datasets

@@ -1,0 +1,69 @@
+{
+  "sources": [
+    {
+      "path": "data\\samples_seed.jsonl",
+      "sha256": "64673508d2cb62d968b9e04ba4d4532050d2b2b1139d9c4552176e4963d97b25"
+    },
+    {
+      "path": "data\\samples_seed.add9.jsonl",
+      "sha256": "709967656b6301fd61749d81f8b00061961c5e00bf0c387fc1df3dec3e9e8193"
+    },
+    {
+      "path": "data\\samples_batch2.jsonl",
+      "sha256": "71fe390980d096e4fe27b624a704a60d97e923a6a02f8cc5239ca47fd117ccef"
+    },
+    {
+      "path": "data\\samples_batch3.jsonl",
+      "sha256": "c40b3522a9fbed5ad6e3033ced53728a8eccf1fe1303717789db26c1579dcd29"
+    },
+    {
+      "path": "data\\samples_batch4.jsonl",
+      "sha256": "46fed7ba0bbb4c29c5a8520c866064775bffbb8fedc593499b3a966c35d70d0e"
+    },
+    {
+      "path": "data\\samples_batch5.jsonl",
+      "sha256": "9aac6d4f6dfa3bc667163cd2dae9ff2f1768e1c8059ae9ce66b4ac4afb6e9bf3"
+    },
+    {
+      "path": "data\\samples_batch6.jsonl",
+      "sha256": "b2411c1b412caf1086b76fc71debab9370baa4e55847bd2f35422e7d8e189f81"
+    },
+    {
+      "path": "data\\samples_batch7.jsonl",
+      "sha256": "bfdf129a93faf88e4a0c6cf4c2a08ccf6952b562e11d3d0c64edf0512180168f"
+    },
+    {
+      "path": "data\\samples_batch8.jsonl",
+      "sha256": "d4f1a927ecee9950a6f0a32d42060d2b25bb080e1f4b03cac8444d68b05506c6"
+    },
+    {
+      "path": "data\\samples_batch9.jsonl",
+      "sha256": "57f31959b841693e3a95fc0ded86cf3dc8915ae44f3f71c6dc1793e8ab16b85a"
+    },
+    {
+      "path": "data\\samples_batch10.jsonl",
+      "sha256": "22f12ef5f1de92980071d55c85e0f6968dfa1788bd38d2d6d1c1cc52a853d0c6"
+    }
+  ],
+  "status_counts_in_source": {
+    "approved": 300
+  },
+  "exported": {
+    "train": {
+      "file": "bailian_train.jsonl",
+      "sha256": "336c6bfb8e1b1490f903734c5b8fd12a5ef90eb4ed7e2c14f90e8ce00ad94b68",
+      "records": 273,
+      "chars_median": 896,
+      "chars_max": 1214,
+      "over_max_chars": 0
+    },
+    "val": {
+      "file": "bailian_val.jsonl",
+      "sha256": "639c76b94fda5747c9dc9219875de8957559a1815e559ea2c35608ca7f9e0532",
+      "records": 27,
+      "chars_median": 942,
+      "chars_max": 1174,
+      "over_max_chars": 0
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "out": "D:\\AI260803\\健康培训移动\\train\\data\\embed_pairs_v2.jsonl",
+  "n_total": 600,
+  "n_ft": 450,
+  "n_existing": 150,
+  "split": {
+    "train": 547,
+    "val": 53
+  },
+  "source_split": {
+    "ft": {
+      "train": 412,
+      "val": 38
+    },
+    "existing": {
+      "val": 15,
+      "train": 135
+    }
+  },
+  "no_negative_rows": 0,
+  "neg_k": 5,
+  "generated_at": "2026-11-07T21:17:01+08:00"
+}

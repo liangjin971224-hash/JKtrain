@@ -1,0 +1,161 @@
+{
+  "label": "p03_sparse",
+  "eval_set": "train\\data\\retrieval_eval_v1_remap.jsonl",
+  "n_queries": 205,
+  "retrieval_mode": "sparse",
+  "embed_model": "D:\\AI260803\\健康培训移动\\models\\bge-m3",
+  "rerank_model": null,
+  "r@5": 0.7756,
+  "r@10": 0.8732,
+  "mrr": 0.6656,
+  "latency_ms": {
+    "embed": 90,
+    "search": 4,
+    "rerank": null
+  },
+  "breakdown": {
+    "origin": {
+      "auto_exact": {
+        "n": 40,
+        "r@5": 1.0,
+        "mrr": 1.0
+      },
+      "eval_v3": {
+        "n": 45,
+        "r@5": 0.8444,
+        "mrr": 0.7328
+      },
+      "gen_b": {
+        "n": 120,
+        "r@5": 0.675,
+        "mrr": 0.5289
+      }
+    },
+    "collection": {
+      "health_case_library": {
+        "n": 34,
+        "r@5": 0.7353,
+        "mrr": 0.5457
+      },
+      "health_question_bank": {
+        "n": 40,
+        "r@5": 1.0,
+        "mrr": 1.0
+      },
+      "health_training_docs": {
+        "n": 131,
+        "r@5": 0.7176,
+        "mrr": 0.5945
+      }
+    }
+  },
+  "gate": {
+    "threshold": null,
+    "verdict": null
+  },
+  "generated_at": "2026-11-07T13:03:32+08:00",
+  "compare": {
+    "prev_detail": "train\\eval_runs\\p03_dense_20261107_130202\\detail.jsonl",
+    "n_prev": 205,
+    "n_cur": 205,
+    "n_common": 205,
+    "only_in_prev": 0,
+    "only_in_cur": 0,
+    "prev_r5_on_common": 0.7756,
+    "cur_r5_on_common": 0.7756,
+    "delta": 0.0,
+    "flips_up": 19,
+    "flips_down": 19,
+    "up_qids": [
+      "ev2-01",
+      "ev2-14",
+      "ev2-34",
+      "gen-C01_s06-paraphrase",
+      "gen-C04_s11-scenario",
+      "gen-C07_s28-scenario",
+      "gen-C07_s31-scenario",
+      "gen-C08_s40-scenario",
+      "gen-C13_s75-scenario",
+      "gen-C16_s93-scenario",
+      "gen-D001_c010-keyword",
+      "gen-D005_c017-paraphrase",
+      "gen-D006_c007-keyword",
+      "gen-D007_c006-paraphrase",
+      "gen-D007_c015-paraphrase",
+      "gen-D007_c017-paraphrase",
+      "gen-D009_c013-keyword",
+      "gen-D013_c000-keyword",
+      "gen-D013_c017-paraphrase"
+    ],
+    "down_qids": [
+      "ev2-19",
+      "ev2-25",
+      "ev2-26",
+      "gen-C02_s01-paraphrase",
+      "gen-C08_s38-scenario",
+      "gen-C11_s59-paraphrase",
+      "gen-D002_c003-paraphrase",
+      "gen-D003_c000-paraphrase",
+      "gen-D004_c018-paraphrase",
+      "gen-D004_c023-paraphrase",
+      "gen-D007_c004-paraphrase",
+      "gen-D009_c006-keyword",
+      "gen-D009_c013-paraphrase",
+      "gen-D009_c014-keyword",
+      "gen-D012_c010-keyword",
+      "gen-D013_c007-paraphrase",
+      "gen-D014_c009-keyword",
+      "gen-D014_c009-paraphrase",
+      "gen-D015_c014-paraphrase"
+    ],
+    "mcnemar": {
+      "p": 1.0,
+      "method": "chi2<=0"
+    },
+    "by_origin": {
+      "auto_exact": {
+        "n": 40,
+        "delta": 0.0,
+        "up": 0,
+        "down": 0
+      },
+      "eval_v3": {
+        "n": 45,
+        "delta": 0.0,
+        "up": 3,
+        "down": 3
+      },
+      "gen_b": {
+        "n": 120,
+        "delta": 0.0,
+        "up": 16,
+        "down": 16
+      }
+    },
+    "by_collection": {
+      "health_case_library": {
+        "n": 34,
+        "delta": 0.1176,
+        "up": 7,
+        "down": 3
+      },
+      "health_question_bank": {
+        "n": 40,
+        "delta": 0.0,
+        "up": 0,
+        "down": 0
+      },
+      "health_training_docs": {
+        "n": 131,
+        "delta": -0.0305,
+        "up": 12,
+        "down": 16
+      }
+    }
+  },
+  "gate_delta": {
+    "threshold": null,
+    "delta": 0.0,
+    "verdict": null
+  }
+}

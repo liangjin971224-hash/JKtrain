@@ -1,0 +1,107 @@
+[
+  {
+    "efficacy_id": "EFF_01",
+    "name": "有助于增强免疫力",
+    "catalog_no": 1,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_02",
+    "name": "有助于抗氧化",
+    "catalog_no": 2,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_03",
+    "name": "辅助改善记忆",
+    "catalog_no": 3,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_06",
+    "name": "有助于改善睡眠",
+    "catalog_no": 6,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_07",
+    "name": "缓解体力疲劳",
+    "catalog_no": 7,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_09",
+    "name": "有助于控制体内脂肪",
+    "catalog_no": 9,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_10",
+    "name": "有助于改善骨密度",
+    "catalog_no": 10,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_15",
+    "name": "有助于调节肠道菌群",
+    "catalog_no": 15,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_17",
+    "name": "有助于润肠通便",
+    "catalog_no": 17,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_19",
+    "name": "有助于维持血脂（胆固醇/甘油三酯）健康水平",
+    "catalog_no": 19,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_20",
+    "name": "有助于维持血糖健康水平",
+    "catalog_no": 20,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_21",
+    "name": "有助于维持血压健康水平",
+    "catalog_no": 21,
+    "catalog_version": "2023",
+    "is_nutrient": false
+  },
+  {
+    "efficacy_id": "EFF_NUT_CA",
+    "name": "补充钙、维生素D",
+    "catalog_no": null,
+    "catalog_version": "2023",
+    "is_nutrient": true
+  },
+  {
+    "efficacy_id": "EFF_NUT_MV",
+    "name": "补充多种维生素和矿物质",
+    "catalog_no": null,
+    "catalog_version": "2023",
+    "is_nutrient": true
+  },
+  {
+    "efficacy_id": "EFF_NUT_VC",
+    "name": "补充维生素C",
+    "catalog_no": null,
+    "catalog_version": "2023",
+    "is_nutrient": true
+  }
+]

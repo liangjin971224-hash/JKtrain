@@ -52,6 +52,8 @@ sentence-transformers==3.4.1
 transformers==4.44.2
 huggingface-hub==0.25.2
 numpy==2.4.6
+# 稀疏检索 / BGE-M3 微调（lexical_weights 头）
+FlagEmbedding==1.4.2
 
 # ---- 测试 ----
 pytest==9.1.1

@@ -1,0 +1,10 @@
+{
+  "wp_dir": "train\\annotation_wp_v3\\revision",
+  "n_targets": 31,
+  "n_pred": 31,
+  "hard": [],
+  "warn": [
+    "gen-C05_s19-scenario 必答点从 9 降到 5，放宽过度？"
+  ],
+  "verdict": "PASS"
+}

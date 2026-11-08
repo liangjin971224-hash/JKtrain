@@ -1,0 +1,104 @@
+{"chunk_id": "D005_c022", "collection": "health_training_docs", "question": "顾客追问产品效果时，标准口径应该怎么讲？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c022", "collection": "health_training_docs", "question": "顾客问到病情该怎么回应？", "difficulty": "keyword"}
+{"chunk_id": "D006_c000", "collection": "health_training_docs", "question": "D006 这份手册写给谁看的？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c000", "collection": "health_training_docs", "question": "手册 D006 覆盖了哪两款产品？", "difficulty": "keyword"}
+{"chunk_id": "D006_c002", "collection": "health_training_docs", "question": "这个品类的顾客大多处于什么年龄段？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c002", "collection": "health_training_docs", "question": "心脑血管品类里最容易出事的状况是什么？", "difficulty": "keyword"}
+{"chunk_id": "D006_c003", "collection": "health_training_docs", "question": "P001 这款鱼油买回去应该放在什么环境保存？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c003", "collection": "health_training_docs", "question": "鱼油的保质期是多久？", "difficulty": "keyword"}
+{"chunk_id": "D006_c004", "collection": "health_training_docs", "question": "这款产品的成分组成里，除了鱼油还有哪几样？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c004", "collection": "health_training_docs", "question": "一粒鱼油含多少毫克的 EPA 与 DHA？", "difficulty": "keyword"}
+{"chunk_id": "D006_c005", "collection": "health_training_docs", "question": "哪些人不适合吃这款鱼油？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c005", "collection": "health_training_docs", "question": "鱼油每天的用量上限是多少？", "difficulty": "keyword"}
+{"chunk_id": "D006_c006", "collection": "health_training_docs", "question": "顾客说自己还在吃华法林，顾问该怎么应对？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c006", "collection": "health_training_docs", "question": "客户提到自己血小板偏低，还能不能卖给他？", "difficulty": "keyword"}
+{"chunk_id": "D006_c007", "collection": "health_training_docs", "question": "顾客嫌这款卖得贵，手册建议给出哪些替代思路？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c007", "collection": "health_training_docs", "question": "一瓶 60 粒如果每天吃 4 粒，够吃多长时间？", "difficulty": "keyword"}
+{"chunk_id": "D006_c008", "collection": "health_training_docs", "question": "宣称这款能防止血管类疾病，问题出在哪里？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c008", "collection": "health_training_docs", "question": "说“老人小孩都能吃”为什么不行？", "difficulty": "keyword"}
+{"chunk_id": "D006_c009", "collection": "health_training_docs", "question": "P002 这款 Q10 产品的零售定价是多少？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c009", "collection": "health_training_docs", "question": "辅酶Q10 的批准文号是什么？", "difficulty": "keyword"}
+{"chunk_id": "D006_c010", "collection": "health_training_docs", "question": "组成这款 Q10 产品的原料都有哪些？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c010", "collection": "health_training_docs", "question": "每粒含多少毫克的辅酶Q10？", "difficulty": "keyword"}
+{"chunk_id": "D006_c011", "collection": "health_training_docs", "question": "Q10 这款一天吃几次、什么时间点吃比较好？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c011", "collection": "health_training_docs", "question": "辅酶Q10 每天的用量上限是多少？", "difficulty": "keyword"}
+{"chunk_id": "D006_c012", "collection": "health_training_docs", "question": "长期吃降脂药的人想补 Q10，为什么必须先经医生判断？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c012", "collection": "health_training_docs", "question": "客户说自己过敏体质，这款 Q10 能不能推荐？", "difficulty": "keyword"}
+{"chunk_id": "D006_c013", "collection": "health_training_docs", "question": "顾客觉得这个能护住心脏，为什么不能顺着讲？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c013", "collection": "health_training_docs", "question": "辅酶Q10 可以长期吃吗？", "difficulty": "keyword"}
+{"chunk_id": "D006_c014", "collection": "health_training_docs", "question": "为什么不能把这款说成能延缓衰老？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c014", "collection": "health_training_docs", "question": "“服他汀就得搭配这款”这种话能讲吗？", "difficulty": "keyword"}
+{"chunk_id": "D006_c015", "collection": "health_training_docs", "question": "按对比速记，鱼油这款最常见的理解偏差是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c015", "collection": "health_training_docs", "question": "鱼油排第一的高危禁忌是什么？", "difficulty": "keyword"}
+{"chunk_id": "D006_c016", "collection": "health_training_docs", "question": "一句话概括的话，两款产品各自负责什么方向？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c016", "collection": "health_training_docs", "question": "两款产品对心脏有没有作用？", "difficulty": "keyword"}
+{"chunk_id": "D006_c017", "collection": "health_training_docs", "question": "给顾客推荐之前，为什么要先弄清对方有没有海鲜类过敏？", "difficulty": "paraphrase"}
+{"chunk_id": "D006_c017", "collection": "health_training_docs", "question": "推荐前第一件要确认的事是什么？", "difficulty": "keyword"}
+{"chunk_id": "D007_c000", "collection": "health_training_docs", "question": "第二册手册在审核时要格外盯住哪两点？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c000", "collection": "health_training_docs", "question": "D007 一共涵盖几款产品？", "difficulty": "keyword"}
+{"chunk_id": "D007_c002", "collection": "health_training_docs", "question": "健身想长肌肉的人属于哪一类顾客，该怎么对待？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c002", "collection": "health_training_docs", "question": "A 型客户有什么特征？", "difficulty": "keyword"}
+{"chunk_id": "D007_c003", "collection": "health_training_docs", "question": "乳清蛋白粉这一罐有多重、能冲出多少份？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c003", "collection": "health_training_docs", "question": "乳清蛋白粉的批准文号是多少？", "difficulty": "keyword"}
+{"chunk_id": "D007_c004", "collection": "health_training_docs", "question": "这款蛋白粉除了主原料还添加了什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c004", "collection": "health_training_docs", "question": "每份乳清蛋白含多少克蛋白质？", "difficulty": "keyword"}
+{"chunk_id": "D007_c005", "collection": "health_training_docs", "question": "对动物蛋白过敏的人，这款乳清粉合适吗？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c005", "collection": "health_training_docs", "question": "乳清蛋白粉每次冲多少、一天吃几次？", "difficulty": "keyword"}
+{"chunk_id": "D007_c006", "collection": "health_training_docs", "question": "牛奶过敏的顾客想要蛋白粉，应该怎么引导？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c006", "collection": "health_training_docs", "question": "客户说肾不太好，为什么属于最高危？", "difficulty": "keyword"}
+{"chunk_id": "D007_c007", "collection": "health_training_docs", "question": "100 克瘦肉能提供多少蛋白质？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c007", "collection": "health_training_docs", "question": "成年男性每天蛋白质推荐量是多少？", "difficulty": "keyword"}
+{"chunk_id": "D007_c008", "collection": "health_training_docs", "question": "健身的人问这款能不能帮助增肌，该怎么回应？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c008", "collection": "health_training_docs", "question": "蛋白粉超量吃会怎么样？", "difficulty": "keyword"}
+{"chunk_id": "D007_c009", "collection": "health_training_docs", "question": "编号 P005 的这款产品标价是多少元？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c009", "collection": "health_training_docs", "question": "P005 的批准文号是什么？", "difficulty": "keyword"}
+{"chunk_id": "D007_c010", "collection": "health_training_docs", "question": "冲一份 P005 能摄入多少克蛋白质？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c010", "collection": "health_training_docs", "question": "P005 的配料是哪几样？", "difficulty": "keyword"}
+{"chunk_id": "D007_c011", "collection": "health_training_docs", "question": "对大豆过敏的人能不能吃这款蛋白粉？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c011", "collection": "health_training_docs", "question": "P005 的适宜人群是哪类人？", "difficulty": "keyword"}
+{"chunk_id": "D007_c012", "collection": "health_training_docs", "question": "如果不先问顾客能不能喝牛奶，直接推乳清可能出什么问题？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c012", "collection": "health_training_docs", "question": "乳糖不耐受的客户选大豆蛋白合适吗？", "difficulty": "keyword"}
+{"chunk_id": "D007_c013", "collection": "health_training_docs", "question": "孢子粉的包装规格是多少克一袋、一共多少袋？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c013", "collection": "health_training_docs", "question": "灵芝孢子粉的每日用量上限是多少？", "difficulty": "keyword"}
+{"chunk_id": "D007_c014", "collection": "health_training_docs", "question": "顾客拿这款和灵芝比好坏，该怎么回应？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c014", "collection": "health_training_docs", "question": "孢子粉适合餐前吃还是餐后吃？", "difficulty": "keyword"}
+{"chunk_id": "D007_c015", "collection": "health_training_docs", "question": "为什么这款的禁用人群写到婴幼儿，比少年儿童还严？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c015", "collection": "health_training_docs", "question": "螺旋藻片一共有多少片？", "difficulty": "keyword"}
+{"chunk_id": "D007_c016", "collection": "health_training_docs", "question": "孢子油这款胶囊一天怎么服用？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c016", "collection": "health_training_docs", "question": "P010 的批准文号是什么？", "difficulty": "keyword"}
+{"chunk_id": "D007_c017", "collection": "health_training_docs", "question": "顾客要两款灵芝产品分个高下，标准答法是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c017", "collection": "health_training_docs", "question": "软胶囊形态的灵芝产品有什么优势？", "difficulty": "keyword"}
+{"chunk_id": "D007_c018", "collection": "health_training_docs", "question": "顾客随口提了句肾方面不太好，为什么必须停下来？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c018", "collection": "health_training_docs", "question": "问顾客平时三餐吃什么是为了什么？", "difficulty": "keyword"}
+{"chunk_id": "D007_c021", "collection": "health_training_docs", "question": "这五款产品在批准功能方面有什么共同之处？", "difficulty": "paraphrase"}
+{"chunk_id": "D007_c021", "collection": "health_training_docs", "question": "螺旋藻这款最需要注意哪类人？", "difficulty": "keyword"}
+{"chunk_id": "D008_c000", "collection": "health_training_docs", "question": "第三册手册包含的产品编号是从哪号到哪号？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c000", "collection": "health_training_docs", "question": "哪一册手册最容易出错？", "difficulty": "keyword"}
+{"chunk_id": "D008_c001", "collection": "health_training_docs", "question": "从外包装标识上看，普通食品和保健食品怎么分辨？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c001", "collection": "health_training_docs", "question": "“有助于”这三个字能用在普通食品上吗？", "difficulty": "keyword"}
+{"chunk_id": "D008_c002", "collection": "health_training_docs", "question": "普通食品要是声称了保健功能，会踩哪条法律红线？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c002", "collection": "health_training_docs", "question": "暗示能防病治病违反哪部法律？", "difficulty": "keyword"}
+{"chunk_id": "D008_c003", "collection": "health_training_docs", "question": "对普通食品夸一句“效果不错”，为什么也不行？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c003", "collection": "health_training_docs", "question": "普通食品能不能说减肥？", "difficulty": "keyword"}
+{"chunk_id": "D008_c004", "collection": "health_training_docs", "question": "介绍普通食品时，口感和产地这些能不能聊？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c004", "collection": "health_training_docs", "question": "普通食品的话术界线是什么？", "difficulty": "keyword"}
+{"chunk_id": "D008_c005", "collection": "health_training_docs", "question": "顾客问 P016 是否能帮助提升免疫力，标准回答怎么给？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c005", "collection": "health_training_docs", "question": "P016 每份含多少克蛋白质？", "difficulty": "keyword"}
+{"chunk_id": "D008_c006", "collection": "health_training_docs", "question": "顾客直接问这款饮品能不能美容，该怎么答复？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c006", "collection": "health_training_docs", "question": "P017 的规格是多少？", "difficulty": "keyword"}
+{"chunk_id": "D008_c007", "collection": "health_training_docs", "question": "同一种原料做成不同形态卖，宣传上的限制会不一样吗？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c007", "collection": "health_training_docs", "question": "P018 的配料有哪些？", "difficulty": "keyword"}
+{"chunk_id": "D008_c008", "collection": "health_training_docs", "question": "顾客指望吃这个丸剂让头发变密，能顺着讲吗？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c008", "collection": "health_training_docs", "question": "P019 的配料是什么？", "difficulty": "keyword"}
+{"chunk_id": "D008_c009", "collection": "health_training_docs", "question": "卖代餐奶昔时为什么要提醒顾客别拿它当全部三餐？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c009", "collection": "health_training_docs", "question": "P020 可以宣传吃了能变瘦吗？", "difficulty": "keyword"}
+{"chunk_id": "D008_c010", "collection": "health_training_docs", "question": "卖枸杞原浆时，顾问最容易脱口而出的违规话是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c010", "collection": "health_training_docs", "question": "代餐奶昔最容易说错的是什么？", "difficulty": "keyword"}
+{"chunk_id": "D008_c011", "collection": "health_training_docs", "question": "一句话记忆里，介绍这五款产品只能讲哪几项内容？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c011", "collection": "health_training_docs", "question": "除了配料、营养、规格、用法，还能提别的吗？", "difficulty": "keyword"}
+{"chunk_id": "D008_c013", "collection": "health_training_docs", "question": "顾客质疑“是不是东西不行才不让讲好处”，该怎么解释？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c013", "collection": "health_training_docs", "question": "顾客想要功能明确的产品时，该怎么引导？", "difficulty": "keyword"}
+{"chunk_id": "D008_c014", "collection": "health_training_docs", "question": "私底下承认产品有效果，只是嘴上说不能宣传，这种讲法问题在哪？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c014", "collection": "health_training_docs", "question": "“其实有效果，只是不能宣传”这种话能讲吗？", "difficulty": "keyword"}
+{"chunk_id": "D008_c015", "collection": "health_training_docs", "question": "顾客问 P016 可否提高免疫力，顾问答“可以的，里面含蛋白质”，错在哪里？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c015", "collection": "health_training_docs", "question": "拿“含蛋白质”当答复讲给顾客，会有什么后果？", "difficulty": "keyword"}

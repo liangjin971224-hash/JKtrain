@@ -1,0 +1,37 @@
+{
+  "questions": 45,
+  "answer_origin": "assistant reference candidates",
+  "generation_model_or_adapter_tested": false,
+  "first_pass_nonempty_retrieval": 45,
+  "first_pass_degraded_questions": 0,
+  "first_pass_graph_hit_questions": 17,
+  "supplemental_rag_queries": 5,
+  "answers_using_supplemental_rag": 4,
+  "answers_using_extra_graph": [
+    "ev2-19",
+    "ev2-20",
+    "ev2-21",
+    "ev2-24",
+    "ev2-31",
+    "ev2-33"
+  ],
+  "source_pending": [
+    "ev2-22",
+    "ev2-25"
+  ],
+  "legacy_raw_pass": 40,
+  "legacy_normalized_pass": 40,
+  "legacy_failures": [
+    "ev2-05",
+    "ev2-19",
+    "ev2-23",
+    "ev2-37",
+    "ev2-45"
+  ],
+  "numeric_literal_occurrences_checked": 28,
+  "missing_numeric_literals": 0,
+  "citation_membership_checks": "45/45 pass",
+  "eval_sha256_unchanged": "27ade6437dedc0a0fb79e79e9b08fb7d9776aaa8667dcc35cbfc7b4706fb1460",
+  "nonempty_retrieval_is_not_answerability": true,
+  "keyword_pass_is_not_factual_accuracy": true
+}

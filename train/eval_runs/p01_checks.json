@@ -1,0 +1,89 @@
+{
+  "stage": "P0-1",
+  "seed": 20261107,
+  "created_at": "2026-11-07T10:47:35+08:00",
+  "source": {
+    "eval": "D:\\AI260803\\健康培训移动\\train\\data\\retrieval_eval_v1.jsonl",
+    "pairs": "D:\\AI260803\\健康培训移动\\train\\data\\embed_pairs_v1.jsonl"
+  },
+  "strata": {
+    "auto_exact|health_question_bank": {
+      "total": 40,
+      "holdout": 11,
+      "train": 29,
+      "expected_total": 40,
+      "expected_holdout": 11
+    },
+    "eval_v3|health_training_docs": {
+      "total": 45,
+      "holdout": 12,
+      "train": 33,
+      "expected_total": 45,
+      "expected_holdout": 12
+    },
+    "gen_b|health_case_library": {
+      "total": 34,
+      "holdout": 9,
+      "train": 25,
+      "expected_total": 34,
+      "expected_holdout": 9
+    },
+    "gen_b|health_training_docs": {
+      "total": 86,
+      "holdout": 23,
+      "train": 63,
+      "expected_total": 86,
+      "expected_holdout": 23
+    }
+  },
+  "counts": {
+    "eval_rows": 205,
+    "pairs_rows": 205,
+    "holdout_qids": 55,
+    "train_qids": 150,
+    "holdout_unique_gold": 68,
+    "pairs_lines": 150,
+    "split_val": 15,
+    "split_train": 135,
+    "val_quota_by_origin": {
+      "auto_exact": 3,
+      "eval_v3": 3,
+      "gen_b": 9
+    }
+  },
+  "assertions": {
+    "strata_counts_exact": true,
+    "holdout_55": true,
+    "train_150": true,
+    "disjoint": true,
+    "union_eq_205": true,
+    "eval_rows_205": true,
+    "pairs_rows_205": true,
+    "holdout_unique_gold_ge_45": true,
+    "pairs_lines_150": true,
+    "val_exactly_15": true
+  },
+  "all_pass": true,
+  "outputs": {
+    "holdout_v1": "D:\\AI260803\\健康培训移动\\train\\data\\holdout_v1.json",
+    "eval_holdout": "D:\\AI260803\\健康培训移动\\train\\data\\retrieval_eval_v1_holdout.jsonl",
+    "pairs_train150": "D:\\AI260803\\健康培训移动\\train\\data\\embed_pairs_v1_train150.jsonl"
+  },
+  "val_qids": [
+    "auto-Q051",
+    "auto-Q091",
+    "auto-S003",
+    "ev2-01",
+    "ev2-08",
+    "ev2-25",
+    "gen-C05_s14-scenario",
+    "gen-D004_c015-keyword",
+    "gen-D004_c018-paraphrase",
+    "gen-D004_c024-keyword",
+    "gen-D006_c005-paraphrase",
+    "gen-D006_c013-keyword",
+    "gen-D007_c000-keyword",
+    "gen-D009_c006-keyword",
+    "gen-D012_c011-paraphrase"
+  ]
+}

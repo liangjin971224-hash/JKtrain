@@ -1,0 +1,3 @@
+{"qid":"bq-01","data_origin":"synthetic","question":"演示产品A的规格是什么？","references":[{"title":"演示标签A","section":"规格","body":"规格：30粒/瓶。"}],"facts":null,"fact_hints":null}
+{"qid":"bq-02","data_origin":"synthetic","question":"演示产品A属于哪一类？","references":[{"title":"演示标签A","section":"产品类别","body":"产品类别：保健食品。保健食品不是药物，不能代替药物治疗疾病。"}],"facts":null,"fact_hints":null}
+{"qid":"bq-03","data_origin":"synthetic","question":"演示产品A多少钱一瓶？","references":[{"title":"演示标签A","section":"规格","body":"规格：30粒/瓶。"}],"facts":null,"fact_hints":null}

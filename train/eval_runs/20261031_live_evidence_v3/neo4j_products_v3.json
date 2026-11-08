@@ -1,0 +1,952 @@
+{
+  "P001": {
+    "product_id": "P001",
+    "name": "康源牌鱼油软胶囊",
+    "category": "保健食品",
+    "approval_no": "国食健注G20250012",
+    "dosage_form": "软胶囊",
+    "spec": "1.0g/粒×60粒",
+    "retail_price": 298,
+    "claims": [
+      {
+        "efficacy_id": "EFF_19",
+        "text": "有助于维持血脂（胆固醇/甘油三酯）健康水平",
+        "catalog_no": 19,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [
+      "鱼油"
+    ],
+    "usage": {
+      "dosage": "每日2次，每次2粒，随餐服用",
+      "daily_limit": "不超过4.0g（EPA+DHA不低于1.0g）",
+      "note": "随餐服用有利于脂溶性成分吸收"
+    },
+    "suitable_for": [
+      "血脂偏高者"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      },
+      {
+        "contra_id": "CI_PREG",
+        "name": "孕妇",
+        "severity": "high",
+        "reason": "孕期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_LACT",
+        "name": "乳母",
+        "severity": "high",
+        "reason": "哺乳期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_BLEED",
+        "name": "出血倾向者和出血性疾病患者",
+        "severity": "critical",
+        "reason": "鱼油可能影响凝血功能，与抗凝药同服增加出血风险"
+      },
+      {
+        "contra_id": "CI_LIVER",
+        "name": "肝功能不全者",
+        "severity": "high",
+        "reason": "肝功能不全时代谢能力下降"
+      },
+      {
+        "contra_id": "CI_SEAFOOD",
+        "name": "海产品过敏者",
+        "severity": "critical",
+        "reason": "鱼油来源于海产品，注意事项明确不推荐食用"
+      }
+    ],
+    "aliases": [
+      "鱼油",
+      "深海鱼油",
+      "omega3"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P002": {
+    "product_id": "P002",
+    "name": "康源牌辅酶Q10软胶囊",
+    "category": "保健食品",
+    "approval_no": "国食健注G20250013",
+    "dosage_form": "软胶囊",
+    "spec": "0.3g/粒×60粒",
+    "retail_price": 368,
+    "claims": [
+      {
+        "efficacy_id": "EFF_01",
+        "text": "有助于增强免疫力",
+        "catalog_no": 1,
+        "catalog_version": "2023"
+      },
+      {
+        "efficacy_id": "EFF_02",
+        "text": "有助于抗氧化",
+        "catalog_no": 2,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [
+      "辅酶Q10"
+    ],
+    "usage": {
+      "dosage": "每日1次，每次1粒，餐后服用",
+      "daily_limit": "30–50mg",
+      "note": ""
+    },
+    "suitable_for": [
+      "成人"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      },
+      {
+        "contra_id": "CI_PREG",
+        "name": "孕妇",
+        "severity": "high",
+        "reason": "孕期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_LACT",
+        "name": "乳母",
+        "severity": "high",
+        "reason": "哺乳期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_ALLERGY",
+        "name": "过敏体质人群",
+        "severity": "high",
+        "reason": "成分可能引发过敏反应"
+      }
+    ],
+    "aliases": [
+      "辅酶Q10",
+      "Q10"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P003": {
+    "product_id": "P003",
+    "name": "康源牌褪黑素片",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000123",
+    "dosage_form": "片剂",
+    "spec": "0.3g/片×60片",
+    "retail_price": 128,
+    "claims": [
+      {
+        "efficacy_id": "EFF_06",
+        "text": "有助于改善睡眠",
+        "catalog_no": 6,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [
+      "褪黑素"
+    ],
+    "usage": {
+      "dosage": "每日1次，每次1片，睡前30分钟服用",
+      "daily_limit": "1–3mg",
+      "note": "操作前或操作中不得食用"
+    },
+    "suitable_for": [
+      "成人"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      },
+      {
+        "contra_id": "CI_PREG",
+        "name": "孕妇",
+        "severity": "high",
+        "reason": "孕期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_LACT",
+        "name": "乳母",
+        "severity": "high",
+        "reason": "哺乳期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_DRIVER",
+        "name": "驾驶及机械作业者（操作前/中）",
+        "severity": "critical",
+        "reason": "褪黑素可能引起嗜睡，操作前或操作中禁用"
+      },
+      {
+        "contra_id": "CI_AUTOIMMUNE",
+        "name": "自身免疫症患者（类风湿等）",
+        "severity": "high",
+        "reason": "褪黑素慎用，可能影响免疫调节"
+      },
+      {
+        "contra_id": "CI_HYPER",
+        "name": "甲亢患者",
+        "severity": "high",
+        "reason": "褪黑素慎用"
+      }
+    ],
+    "aliases": [
+      "褪黑素",
+      "助眠片"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P004": {
+    "product_id": "P004",
+    "name": "康源牌乳清蛋白粉",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000124",
+    "dosage_form": "粉剂",
+    "spec": "400g/罐",
+    "retail_price": 428,
+    "claims": [
+      {
+        "efficacy_id": "EFF_01",
+        "text": "有助于增强免疫力",
+        "catalog_no": 1,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [
+      "乳清蛋白粉"
+    ],
+    "usage": {
+      "dosage": "每日1–2次，每次1份（20g），温水冲调",
+      "daily_limit": "蛋白质6–25g（成人每日总量建议60g）",
+      "note": ""
+    },
+    "suitable_for": [
+      "因蛋白质摄入不足而致免疫低下的成人"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      },
+      {
+        "contra_id": "CI_RENAL",
+        "name": "肾功能不全者",
+        "severity": "critical",
+        "reason": "高蛋白摄入加重肾脏负担，产品注意事项明确慎用"
+      },
+      {
+        "contra_id": "CI_ANIMAL_ALLERGY",
+        "name": "动物蛋白过敏者",
+        "severity": "critical",
+        "reason": "乳清蛋白为牛奶来源，过敏者不宜使用"
+      }
+    ],
+    "aliases": [
+      "蛋白粉",
+      "乳清蛋白"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P005": {
+    "product_id": "P005",
+    "name": "康源牌大豆分离蛋白粉",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000125",
+    "dosage_form": "粉剂",
+    "spec": "400g/罐",
+    "retail_price": 268,
+    "claims": [
+      {
+        "efficacy_id": "EFF_01",
+        "text": "有助于增强免疫力",
+        "catalog_no": 1,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [
+      "大豆分离蛋白"
+    ],
+    "usage": {
+      "dosage": "每日1–2次，每次1份（20g），温水冲调",
+      "daily_limit": "蛋白质6–25g",
+      "note": ""
+    },
+    "suitable_for": [
+      "因蛋白质摄入不足而致免疫低下的成人"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      },
+      {
+        "contra_id": "CI_RENAL",
+        "name": "肾功能不全者",
+        "severity": "critical",
+        "reason": "高蛋白摄入加重肾脏负担，产品注意事项明确慎用"
+      },
+      {
+        "contra_id": "CI_PLANT_ALLERGY",
+        "name": "植物蛋白过敏者",
+        "severity": "critical",
+        "reason": "大豆分离蛋白为植物来源，过敏者不宜使用"
+      }
+    ],
+    "aliases": [
+      "大豆蛋白",
+      "植物蛋白"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P006": {
+    "product_id": "P006",
+    "name": "康源牌破壁灵芝孢子粉",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000126",
+    "dosage_form": "粉剂",
+    "spec": "2g/袋×30袋",
+    "retail_price": 598,
+    "claims": [
+      {
+        "efficacy_id": "EFF_01",
+        "text": "有助于增强免疫力",
+        "catalog_no": 1,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [
+      "破壁灵芝孢子粉"
+    ],
+    "usage": {
+      "dosage": "每日1–2次，每次1袋（2g），温水冲服",
+      "daily_limit": "1–4g",
+      "note": ""
+    },
+    "suitable_for": [
+      "免疫力低下者"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      },
+      {
+        "contra_id": "CI_PREG",
+        "name": "孕妇",
+        "severity": "high",
+        "reason": "孕期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_LACT",
+        "name": "乳母",
+        "severity": "high",
+        "reason": "哺乳期营养需专业评估，多数产品不适宜"
+      }
+    ],
+    "aliases": [
+      "灵芝孢子粉",
+      "孢子粉"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P007": {
+    "product_id": "P007",
+    "name": "康源牌螺旋藻片",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000127",
+    "dosage_form": "片剂",
+    "spec": "0.5g/片×120片",
+    "retail_price": 198,
+    "claims": [
+      {
+        "efficacy_id": "EFF_01",
+        "text": "有助于增强免疫力",
+        "catalog_no": 1,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [
+      "螺旋藻"
+    ],
+    "usage": {
+      "dosage": "每日2–3次，每次2片",
+      "daily_limit": "3–4g",
+      "note": ""
+    },
+    "suitable_for": [
+      "免疫力低下者"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_INFANT",
+        "name": "婴幼儿",
+        "severity": "high",
+        "reason": "婴幼儿器官发育未成熟，不宜食用"
+      },
+      {
+        "contra_id": "CI_PREG",
+        "name": "孕妇",
+        "severity": "high",
+        "reason": "孕期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_LACT",
+        "name": "乳母",
+        "severity": "high",
+        "reason": "哺乳期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_ALLERGY",
+        "name": "过敏体质人群",
+        "severity": "high",
+        "reason": "成分可能引发过敏反应"
+      }
+    ],
+    "aliases": [
+      "螺旋藻"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P008": {
+    "product_id": "P008",
+    "name": "康源牌西洋参含片",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000128",
+    "dosage_form": "片剂",
+    "spec": "0.5g/片×60片",
+    "retail_price": 328,
+    "claims": [
+      {
+        "efficacy_id": "EFF_01",
+        "text": "有助于增强免疫力",
+        "catalog_no": 1,
+        "catalog_version": "2023"
+      },
+      {
+        "efficacy_id": "EFF_07",
+        "text": "缓解体力疲劳",
+        "catalog_no": 7,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [
+      "西洋参"
+    ],
+    "usage": {
+      "dosage": "每日2次，每次2片，含服",
+      "daily_limit": "1.5–3g",
+      "note": ""
+    },
+    "suitable_for": [
+      "免疫力低下者",
+      "易疲劳者"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      },
+      {
+        "contra_id": "CI_PREG",
+        "name": "孕妇",
+        "severity": "high",
+        "reason": "孕期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_LACT",
+        "name": "乳母",
+        "severity": "high",
+        "reason": "哺乳期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_COLD",
+        "name": "感冒期间",
+        "severity": "medium",
+        "reason": "人参、西洋参注意事项列明感冒期间不推荐使用"
+      }
+    ],
+    "aliases": [
+      "西洋参"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P009": {
+    "product_id": "P009",
+    "name": "康源牌人参胶囊",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000129",
+    "dosage_form": "硬胶囊",
+    "spec": "0.4g/粒×60粒",
+    "retail_price": 458,
+    "claims": [
+      {
+        "efficacy_id": "EFF_01",
+        "text": "有助于增强免疫力",
+        "catalog_no": 1,
+        "catalog_version": "2023"
+      },
+      {
+        "efficacy_id": "EFF_07",
+        "text": "缓解体力疲劳",
+        "catalog_no": 7,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [
+      "人参"
+    ],
+    "usage": {
+      "dosage": "每日1–2次，每次1粒",
+      "daily_limit": "1–3g",
+      "note": "长期食用建议根据个人体质酌情减量"
+    },
+    "suitable_for": [
+      "免疫力低下者",
+      "易疲劳者"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      },
+      {
+        "contra_id": "CI_PREG",
+        "name": "孕妇",
+        "severity": "high",
+        "reason": "孕期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_LACT",
+        "name": "乳母",
+        "severity": "high",
+        "reason": "哺乳期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_DAMPHEAT",
+        "name": "湿热体质者",
+        "severity": "high",
+        "reason": "人参原料目录明确列为不适宜人群"
+      },
+      {
+        "contra_id": "CI_YINXU",
+        "name": "阴虚体质者",
+        "severity": "high",
+        "reason": "人参原料目录明确列为不适宜人群"
+      },
+      {
+        "contra_id": "CI_COLD",
+        "name": "感冒期间",
+        "severity": "medium",
+        "reason": "人参、西洋参注意事项列明感冒期间不推荐使用"
+      }
+    ],
+    "aliases": [
+      "人参"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P010": {
+    "product_id": "P010",
+    "name": "康源牌灵芝孢子油软胶囊",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000130",
+    "dosage_form": "软胶囊",
+    "spec": "0.5g/粒×60粒",
+    "retail_price": 698,
+    "claims": [
+      {
+        "efficacy_id": "EFF_01",
+        "text": "有助于增强免疫力",
+        "catalog_no": 1,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [
+      "灵芝"
+    ],
+    "usage": {
+      "dosage": "每日2次，每次1粒",
+      "daily_limit": "灵芝4–6g（折算）",
+      "note": ""
+    },
+    "suitable_for": [
+      "免疫力低下者"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      },
+      {
+        "contra_id": "CI_PREG",
+        "name": "孕妇",
+        "severity": "high",
+        "reason": "孕期营养需专业评估，多数产品不适宜"
+      },
+      {
+        "contra_id": "CI_LACT",
+        "name": "乳母",
+        "severity": "high",
+        "reason": "哺乳期营养需专业评估，多数产品不适宜"
+      }
+    ],
+    "aliases": [
+      "灵芝孢子油"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P011": {
+    "product_id": "P011",
+    "name": "康源牌钙维生素D软胶囊",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000131",
+    "dosage_form": "软胶囊",
+    "spec": "1.0g/粒×100粒",
+    "retail_price": 168,
+    "claims": [
+      {
+        "efficacy_id": "EFF_NUT_CA",
+        "text": "补充钙、维生素D",
+        "catalog_no": null,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [
+      "钙",
+      "维生素D"
+    ],
+    "usage": {
+      "dosage": "每日1次，每次1–2粒",
+      "daily_limit": "钙不超过2000mg",
+      "note": "不宜与同类营养素补充剂同时食用"
+    },
+    "suitable_for": [
+      "需要补充的成人"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      }
+    ],
+    "aliases": [
+      "钙片",
+      "钙维D"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P012": {
+    "product_id": "P012",
+    "name": "康源牌多种维生素矿物质片",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000132",
+    "dosage_form": "片剂",
+    "spec": "1.0g/片×60片",
+    "retail_price": 138,
+    "claims": [
+      {
+        "efficacy_id": "EFF_NUT_MV",
+        "text": "补充多种维生素和矿物质",
+        "catalog_no": null,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [],
+    "usage": {
+      "dosage": "每日1次，每次1片",
+      "daily_limit": "按说明，不宜叠加同类补充剂",
+      "note": ""
+    },
+    "suitable_for": [
+      "需要补充的成人"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      }
+    ],
+    "aliases": [
+      "复合维生素"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P013": {
+    "product_id": "P013",
+    "name": "康源牌益生菌粉",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000133",
+    "dosage_form": "粉剂",
+    "spec": "2g/袋×30袋",
+    "retail_price": 228,
+    "claims": [
+      {
+        "efficacy_id": "EFF_15",
+        "text": "有助于调节肠道菌群",
+        "catalog_no": 15,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [],
+    "usage": {
+      "dosage": "每日1次，每次1袋",
+      "daily_limit": "按说明",
+      "note": "冲调水温不超过40℃；与抗生素同服应间隔2小时以上"
+    },
+    "suitable_for": [
+      "肠道菌群失调者"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_INFANT",
+        "name": "婴幼儿",
+        "severity": "high",
+        "reason": "婴幼儿器官发育未成熟，不宜食用"
+      }
+    ],
+    "aliases": [
+      "益生菌"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P014": {
+    "product_id": "P014",
+    "name": "康源牌膳食纤维粉",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000134",
+    "dosage_form": "粉剂",
+    "spec": "5g/袋×30袋",
+    "retail_price": 158,
+    "claims": [
+      {
+        "efficacy_id": "EFF_17",
+        "text": "有助于润肠通便",
+        "catalog_no": 17,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [],
+    "usage": {
+      "dosage": "每日1–2次，每次1袋，冲服",
+      "daily_limit": "按说明",
+      "note": "服用后应多饮水；不宜与药物同时服用（间隔1–2小时）"
+    },
+    "suitable_for": [
+      "便秘者"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_OBSTRUCTION",
+        "name": "肠道梗阻者",
+        "severity": "critical",
+        "reason": "膳食纤维可能加重梗阻，产品注意事项明确禁用"
+      }
+    ],
+    "aliases": [
+      "膳食纤维",
+      "纤维粉"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P015": {
+    "product_id": "P015",
+    "name": "康源牌维生素C咀嚼片",
+    "category": "保健食品",
+    "approval_no": "食健备G202544000135",
+    "dosage_form": "片剂",
+    "spec": "0.8g/片×60片",
+    "retail_price": 98,
+    "claims": [
+      {
+        "efficacy_id": "EFF_NUT_VC",
+        "text": "补充维生素C",
+        "catalog_no": null,
+        "catalog_version": "2023"
+      }
+    ],
+    "ingredients": [],
+    "usage": {
+      "dosage": "每日1次，每次1片，嚼服",
+      "daily_limit": "不超过2000mg",
+      "note": ""
+    },
+    "suitable_for": [
+      "需要补充的成人"
+    ],
+    "contraindications": [
+      {
+        "contra_id": "CI_CHILD",
+        "name": "少年儿童",
+        "severity": "high",
+        "reason": "多数保健食品原料目录明确列为不适宜人群"
+      }
+    ],
+    "aliases": [
+      "维生素C",
+      "VC"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P016": {
+    "product_id": "P016",
+    "name": "康源牌复合蛋白固体饮料",
+    "category": "普通食品",
+    "approval_no": "SC11344010100123",
+    "dosage_form": "粉剂",
+    "spec": "360g/罐",
+    "retail_price": 198,
+    "claims": [],
+    "ingredients": [],
+    "usage": {
+      "dosage": "每日1–2次，每次1份（20g），温水冲调",
+      "daily_limit": "按说明，作为日常饮食的一部分",
+      "note": "普通食品，无保健功能声称；不能替代正常饮食"
+    },
+    "suitable_for": [],
+    "contraindications": [],
+    "aliases": [
+      "复合蛋白粉",
+      "固体饮料"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P017": {
+    "product_id": "P017",
+    "name": "康源牌胶原蛋白肽饮品",
+    "category": "普通食品",
+    "approval_no": "SC11344010100124",
+    "dosage_form": "口服液",
+    "spec": "50ml/瓶×10瓶",
+    "retail_price": 268,
+    "claims": [],
+    "ingredients": [],
+    "usage": {
+      "dosage": "每日1瓶（50ml），可直接饮用或冷藏后饮用",
+      "daily_limit": "按说明",
+      "note": "普通食品，无保健功能声称"
+    },
+    "suitable_for": [],
+    "contraindications": [],
+    "aliases": [
+      "胶原蛋白",
+      "胶原蛋白肽"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P018": {
+    "product_id": "P018",
+    "name": "康源牌枸杞原浆",
+    "category": "普通食品",
+    "approval_no": "SC11344010100125",
+    "dosage_form": "口服液",
+    "spec": "30ml/袋×30袋",
+    "retail_price": 128,
+    "claims": [],
+    "ingredients": [],
+    "usage": {
+      "dosage": "每日1–2袋（30ml），可直接饮用或兑水",
+      "daily_limit": "按说明",
+      "note": "普通食品，无保健功能声称"
+    },
+    "suitable_for": [],
+    "contraindications": [],
+    "aliases": [
+      "枸杞原浆",
+      "枸杞汁"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P019": {
+    "product_id": "P019",
+    "name": "康源牌黑芝麻丸",
+    "category": "普通食品",
+    "approval_no": "SC11344010100126",
+    "dosage_form": "丸剂",
+    "spec": "10g/丸×20丸",
+    "retail_price": 88,
+    "claims": [],
+    "ingredients": [],
+    "usage": {
+      "dosage": "每日1–2丸（10g/丸），作为日常零食",
+      "daily_limit": "按说明",
+      "note": "普通食品，无保健功能声称"
+    },
+    "suitable_for": [],
+    "contraindications": [],
+    "aliases": [
+      "黑芝麻丸",
+      "芝麻丸"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  },
+  "P020": {
+    "product_id": "P020",
+    "name": "康源牌代餐奶昔",
+    "category": "普通食品",
+    "approval_no": "SC11344010100127",
+    "dosage_form": "粉剂",
+    "spec": "500g/罐",
+    "retail_price": 218,
+    "claims": [],
+    "ingredients": [],
+    "usage": {
+      "dosage": "每日1次，每次1份（约40g），温水冲调",
+      "daily_limit": "按说明",
+      "note": "普通食品，无保健功能声称；不建议完全替代正餐，具体请咨询营养专业人员"
+    },
+    "suitable_for": [],
+    "contraindications": [],
+    "aliases": [
+      "代餐",
+      "奶昔"
+    ],
+    "compliance_note": null,
+    "data_origin": "synthetic"
+  }
+}

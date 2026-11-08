@@ -1,0 +1,130 @@
+{
+  "label": "ft_v1_ctx_ab",
+  "eval_set": "D:\\AI260803\\健康培训移动\\train\\data\\eval_questions_v3.jsonl",
+  "n_queries": 45,
+  "variants": [
+    5,
+    6,
+    7
+  ],
+  "prompt_variant": "v3",
+  "results": {
+    "5": {
+      "n": 45,
+      "passed": 36,
+      "pass_rate": 0.8,
+      "missed_points": 10,
+      "forbidden_questions": 1,
+      "refused": 0,
+      "refusal_rate": 0.0,
+      "gold_in_context": 43,
+      "gold_in_context_rate": 0.9556,
+      "avg_answer_chars": 163.0,
+      "p50_elapsed_s": 1.42
+    },
+    "6": {
+      "n": 45,
+      "passed": 35,
+      "pass_rate": 0.7778,
+      "missed_points": 12,
+      "forbidden_questions": 1,
+      "refused": 1,
+      "refusal_rate": 0.0222,
+      "gold_in_context": 44,
+      "gold_in_context_rate": 0.9778,
+      "avg_answer_chars": 157.4,
+      "p50_elapsed_s": 1.45
+    },
+    "7": {
+      "n": 45,
+      "passed": 32,
+      "pass_rate": 0.7111,
+      "missed_points": 16,
+      "forbidden_questions": 1,
+      "refused": 1,
+      "refusal_rate": 0.0222,
+      "gold_in_context": 44,
+      "gold_in_context_rate": 0.9778,
+      "avg_answer_chars": 152.4,
+      "p50_elapsed_s": 1.45
+    }
+  },
+  "comparisons": {
+    "5_vs_6": {
+      "n_common": 45,
+      "pass_up": 4,
+      "pass_down": 5,
+      "up_qids": [
+        "ev2-02",
+        "ev2-29",
+        "ev2-42",
+        "ev2-43"
+      ],
+      "down_qids": [
+        "ev2-01",
+        "ev2-04",
+        "ev2-10",
+        "ev2-19",
+        "ev2-21"
+      ],
+      "mcnemar_p": 1.0,
+      "delta_passed": -1,
+      "new_forbidden_qids": [],
+      "fixed_forbidden_qids": []
+    },
+    "5_vs_7": {
+      "n_common": 45,
+      "pass_up": 2,
+      "pass_down": 6,
+      "up_qids": [
+        "ev2-02",
+        "ev2-43"
+      ],
+      "down_qids": [
+        "ev2-01",
+        "ev2-04",
+        "ev2-09",
+        "ev2-10",
+        "ev2-20",
+        "ev2-27"
+      ],
+      "mcnemar_p": 0.2891,
+      "delta_passed": -4,
+      "new_forbidden_qids": [],
+      "fixed_forbidden_qids": []
+    }
+  },
+  "gates": {
+    "5_vs_6": {
+      "checks": {
+        "pass_not_drop_2": true,
+        "forbidden_not_up": true,
+        "refused_not_up": false
+      },
+      "verdict": "FAIL",
+      "delta_passed": -1
+    },
+    "5_vs_7": {
+      "checks": {
+        "pass_not_drop_2": false,
+        "forbidden_not_up": true,
+        "refused_not_up": false
+      },
+      "verdict": "FAIL",
+      "delta_passed": -4
+    }
+  },
+  "external_baseline": null,
+  "llm_ready": true,
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage"
+  ],
+  "generated_at": "2026-11-08T00:24:03+08:00"
+}

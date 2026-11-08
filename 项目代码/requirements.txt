@@ -45,6 +45,10 @@ langgraph>=1.0
 # 缺包时 HTTP 服务照常启动，只是接口层 import 会失败，所以建议装
 mcp>=2.3
 
+# ---- 稀疏检索（BGE-M3 lexical_weights）----
+# 缺失时 SPARSE_RECALL 端口降级（pending），dense 路照常工作
+FlagEmbedding>=1.4
+
 # ---- 测试 ----
 pytest>=8.0
 pytest-cov>=5.0

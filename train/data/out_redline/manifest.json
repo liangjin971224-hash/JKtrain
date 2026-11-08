@@ -1,0 +1,81 @@
+{
+  "sources": [
+    {
+      "path": "data\\samples_seed.jsonl",
+      "sha256": "64673508d2cb62d968b9e04ba4d4532050d2b2b1139d9c4552176e4963d97b25"
+    },
+    {
+      "path": "data\\samples_seed.add9.jsonl",
+      "sha256": "8546bb2588113bec207401a194a00023181c2f76fda81a74099133416ae3607a"
+    },
+    {
+      "path": "data\\samples_batch2.jsonl",
+      "sha256": "92ed5b80e74c060b88320de915027f911ba2c1efd3b2589fc6148b21a2b5ae73"
+    },
+    {
+      "path": "data\\samples_batch3.jsonl",
+      "sha256": "f8dc3096c6f769ea829b800ad852511475f4ffa744db08409072731ea9ed4c86"
+    },
+    {
+      "path": "data\\samples_batch4.jsonl",
+      "sha256": "6943ae8ae6b58da0b04b48892fe6723a98686f8cb3e51d76e1a6354e1784befd"
+    }
+  ],
+  "status_counts_in_source": {
+    "approved": 33,
+    "pending": 48
+  },
+  "exported": {
+    "train": {
+      "file": "train.jsonl",
+      "sha256": "272528ed190419235f186704792572228182e8ddf659980c7aa739d940329918",
+      "records": 31,
+      "groups": 31
+    },
+    "val": {
+      "file": "val.jsonl",
+      "sha256": "a78d602c68b4381bfc6020ec30620ee981dba787ea52c444cfd86e1982e7720c",
+      "records": 2,
+      "groups": 2
+    }
+  },
+  "group_ids": {
+    "train": [
+      "D011-chest-tight",
+      "D011-fast",
+      "D011-give-meds",
+      "D011-redflags",
+      "D013-adverse-event",
+      "D013-no-effect-return",
+      "D013-opened",
+      "D013-returnable",
+      "P001-forbidden-claims",
+      "P001-offlabel",
+      "P002-diabetes",
+      "P016-no-claim",
+      "P016-vs-P004",
+      "P016-what-to-say",
+      "P017-no-claim",
+      "P017-what-to-say",
+      "P018-no-claim",
+      "P018-why-rule",
+      "P019-calcium-wording",
+      "P020-meal-replace",
+      "P020-no-claim",
+      "counter-P016-claim",
+      "counter-effect-word",
+      "redline-stopmed",
+      "redline-stopmed-2",
+      "rule-absolute",
+      "rule-bluehat-vs-sc",
+      "rule-catalog",
+      "rule-explain",
+      "rule-three",
+      "rule-wording"
+    ],
+    "val": [
+      "P019-no-claim",
+      "role-boundary"
+    ]
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "label": "a_after_fix_45",
+  "eval_set": "D:\\AI260803\\健康培训移动\\train\\data\\eval_questions_v3.jsonl",
+  "n_queries": 45,
+  "variants": [
+    5
+  ],
+  "prompt_variant": "v3",
+  "results": {
+    "5": {
+      "n": 45,
+      "passed": 33,
+      "pass_rate": 0.7333,
+      "missed_points": 14,
+      "forbidden_questions": 2,
+      "refused": 1,
+      "refusal_rate": 0.0222,
+      "gold_in_context": 43,
+      "gold_in_context_rate": 0.9556,
+      "avg_answer_chars": 173.7,
+      "p50_elapsed_s": 1.69
+    }
+  },
+  "comparisons": {},
+  "gates": {},
+  "external_baseline": {
+    "detail": "..\\train\\eval_runs\\ft_v1_ctx_ab_20261108_001931\\detail_5.jsonl",
+    "summary": {
+      "n": 45,
+      "passed": 36,
+      "pass_rate": 0.8,
+      "missed_points": 10,
+      "forbidden_questions": 1,
+      "refused": 0,
+      "refusal_rate": 0.0,
+      "gold_in_context": 43,
+      "gold_in_context_rate": 0.9556,
+      "avg_answer_chars": 163.0,
+      "p50_elapsed_s": 1.42
+    },
+    "comparison": {
+      "n_common": 45,
+      "pass_up": 1,
+      "pass_down": 4,
+      "up_qids": [
+        "ev2-02"
+      ],
+      "down_qids": [
+        "ev2-01",
+        "ev2-04",
+        "ev2-10",
+        "ev2-20"
+      ],
+      "mcnemar_p": 0.375,
+      "delta_passed": -3,
+      "new_forbidden_qids": [
+        "ev2-29"
+      ],
+      "fixed_forbidden_qids": []
+    },
+    "gate": {
+      "checks": {
+        "pass_not_drop_2": false,
+        "forbidden_not_up": false,
+        "refused_not_up": false
+      },
+      "verdict": "FAIL",
+      "delta_passed": -3
+    }
+  },
+  "llm_ready": true,
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage"
+  ],
+  "generated_at": "2026-11-08T12:48:08+08:00"
+}

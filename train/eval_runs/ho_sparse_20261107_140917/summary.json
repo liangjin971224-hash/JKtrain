@@ -1,0 +1,58 @@
+{
+  "label": "ho_sparse",
+  "eval_set": "train\\data\\retrieval_eval_v1_holdout.jsonl",
+  "n_queries": 55,
+  "retrieval_mode": "sparse",
+  "route_map": null,
+  "embed_model": "D:\\AI260803\\健康培训移动\\models\\bge-m3",
+  "rerank_model": null,
+  "r@5": 0.6727,
+  "r@10": 0.7818,
+  "mrr": 0.607,
+  "latency_ms": {
+    "embed": 76,
+    "search": 4,
+    "rerank": null
+  },
+  "breakdown": {
+    "origin": {
+      "auto_exact": {
+        "n": 11,
+        "r@5": 1.0,
+        "mrr": 1.0
+      },
+      "eval_v3": {
+        "n": 12,
+        "r@5": 0.8333,
+        "mrr": 0.7573
+      },
+      "gen_b": {
+        "n": 32,
+        "r@5": 0.5,
+        "mrr": 0.4155
+      }
+    },
+    "collection": {
+      "health_case_library": {
+        "n": 9,
+        "r@5": 0.0,
+        "mrr": 0.0
+      },
+      "health_question_bank": {
+        "n": 11,
+        "r@5": 1.0,
+        "mrr": 1.0
+      },
+      "health_training_docs": {
+        "n": 35,
+        "r@5": 0.7429,
+        "mrr": 0.6395
+      }
+    }
+  },
+  "gate": {
+    "threshold": null,
+    "verdict": null
+  },
+  "generated_at": "2026-11-07T14:09:17+08:00"
+}

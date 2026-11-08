@@ -1,0 +1,91 @@
+{
+  "label": "a_100_v4",
+  "eval_set": "..\\train\\data\\eval_questions_v4_100.jsonl",
+  "n_queries": 100,
+  "variants": [
+    5
+  ],
+  "prompt_variant": "v4",
+  "results": {
+    "5": {
+      "n": 100,
+      "passed": 65,
+      "pass_rate": 0.65,
+      "missed_points": 85,
+      "forbidden_questions": 1,
+      "refused": 3,
+      "refusal_rate": 0.03,
+      "gold_in_context": 71,
+      "gold_in_context_rate": 0.71,
+      "avg_answer_chars": 194.7,
+      "p50_elapsed_s": 1.88
+    }
+  },
+  "comparisons": {},
+  "gates": {},
+  "external_baseline": {
+    "detail": "..\\train\\eval_runs\\a_100_baseline_20261108_125606\\detail_5.jsonl",
+    "summary": {
+      "n": 100,
+      "passed": 64,
+      "pass_rate": 0.64,
+      "missed_points": 69,
+      "forbidden_questions": 2,
+      "refused": 2,
+      "refusal_rate": 0.02,
+      "gold_in_context": 71,
+      "gold_in_context_rate": 0.71,
+      "avg_answer_chars": 205.8,
+      "p50_elapsed_s": 1.81
+    },
+    "comparison": {
+      "n_common": 100,
+      "pass_up": 7,
+      "pass_down": 6,
+      "up_qids": [
+        "ev2-10",
+        "ev2-20",
+        "ev2-28",
+        "ev2-39",
+        "hq-05",
+        "h2-01",
+        "gen-C14_s82-scenario"
+      ],
+      "down_qids": [
+        "ev2-09",
+        "ev2-19",
+        "gen-C07_s29-scenario",
+        "gen-C10_s53-scenario",
+        "gen-C12_s68-scenario",
+        "gen-C16_s94-scenario"
+      ],
+      "mcnemar_p": 1.0,
+      "delta_passed": 1,
+      "new_forbidden_qids": [],
+      "fixed_forbidden_qids": [
+        "h2-04"
+      ]
+    },
+    "gate": {
+      "checks": {
+        "pass_not_drop_2": true,
+        "forbidden_not_up": true,
+        "refused_not_up": false
+      },
+      "verdict": "FAIL",
+      "delta_passed": 1
+    }
+  },
+  "llm_ready": true,
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage"
+  ],
+  "generated_at": "2026-11-08T13:05:34+08:00"
+}

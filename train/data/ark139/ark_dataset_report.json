@@ -1,0 +1,59 @@
+{
+  "platform": "volcengine-ark",
+  "sources": [
+    {
+      "path": "data\\samples_seed.jsonl",
+      "sha256": "64673508d2cb62d968b9e04ba4d4532050d2b2b1139d9c4552176e4963d97b25"
+    },
+    {
+      "path": "data\\samples_seed.add9.jsonl",
+      "sha256": "709967656b6301fd61749d81f8b00061961c5e00bf0c387fc1df3dec3e9e8193"
+    },
+    {
+      "path": "data\\samples_batch2.jsonl",
+      "sha256": "71fe390980d096e4fe27b624a704a60d97e923a6a02f8cc5239ca47fd117ccef"
+    },
+    {
+      "path": "data\\samples_batch3.jsonl",
+      "sha256": "c40b3522a9fbed5ad6e3033ced53728a8eccf1fe1303717789db26c1579dcd29"
+    },
+    {
+      "path": "data\\samples_batch4.jsonl",
+      "sha256": "46fed7ba0bbb4c29c5a8520c866064775bffbb8fedc593499b3a966c35d70d0e"
+    },
+    {
+      "path": "data\\samples_batch5.jsonl",
+      "sha256": "9aac6d4f6dfa3bc667163cd2dae9ff2f1768e1c8059ae9ce66b4ac4afb6e9bf3"
+    },
+    {
+      "path": "data\\samples_batch6.jsonl",
+      "sha256": "b2411c1b412caf1086b76fc71debab9370baa4e55847bd2f35422e7d8e189f81"
+    },
+    {
+      "path": "data\\samples_batch7.jsonl",
+      "sha256": "bfdf129a93faf88e4a0c6cf4c2a08ccf6952b562e11d3d0c64edf0512180168f"
+    }
+  ],
+  "status_counts_in_source": {
+    "approved": 139
+  },
+  "exported": {
+    "train": {
+      "file": "ark_train.jsonl",
+      "sha256": "a11c46673853cce5fe435642e4cd8460e6fc1e7adc8ec70f2413dd0cc3c5fe64",
+      "records": 128,
+      "tokens_median": 504,
+      "tokens_max": 688,
+      "over_max_tokens": 0
+    },
+    "val": {
+      "file": "ark_val.jsonl",
+      "sha256": "cc946fa7b3727d7eaf6fde2cd563a3963efcb156c31af4c713ebf1c66e660833",
+      "records": 11,
+      "tokens_median": 554,
+      "tokens_max": 638,
+      "over_max_tokens": 0
+    }
+  },
+  "errors": []
+}

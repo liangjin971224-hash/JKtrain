@@ -1,0 +1,89 @@
+{
+  "label": "ho_union",
+  "eval_set": "train\\data\\retrieval_eval_v1_holdout_remap.jsonl",
+  "n_queries": 55,
+  "retrieval_mode": "union",
+  "case_window": 10,
+  "route_map": {
+    "health_case_library": "union",
+    "health_training_docs": "hybrid",
+    "health_question_bank": "dense"
+  },
+  "metric_semantics": {
+    "changed": true,
+    "case_collection": "health_case_library",
+    "case_library_hit@5": "gold 是否落在 dense top5 ∪ sparse top5 去重后的候选窗口（≤10 条）内；这是 10 候选窗口覆盖率，不是单列表前 5 的 R@5，hit@10 与 hit@5 同值。",
+    "gold_rank": "gold 在合并窗口内的名次（1~10），未命中 null；MRR 用该名次计算。",
+    "merge_order": "按名次轮转交错 d1,s1,d2,s2,… 后去重；dense(COSINE) 与 sparse(IP) 分数尺度不可比，不做跨路分数排序。两路仍按 TOP_K_SEARCH=20 检索后各取前 5。",
+    "other_collections": "health_training_docs=hybrid、health_question_bank=dense，与 p03_route 一致，仍为单列表 R@5。",
+    "comparability": "★ 口径已变更，禁止把本 run 的案例库命中数与整体 R@5 与 p03_dense / p03_sparse / p03_hybrid / p03_route 等历史 R@5 放在同一口径里比较；本次整体 R@5 是混合口径，仅作归档记录，不得作为同口径门禁或 delta 结论的依据。"
+  },
+  "hit_counts": {
+    "total": 48,
+    "by_collection": {
+      "health_case_library": {
+        "n": 9,
+        "hits": 7
+      },
+      "health_question_bank": {
+        "n": 11,
+        "hits": 11
+      },
+      "health_training_docs": {
+        "n": 35,
+        "hits": 30
+      }
+    }
+  },
+  "embed_model": "D:\\AI260803\\健康培训移动\\models\\bge-m3",
+  "rerank_model": null,
+  "r@5": 0.8727,
+  "r@10": 0.8909,
+  "mrr": 0.7216,
+  "latency_ms": {
+    "embed": 100,
+    "search": 7,
+    "rerank": null
+  },
+  "breakdown": {
+    "origin": {
+      "auto_exact": {
+        "n": 11,
+        "r@5": 1.0,
+        "mrr": 1.0
+      },
+      "eval_v3": {
+        "n": 12,
+        "r@5": 0.9167,
+        "mrr": 0.7431
+      },
+      "gen_b": {
+        "n": 32,
+        "r@5": 0.8125,
+        "mrr": 0.6179
+      }
+    },
+    "collection": {
+      "health_case_library": {
+        "n": 9,
+        "r@5": 0.7778,
+        "mrr": 0.4603
+      },
+      "health_question_bank": {
+        "n": 11,
+        "r@5": 1.0,
+        "mrr": 1.0
+      },
+      "health_training_docs": {
+        "n": 35,
+        "r@5": 0.8571,
+        "mrr": 0.7013
+      }
+    }
+  },
+  "gate": {
+    "threshold": null,
+    "verdict": null
+  },
+  "generated_at": "2026-11-07T15:35:54+08:00"
+}

@@ -58,7 +58,13 @@ class BgeRerankerAdapter(RerankPort):
         self._model: Any = None          # 惰性加载，见 _ensure_model
 
     def _ensure_model(self) -> Any:
-        """惰性加载 CrossEncoder。失败回退 CPU 的逻辑与向量路一致。"""
+        """惰性加载 CrossEncoder。失败回退 CPU 的逻辑与向量路一致。
+
+        Raises:
+            RerankError: GPU/CPU 都加载失败（模型缺失、依赖缺失等）。
+                ★ 必须转成端口契约里的 `RerankError`：用例层据此降级，
+                  raw 异常会穿透到接口层变成 500。
+        """
         if self._model is not None:
             return self._model
 
@@ -71,8 +77,13 @@ class BgeRerankerAdapter(RerankPort):
         except Exception as exc:              # noqa: BLE001 无卡/显存不足 → CPU
             logger.warning(
                 "reranker GPU 加载失败（%s），回退 CPU。", exc)
-            model = CrossEncoder(self._model_dir, max_length=self._max_length,
-                                 device="cpu")
+            try:
+                model = CrossEncoder(self._model_dir,
+                                     max_length=self._max_length, device="cpu")
+            except Exception as cpu_exc:      # noqa: BLE001 统一转端口契约
+                raise RerankError(
+                    f"reranker 加载失败: {type(cpu_exc).__name__}: {cpu_exc}"
+                ) from cpu_exc
         self._model = model
         return model
 

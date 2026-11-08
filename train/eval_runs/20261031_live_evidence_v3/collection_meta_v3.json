@@ -1,0 +1,32 @@
+{
+  "collected_at_utc": "2026-10-31T02:04:18.292330+00:00",
+  "eval_file": "D:\\AI260803\\健康培训移动\\train\\data\\eval_questions_v3.jsonl",
+  "eval_sha256": "5957f36464b2709742c18907784b8345da102f39338e31378a08ce1311ea164c",
+  "questions": 45,
+  "graph_database": "jiankangshujuku",
+  "graph_products": 20,
+  "rag_collection": "health_training_docs",
+  "approved_chunks": 293,
+  "allowed_permissions": [
+    "public",
+    "internal"
+  ],
+  "top_k": 20,
+  "fused_limit": 10,
+  "classification": "existing IntentClassifier, rules only, no LLM fallback",
+  "embedding_model": "bge-m3",
+  "embedding_device": "cpu",
+  "embedding_batch_cache": "same project encoder; no search/evaluation labels supplied",
+  "nonempty_retrieval": 45,
+  "degraded_questions": 0,
+  "degraded_channel_count": 0,
+  "graph_hit_questions": 17,
+  "generation_model_called": false,
+  "candidate_status": "pending_human_review",
+  "elapsed_sec": 19.032,
+  "validation_completed_at_utc": "2026-10-31T02:14:05.552832+00:00",
+  "first_pass_retrieval_sha256": "97c680ea6bea919ef903059da429519b996640048761a9ab2e50a8b43a391a30",
+  "supplement_actual_queries": 10,
+  "validation_file": "D:\\AI260803\\健康培训移动\\train\\eval_runs\\20261031_live_evidence_v3\\validation_v3.json",
+  "reference_status": "pending_human_review; not approved gold labels"
+}

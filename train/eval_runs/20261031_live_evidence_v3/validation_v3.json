@@ -1,0 +1,1358 @@
+{
+  "summary": {
+    "candidate_count": 45,
+    "status": "pending_human_review",
+    "generation_model_called": false,
+    "official_scorer_passed": 45,
+    "official_scorer_total": 45,
+    "official_scorer_failures": [],
+    "failure_classification": {
+      "answer_error": [],
+      "expect_too_narrow": [],
+      "unresolved_source_in_scoring_failures": []
+    },
+    "numeric_occurrence_positions": 30,
+    "missing_numeric_sources": 0,
+    "citation_membership_passed": 45,
+    "sentence_mapped_positions": 98,
+    "first_pass_nonempty": 45,
+    "first_pass_degraded_questions": 0,
+    "first_pass_degraded_channel_count": 0,
+    "first_pass_graph_hit_questions": 17,
+    "supplement_actual_queries": 10,
+    "supplement_degraded_channel_count": 0,
+    "depends_on_supplement_qids": [
+      "ev2-03",
+      "ev2-04",
+      "ev2-05",
+      "ev2-06",
+      "ev2-15",
+      "ev2-16",
+      "ev2-17",
+      "ev2-18",
+      "ev2-19",
+      "ev2-20",
+      "ev2-21",
+      "ev2-24",
+      "ev2-25",
+      "ev2-26",
+      "ev2-34",
+      "ev2-35",
+      "ev2-37",
+      "ev2-43"
+    ],
+    "rewritten_qids": [
+      "ev2-14",
+      "ev2-19",
+      "ev2-21",
+      "ev2-22",
+      "ev2-25",
+      "ev2-27",
+      "ev2-34",
+      "ev2-35",
+      "ev2-36",
+      "ev2-38",
+      "ev2-40",
+      "ev2-41",
+      "ev2-44"
+    ],
+    "reused_answer_count": 32,
+    "current_scope_unresolved": [
+      "ev2-22"
+    ],
+    "historical_issue_now_outside_question": {
+      "ev2-25": "旧题每日补充量口径待澄清；v3只问包装，按D007_c003原文回答，不阻塞本题"
+    },
+    "protected_files_checked": 116,
+    "changed_protected_files": [],
+    "source_eval_sha256": "5957f36464b2709742c18907784b8345da102f39338e31378a08ce1311ea164c",
+    "retrieval_sha256": "97c680ea6bea919ef903059da429519b996640048761a9ab2e50a8b43a391a30"
+  },
+  "per_question": [
+    {
+      "qid": "ev2-01",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-01",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 76
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-02",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-02",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 73
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-03",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-03",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 55
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-04",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 4,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-04",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 65
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-05",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-05",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 59
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-06",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-06",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 71
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-07",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-07",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 56
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-08",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-08",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 65
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-09",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-09",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 60
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-10",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-10",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 76
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-11",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-11",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 75
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-12",
+      "numeric_occurrences": [
+        {
+          "token": "2",
+          "output_offset": 7,
+          "output_context": "资料写明每日 2 次，每次 2 粒，随餐服用；",
+          "literal_sources": [
+            {
+              "chunk_id": "D006_c005",
+              "source_offset": 134,
+              "source_excerpt": "荐食用\n字段：食用方法；内容：每日 2 次，每次 2 粒，随餐服用\n字段：每日用量"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "2",
+          "output_offset": 14,
+          "output_context": "写明每日 2 次，每次 2 粒，随餐服用；每日用量不超过",
+          "literal_sources": [
+            {
+              "chunk_id": "D006_c005",
+              "source_offset": 134,
+              "source_excerpt": "荐食用\n字段：食用方法；内容：每日 2 次，每次 2 粒，随餐服用\n字段：每日用量"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "4.0",
+          "output_offset": 31,
+          "output_context": "餐服用；每日用量不超过 4.0g。请按说明书用量食用。保健食",
+          "literal_sources": [
+            {
+              "chunk_id": "D006_c005",
+              "source_offset": 167,
+              "source_excerpt": "\n字段：每日用量上限；内容：不超过 4.0g（其中 EPA+DHA 不低于 1.0g）"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 3,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-12",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 66
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-13",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-13",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 74
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-14",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-14",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 52
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-15",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-15",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 86
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-16",
+      "numeric_occurrences": [
+        {
+          "token": "1",
+          "output_offset": 10,
+          "output_context": "建议餐后服用，每日 1 次，每次 1 粒。保健食品不",
+          "literal_sources": [
+            {
+              "chunk_id": "D006_c013",
+              "source_offset": 1,
+              "source_excerpt": "Q1：这个对心脏好不好？\n\n> 「这款批准的功能"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "1",
+          "output_offset": 17,
+          "output_context": "用，每日 1 次，每次 1 粒。保健食品不是药物，不能代",
+          "literal_sources": [
+            {
+              "chunk_id": "D006_c013",
+              "source_offset": 1,
+              "source_excerpt": "Q1：这个对心脏好不好？\n\n> 「这款批准的功能"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 2,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-16",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 41
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-17",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-17",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 63
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-18",
+      "numeric_occurrences": [
+        {
+          "token": "20",
+          "output_offset": 10,
+          "output_context": "这款乳清蛋白粉每份（20g）含蛋白质 15g。保健食品",
+          "literal_sources": [
+            {
+              "chunk_id": "D007_c004",
+              "source_offset": 34,
+              "source_excerpt": "芽糊精\n项：标志性成分；内容：每份（20g）含蛋白质 15g\n项：蛋白质含量占比；内"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "15",
+          "output_offset": 19,
+          "output_context": "每份（20g）含蛋白质 15g。保健食品不是药物，不能代替",
+          "literal_sources": [
+            {
+              "chunk_id": "D007_c004",
+              "source_offset": 43,
+              "source_excerpt": "成分；内容：每份（20g）含蛋白质 15g\n项：蛋白质含量占比；内容：约 75%"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 2,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-18",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 43
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-19",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-19",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 78
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-20",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-20",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 37
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-21",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-21",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 44
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-22",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-22",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 43
+      },
+      "semantic_review": "source_scope_pending"
+    },
+    {
+      "qid": "ev2-23",
+      "numeric_occurrences": [
+        {
+          "token": "2–3",
+          "output_offset": 8,
+          "output_context": "食用方法为每日 2–3 次，每次 2 片。保健食品不",
+          "literal_sources": [
+            {
+              "chunk_id": "D007_c015",
+              "source_offset": 172,
+              "source_excerpt": "无特殊\n字段：食用方法；内容：每日 2–3 次，每次 2 片\n字段：每日用量上限；内容"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "2",
+          "output_offset": 17,
+          "output_context": "每日 2–3 次，每次 2 片。保健食品不是药物，不能代",
+          "literal_sources": [
+            {
+              "chunk_id": "D007_c015",
+              "source_offset": 31,
+              "source_excerpt": "食品\n字段：批准文号；内容：食健备G202544000127\n字段：剂型/规格；内"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 2,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-23",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 41
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-24",
+      "numeric_occurrences": [
+        {
+          "token": "0.5",
+          "output_offset": 11,
+          "output_context": "剂型为软胶囊，规格为 0.5g/粒 × 60 粒。保健食品",
+          "literal_sources": [
+            {
+              "chunk_id": "D007_c016",
+              "source_offset": 60,
+              "source_excerpt": "0\n字段：剂型/规格；内容：软胶囊，0.5g/粒 × 60 粒\n字段：批准保健功能；内"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "60",
+          "output_offset": 20,
+          "output_context": "格为 0.5g/粒 × 60 粒。保健食品不是药物，不能代",
+          "literal_sources": [
+            {
+              "chunk_id": "D007_c016",
+              "source_offset": 69,
+              "source_excerpt": "格；内容：软胶囊，0.5g/粒 × 60 粒\n字段：批准保健功能；内容：有助于增强免"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 2,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-24",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 45
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-25",
+      "numeric_occurrences": [
+        {
+          "token": "400",
+          "output_offset": 4,
+          "output_context": "规格为 400g/罐，约 20 份，每份 2",
+          "literal_sources": [
+            {
+              "chunk_id": "D007_c003",
+              "source_offset": 52,
+              "source_excerpt": "：批准文号；内容：食健备G202544000124\n字段：剂型；内容：粉剂\n字段：规格"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "20",
+          "output_offset": 13,
+          "output_context": "格为 400g/罐，约 20 份，每份 20g。保健食品不",
+          "literal_sources": [
+            {
+              "chunk_id": "D007_c003",
+              "source_offset": 47,
+              "source_excerpt": "食品\n字段：批准文号；内容：食健备G202544000124\n字段：剂型；内容：粉剂"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "20",
+          "output_offset": 21,
+          "output_context": "罐，约 20 份，每份 20g。保健食品不是药物，不能代替",
+          "literal_sources": [
+            {
+              "chunk_id": "D007_c003",
+              "source_offset": 47,
+              "source_excerpt": "食品\n字段：批准文号；内容：食健备G202544000124\n字段：剂型；内容：粉剂"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 3,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-25",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 45
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-26",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-26",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 86
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-27",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 1,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-27",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 22
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-28",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 1,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-28",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 31
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-29",
+      "numeric_occurrences": [
+        {
+          "token": "20",
+          "output_offset": 13,
+          "output_context": "款复合蛋白固体饮料每份（20g）含蛋白质 12g。",
+          "literal_sources": [
+            {
+              "chunk_id": "D008_c005",
+              "source_offset": 135,
+              "source_excerpt": "芽糊精\n字段：每份含量；内容：每份（20g）含蛋白质 12g\n字段：建议零售价；内容"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "12",
+          "output_offset": 22,
+          "output_context": "每份（20g）含蛋白质 12g。",
+          "literal_sources": [
+            {
+              "chunk_id": "D008_c005",
+              "source_offset": 68,
+              "source_excerpt": "证；内容：SC11344010100123\n字段：剂型/规格；内容：粉剂，360g/"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 2,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 1,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-29",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 26
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-30",
+      "numeric_occurrences": [
+        {
+          "token": "50",
+          "output_offset": 11,
+          "output_context": "剂型为口服液，规格是 50ml/瓶 × 10 瓶。",
+          "literal_sources": [
+            {
+              "chunk_id": "D008_c006",
+              "source_offset": 88,
+              "source_excerpt": "4\n字段：剂型/规格；内容：口服液，50ml/瓶 × 10 瓶\n字段：配料；内容：水"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "10",
+          "output_offset": 20,
+          "output_context": "格是 50ml/瓶 × 10 瓶。",
+          "literal_sources": [
+            {
+              "chunk_id": "D008_c006",
+              "source_offset": 63,
+              "source_excerpt": "：生产许可证；内容：SC11344010100124\n字段：剂型/规格；内容：口服液"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 2,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 1,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-30",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 25
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-31",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 1,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-31",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 8
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-32",
+      "numeric_occurrences": [
+        {
+          "token": "10",
+          "output_offset": 20,
+          "output_context": "蜜；剂型为丸剂，规格是 10g/丸 × 20 丸。",
+          "literal_sources": [
+            {
+              "chunk_id": "D008_c008",
+              "source_offset": 63,
+              "source_excerpt": "：生产许可证；内容：SC11344010100126\n字段：剂型/规格；内容：丸剂，"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "20",
+          "output_offset": 28,
+          "output_context": "规格是 10g/丸 × 20 丸。",
+          "literal_sources": [
+            {
+              "chunk_id": "D008_c008",
+              "source_offset": 95,
+              "source_excerpt": "/规格；内容：丸剂，10g/丸 × 20 丸\n字段：配料；内容：黑芝麻、蜂蜜\n字段："
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 2,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 1,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-32",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 33
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-33",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 1,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-33",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 24
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-34",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-34",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 103
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-35",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-35",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 70
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-36",
+      "numeric_occurrences": [
+        {
+          "token": "1000",
+          "output_offset": 27,
+          "output_context": "的客观参数：每粒含鱼油 1000mg，其中 EPA+DHA 合",
+          "literal_sources": [
+            {
+              "chunk_id": "D006_c007",
+              "source_offset": 358,
+              "source_excerpt": "我只能说我们这款的参数：每粒含鱼油 1000mg，其中 EPA+DHA 合计 300mg"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "300",
+          "output_offset": 48,
+          "output_context": " EPA+DHA 合计 300mg，规格为 60 粒装，批准",
+          "literal_sources": [
+            {
+              "chunk_id": "D006_c007",
+              "source_offset": 379,
+              "source_excerpt": "0mg，其中 EPA+DHA 合计 300mg，规格是 60 粒装，批准文号是国食健注"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "60",
+          "output_offset": 58,
+          "output_context": "计 300mg，规格为 60 粒装，批准文号是国食健注G2",
+          "literal_sources": [
+            {
+              "chunk_id": "D006_c007",
+              "source_offset": 389,
+              "source_excerpt": "+DHA 合计 300mg，规格是 60 粒装，批准文号是国食健注G20250012"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "20250012",
+          "output_offset": 74,
+          "output_context": "装，批准文号是国食健注G20250012。保健食品不是药物，不能代替药",
+          "literal_sources": [
+            {
+              "chunk_id": "D006_c007",
+              "source_offset": 405,
+              "source_excerpt": "是 60 粒装，批准文号是国食健注G20250012，您可以去市场监管总局官网核实。」\n\nQ5："
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 4,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-36",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 103
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-37",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-37",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 48
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-38",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 1,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-38",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 36
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-39",
+      "numeric_occurrences": [
+        {
+          "token": "50",
+          "output_offset": 13,
+          "output_context": " 值适用于绝经后女性和 50 岁以上男性，与年轻健康成年人",
+          "literal_sources": [
+            {
+              "chunk_id": "D011_c006",
+              "source_offset": 41,
+              "source_excerpt": "较的标准差；适用人群：绝经后女性和 50 岁以上男性\n指标：Z 值；含义：与同龄人比"
+            }
+          ],
+          "has_source": true
+        },
+        {
+          "token": "50",
+          "output_offset": 52,
+          "output_context": "适用于儿童、绝经前女性、50 岁以下男性，与同龄人比较。",
+          "literal_sources": [
+            {
+              "chunk_id": "D011_c006",
+              "source_offset": 41,
+              "source_excerpt": "较的标准差；适用人群：绝经后女性和 50 岁以上男性\n指标：Z 值；含义：与同龄人比"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 2,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 1,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-39",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 68
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-40",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-40",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 59
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-41",
+      "numeric_occurrences": [],
+      "numeric_positions": 0,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-41",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 46
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-42",
+      "numeric_occurrences": [
+        {
+          "token": "7",
+          "output_offset": 12,
+          "output_context": "先核实退换原因。若超过 7 天且非质量问题，即使未开封，",
+          "literal_sources": [
+            {
+              "chunk_id": "D013_c005",
+              "source_offset": 45,
+              "source_excerpt": "且涉及食品安全\n#：2；情形：超过 7 天且非质量问题；理由：超出无理由退换期\n#"
+            },
+            {
+              "chunk_id": "D013_c017",
+              "source_offset": 142,
+              "source_excerpt": "按规定登记\n │\n ├─ 未开封且 7 天内？\n │ └─ 是 → 按无理由退换政"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 1,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-42",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 69
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-43",
+      "numeric_occurrences": [
+        {
+          "token": "120",
+          "output_offset": 27,
+          "output_context": "；出现红旗征时立即拨打 120。同时立即上报主管，详细记录食",
+          "literal_sources": [
+            {
+              "chunk_id": "D001_c011",
+              "source_offset": 179,
+              "source_excerpt": "店内出现身体不适；为什么：立即拨打 120 + 通知店长\n\n最后一条特别重要：客户在店"
+            },
+            {
+              "chunk_id": "D014_c008",
+              "source_offset": 78,
+              "source_excerpt": "有意识 + 有红旗征 → 立即拨打 120\n 无意识 → 立即拨打 120 + 检查呼"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 1,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 3,
+      "sentence_mapping_complete": true,
+      "requires_supplement": true,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-43",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 87
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-44",
+      "numeric_occurrences": [
+        {
+          "token": "120",
+          "output_offset": 26,
+          "output_context": "明的红旗征，应立即拨打 120，并通知店长。不要自行判断病因",
+          "literal_sources": [
+            {
+              "chunk_id": "D014_c005",
+              "source_offset": 50,
+              "source_excerpt": "能的紧急情况：急性心梗；动作：立即 120\n#：2；表现：突然说话不清、口角歪斜、一侧"
+            },
+            {
+              "chunk_id": "D001_c011",
+              "source_offset": 179,
+              "source_excerpt": "店内出现身体不适；为什么：立即拨打 120 + 通知店长\n\n最后一条特别重要：客户在店"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 1,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": false,
+      "official_score": {
+        "qid": "ev2-44",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 52
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    },
+    {
+      "qid": "ev2-45",
+      "numeric_occurrences": [
+        {
+          "token": "120",
+          "output_offset": 20,
+          "output_context": "品。客户晕倒应立即拨打 120，检查意识和呼吸，同时通知店长",
+          "literal_sources": [
+            {
+              "chunk_id": "D014_c008",
+              "source_offset": 78,
+              "source_excerpt": "有意识 + 有红旗征 → 立即拨打 120\n 无意识 → 立即拨打 120 + 检查呼"
+            },
+            {
+              "chunk_id": "D001_c011",
+              "source_offset": 179,
+              "source_excerpt": "店内出现身体不适；为什么：立即拨打 120 + 通知店长\n\n最后一条特别重要：客户在店"
+            },
+            {
+              "chunk_id": "D002_c025",
+              "source_offset": 32,
+              "source_excerpt": "立即动作：让客户静坐 + 立即拨打 120 + 通知店长\n情况：晕倒、意识不清；立即动"
+            }
+          ],
+          "has_source": true
+        }
+      ],
+      "numeric_positions": 1,
+      "missing_numeric_sources": 0,
+      "citation_membership": "pass",
+      "sentence_count": 2,
+      "sentence_mapping_complete": true,
+      "requires_supplement": false,
+      "reused_from_v2": true,
+      "official_score": {
+        "qid": "ev2-45",
+        "passed": true,
+        "missed": [],
+        "forbidden_hit": [],
+        "answer_chars": 67
+      },
+      "semantic_review": "candidate_with_documented_limits"
+    }
+  ]
+}

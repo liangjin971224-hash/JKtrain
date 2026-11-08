@@ -1,0 +1,29 @@
+{
+  "gen": {
+    "targets": 410,
+    "produced": 820,
+    "expected": 820,
+    "difficulty_dist": {
+      "paraphrase": 410,
+      "keyword": 293,
+      "scenario": 117
+    },
+    "hard_violations": [],
+    "warnings": [
+      "近重复(≥0.85): D007_c009 与 D007_c016: p005 的批准文号是什么?"
+    ]
+  },
+  "judge": {
+    "queries": 47,
+    "candidates": 1410,
+    "judged": 1410,
+    "verdict_dist": {
+      "irrelevant": 1059,
+      "partial": 238,
+      "relevant": 113
+    },
+    "hard_violations": []
+  },
+  "generated_at": "2026-11-07T02:45:27+08:00",
+  "pass": true
+}

@@ -1,0 +1,23 @@
+{
+  "tag": "base-v3",
+  "model_path": "/mnt/workspace/models/R1-0528-Qwen3-8B",
+  "max_new_tokens": 512,
+  "decoding": "greedy (do_sample=False, temperature=0)",
+  "ran_at": "2026-10-31T03:49:44.919472+00:00",
+  "python": "3.12.13",
+  "torch": "2.13.0+cu130",
+  "transformers": "5.6.0",
+  "gpu": "NVIDIA A10",
+  "questions": "train/data/eval_questions_v3.jsonl",
+  "records": 45,
+  "template": "deepseekr1",
+  "render_source": "llamafactory:deepseekr1",
+  "enable_thinking_requested": false,
+  "thinking_applied": 0,
+  "empty_answers": 0,
+  "truncated": 0,
+  "think_unclosed": 0,
+  "mean_first_token_sec": 0.176,
+  "mean_total_sec": 1.822,
+  "peak_vram_gb": 16.54
+}

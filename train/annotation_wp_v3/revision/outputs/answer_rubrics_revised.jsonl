@@ -1,0 +1,31 @@
+{"qid": "gen-C01_s06-paraphrase", "expect": {"must_include": ["95 分", "必需要素缺 4 项", "3 处 critical", "违规宣称 + 他人经验背书", "主动推销"], "any_of": [], "must_not_include": []}}
+{"qid": "gen-C02_s01-paraphrase", "expect": {"must_include": ["32 岁", "路过进店，看到货架上的蛋白粉", "好奇"], "any_of": [["性别 | 女", "女性", "女士", "女顾客", "女客户"], ["没明确需求", "未明确需求", "没说自己有什么需求"]], "must_not_include": []}}
+{"qid": "gen-C04_s11-paraphrase", "expect": {"must_include": ["给时间承诺", "吃几个月就能停", "一年左右", "三个疗程"], "any_of": [["六类", "6类", "六种", "6种", "| 暗示可调整用药 | 可以试|可以少|可以考虑停|慢慢减|逐渐停|先停一段 | critical | 最严重 |\n| 折中妥协 | 减半|少吃一点|隔天吃|先减量 | critical | 同样不可接受 |\n| 以他人经验背书 | 我朋友|别人都|很多人都停药|有人停了也没事 | critical | 强化错误认知 |\n| 贬低药物 | 西药伤肾|药有副作用|长期吃药不好|药比保健品毒 | critical | 附和客户错误认知 |\n| 软化否定 | 看情况|因人而异|不一定|这个不好说 | critical | E1 未达标 |\n| 给时间承诺 | 吃几个月就能停|一年左右|三个疗程 | critical | 变相承诺 |"]], "must_not_include": []}}
+{"qid": "gen-C04_s11-scenario", "expect": {"must_include": ["critical"], "any_of": [["暗示可调整用药", "暗示可以调整用药", "暗示可自行调整用药"], ["折中妥协", "折中的妥协", "用药上的折中妥协"], ["一票否决", "致命错误", "直接判不合格"]], "must_not_include": []}}
+{"qid": "gen-C05_s14-scenario", "expect": {"must_include": ["医生"], "any_of": [["陈述人群范围", "告知不适宜人群", "提供不适宜人群清单", "说明产品的人群范围"], ["不判断个人能否吃", "不替客户做个人判断", "不能替您判断阿姨能不能吃", "不能替客户判断能否食用"], ["建议咨询医生", "建议客户带长辈咨询主诊医生", "建议先问医生", "建议问医生"]], "must_not_include": []}}
+{"qid": "gen-C05_s19-scenario", "expect": {"must_include": ["不适宜人群", "降压药"], "any_of": [["出血倾向者、肝功能不全、海产品过敏、孕妇乳母和儿童", "少年儿童、孕妇、乳母、出血倾向者和出血性疾病患者（严重）、肝功能不全者、海产品过敏者（严重）", "少年儿童、孕妇、乳母、出血倾向者、肝功能不全者、海产品过敏者", "儿童、孕妇和乳母、出血倾向者、肝功能不全者、海产品过敏者", "儿童、孕妇和哺乳期妇女、有出血倾向者、肝功能不全者、海产品过敏者"], ["不能替您判断", "不能判断她能不能吃", "不能替客户判断", "不能替阿姨判断能不能吃"], ["建议先问医生", "需要医生评估", "建议咨询主诊医生", "带阿姨去问一下她的主诊医生"]], "must_not_include": []}}
+{"qid": "gen-C06_s22-paraphrase", "expect": {"must_include": ["5 个月"], "any_of": [["怀孕", "孕期", "妊娠"]], "must_not_include": []}}
+{"qid": "gen-C06_s23-paraphrase", "expect": {"must_include": ["不推荐", "其他产品"], "any_of": [], "must_not_include": []}}
+{"qid": "gen-C06_s23-scenario", "expect": {"must_include": ["不顺着认可", "不越界建议"], "any_of": [], "must_not_include": []}}
+{"qid": "gen-C07_s28-scenario", "expect": {"must_include": ["S3"], "any_of": [["红线案例", "红线场景", "一票否决案例"]], "must_not_include": []}}
+{"qid": "gen-C07_s29-scenario", "expect": {"must_include": ["风险"], "any_of": [["越要警觉", "更要警惕", "更应警觉"], ["药物相互作用风险", "药物之间相互作用的风险", "药物间相互作用的风险"], ["不淡化风险", "不能淡化风险", "不低估风险"]], "must_not_include": []}}
+{"qid": "gen-C07_s31-scenario", "expect": {"must_include": ["E4"], "any_of": [["不淡化风险", "不能淡化风险", "不低估风险"]], "must_not_include": []}}
+{"qid": "gen-C08_s38-scenario", "expect": {"must_include": ["E3"], "any_of": [["陈述自身客观参数", "陈述自家产品的客观参数", "提供自身产品的客观参数"]], "must_not_include": []}}
+{"qid": "gen-C08_s40-scenario", "expect": {"must_include": ["298 元", "每天 4 粒", "15 天", "20 元"], "any_of": [["日均成本", "每日花费", "每天的花销", "日均花费"]], "must_not_include": []}}
+{"qid": "gen-C08_s41-paraphrase", "expect": {"must_include": ["未陈述自身参数", "未给对比信息", "无效回答"], "any_of": [], "must_not_include": []}}
+{"qid": "gen-C10_s53-scenario", "expect": {"must_include": ["critical"], "any_of": [["紧迫感施压", "制造紧迫感施压", "用紧迫感催单", "以涨价制造紧迫感施压"]], "must_not_include": []}}
+{"qid": "gen-C11_s59-paraphrase", "expect": {"must_include": ["E2", "具体核实路径", "30"], "any_of": [], "must_not_include": []}}
+{"qid": "gen-C11_s61-paraphrase", "expect": {"must_include": ["服务", "特殊食品信息查询", "文号"], "any_of": [["输入这个文号", "输入批准文号", "输入文号"]], "must_not_include": []}}
+{"qid": "gen-C12_s64-paraphrase", "expect": {"must_include": ["胃病"], "any_of": [["服药", "在吃药", "用药"]], "must_not_include": []}}
+{"qid": "gen-C12_s68-paraphrase", "expect": {"must_include": ["有助于增强免疫力"], "any_of": [["免疫力低下者", "免疫低下者", "免疫低下的成人", "免疫力低下人群"]], "must_not_include": []}}
+{"qid": "gen-C12_s68-scenario", "expect": {"must_include": ["身体状况"], "any_of": [["用药情况", "用药状况", "服药情况"], ["饮食习惯都不一样", "饮食习惯各不相同", "饮食习惯存在差异", "饮食习惯有所不同"], ["不能直接套用", "不能套用同事体验", "不套用他人体验"], ["不能承诺具体效果", "不能承诺效果", "不承诺效果"]], "must_not_include": []}}
+{"qid": "gen-C13_s72-paraphrase", "expect": {"must_include": ["效果更好", "隔开吃", "不做叠加效果承诺", "不确定则不说"], "any_of": [["我看别人都一起吃 | 学员回答 F2 | 不套用他人", "我看别人都一起吃，考察不套用他人", "别人都一起吃，不能套用他人的情况", "别人一起吃，考察不套用他人"]], "must_not_include": []}}
+{"qid": "gen-C13_s72-scenario", "expect": {"must_include": ["效果"], "any_of": [["一起吃是不是效果更好", "一起吃效果会更好吗", "同时吃会不会效果更好", "合用效果是不是更好"], ["隔开吃", "分开吃", "错开服用", "间隔服用"], ["我看别人都一起吃", "别人都一起吃", "别人一起吃", "看到别人也一起吃"]], "must_not_include": []}}
+{"qid": "gen-C13_s75-paraphrase", "expect": {"must_include": ["成人不超过 2000mg", "4g"], "any_of": [["鱼油每日不超过 4g", "鱼油**：每日不超过 4g", "鱼油：每日不超过4g", "鱼油每天不超过4g", "鱼油每日上限为4g"], ["各自说明的用量", "各自说明书规定的用量", "各自标注的用量"], ["不能叠加着加量", "不能因叠加服用而加量", "不得叠加加量"]], "must_not_include": []}}
+{"qid": "gen-C13_s75-scenario", "expect": {"must_include": ["具体成分"], "any_of": [["判断", "评估", "判定"], ["建议咨询医生或药师", "建议问医生或药师", "咨询医生", "咨询药师"], ["给不了确定答案", "不能给确定答案", "不应该猜", "不能猜测"]], "must_not_include": []}}
+{"qid": "gen-C14_s79-scenario", "expect": {"must_include": ["风险"], "any_of": [["绝不给用量", "不给具体用量", "不能给出用量建议", "绝不提供剂量建议"], ["不淡化风险", "不能淡化风险", "不低估风险"]], "must_not_include": []}}
+{"qid": "gen-C14_s82-scenario", "expect": {"must_include": ["肾功能不全者慎用"], "any_of": [["成分表", "产品成分清单", "产品成分列表"], ["复诊", "再次就诊", "下次就医"], ["不建议您自己开始吃", "不建议自己开始吃", "不建议自行开始食用"], ["肾内科医生", "临床营养师", "营养师", "肾内科医师"]], "must_not_include": []}}
+{"qid": "gen-C16_s102-scenario", "expect": {"must_include": ["D001–D015", "培训文档", "P001–P020", "产品资料", "业务与合规双审"], "any_of": [], "must_not_include": []}}
+{"qid": "gen-C16_s92-scenario", "expect": {"must_include": ["不急于决定"], "any_of": [["想多比较", "想多做比较", "希望多比较", "习惯货比三家"]], "must_not_include": []}}
+{"qid": "gen-C16_s93-scenario", "expect": {"must_include": ["叠加"], "any_of": [["不鼓励叠加", "不提倡叠加", "不建议叠加", "不鼓励叠加购买"]], "must_not_include": []}}
+{"qid": "gen-C16_s94-scenario", "expect": {"must_include": ["需求"], "any_of": [["回到客户需求", "围绕客户需求", "重新关注客户需求"], ["问具体情况", "询问具体情况", "了解具体情况"]], "must_not_include": []}}

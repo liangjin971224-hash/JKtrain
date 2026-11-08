@@ -28,6 +28,8 @@ models/
 *.gguf
 *.safetensors
 *.tar.gz
+# 微调产出物（checkpoint / merge 结果，78MB+）
+train/output/
 
 # ---- 系统 ----
 Thumbs.db

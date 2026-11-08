@@ -1,0 +1,38 @@
+{
+  "label": "p1b_miss_attr",
+  "baseline_run": "..\\train\\eval_runs\\app_path_head_v1_20261107_194150\\detail.jsonl",
+  "n_misses": 28,
+  "buckets": {
+    "1-5": 13,
+    "11-20": 5,
+    "6-10": 8,
+    ">20": 2
+  },
+  "causes": {
+    "far": 2,
+    "fusion_missed": 12,
+    "ranking": 13,
+    "threshold_blocked": 1
+  },
+  "by_collection": {
+    "health_training_docs": {
+      "ranking": 8,
+      "fusion_missed": 10,
+      "threshold_blocked": 1,
+      "far": 1
+    },
+    "health_case_library": {
+      "ranking": 5,
+      "fusion_missed": 2,
+      "far": 1
+    }
+  },
+  "top_k": 50,
+  "thresholds": {
+    "min_vector_score": 0.5,
+    "min_keyword_score": 14.0,
+    "min_keyword_relative": 0.35,
+    "min_sparse_score": 0.02
+  },
+  "generated_at": "2026-11-07T20:09:22+08:00"
+}

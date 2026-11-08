@@ -1,0 +1,17 @@
+{
+  "embed_model": "D:\\AI260803\\健康培训移动\\models\\bge-m3",
+  "n_queries": 72,
+  "related": {
+    "n": 67,
+    "p5": 0.545,
+    "p50": 0.908,
+    "p95": 0.986
+  },
+  "noise": {
+    "n": 24,
+    "p50": 0.673,
+    "p95": 0.748
+  },
+  "suggested_min_vector_score": 0.748,
+  "generated_at": "2026-11-07T00:23:19+08:00"
+}

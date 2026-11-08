@@ -1,0 +1,10 @@
+{
+  "wp_dir": "train\\annotation_wp_v2",
+  "n_targets": 225,
+  "n_expected": 450,
+  "n_pred": 450,
+  "hard": [],
+  "warn": [],
+  "verdict": "PASS",
+  "generated_at": "2026-11-07T21:15:22+08:00"
+}

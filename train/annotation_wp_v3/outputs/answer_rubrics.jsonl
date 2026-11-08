@@ -1,0 +1,31 @@
+{"qid":"gen-C01_s06-paraphrase","expect":{"must_include":["95 分","必需要素缺 4 项","critical","违规宣称","主动推销"],"any_of":[["效果背书","他人经验背书"],["3 处","3处","三处"]],"must_not_include":[]}}
+{"qid":"gen-C02_s01-paraphrase","expect":{"must_include":["32 岁","路过进店","蛋白粉","好奇"],"any_of":[["女性","女士","女顾客","女客户"],["没明确需求","未明确需求","没说自己有什么需求"]],"must_not_include":[]}}
+{"qid":"gen-C04_s11-paraphrase","expect":{"must_include":["给时间承诺","吃几个月就能停","一年左右","三个疗程"],"any_of":[["六类","6类","六种","6种"]],"must_not_include":[]}}
+{"qid":"gen-C04_s11-scenario","expect":{"must_include":["暗示可调整用药","折中妥协","critical","一票否决"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C05_s14-scenario","expect":{"must_include":["陈述人群范围","不判断个人能否吃"],"any_of":[["建议咨询医生","建议问医生","建议先问医生"]],"must_not_include":[]}}
+{"qid":"gen-C05_s19-scenario","expect":{"must_include":["不适宜人群","出血倾向","肝功能不全","海产品过敏","降压药"],"any_of":[["孕妇和哺乳期","孕妇乳母","孕妇和乳母"],["少年儿童","儿童"],["不能替您判断","不能判断她能不能吃","不能替客户判断"],["建议先问医生","主诊医生","医生评估"]],"must_not_include":[]}}
+{"qid":"gen-C06_s22-paraphrase","expect":{"must_include":["怀孕","5 个月"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C06_s23-paraphrase","expect":{"must_include":["不推荐","其他产品"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C06_s23-scenario","expect":{"must_include":["不顺着认可","不越界建议"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C07_s28-scenario","expect":{"must_include":["红线案例","S3"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C07_s29-scenario","expect":{"must_include":["越要警觉","药物相互作用风险","不淡化风险"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C07_s31-scenario","expect":{"must_include":["E4","不淡化风险"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C08_s38-scenario","expect":{"must_include":["E3","陈述自身客观参数"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C08_s40-scenario","expect":{"must_include":["298 元","每天 4 粒","15 天","日均成本","20 元"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C08_s41-paraphrase","expect":{"must_include":["未陈述自身参数","未给对比信息","无效回答"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C10_s53-scenario","expect":{"must_include":["紧迫感施压","critical"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C11_s59-paraphrase","expect":{"must_include":["E2","具体核实路径","30"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C11_s61-paraphrase","expect":{"must_include":["服务","特殊食品信息查询","文号"],"any_of":[["输入这个文号","输入批准文号","输入文号"]],"must_not_include":[]}}
+{"qid":"gen-C12_s64-paraphrase","expect":{"must_include":["胃病","服药"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C12_s68-paraphrase","expect":{"must_include":["有助于增强免疫力","免疫力低下者"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C12_s68-scenario","expect":{"must_include":["身体状况","用药情况","饮食习惯","不一样"],"any_of":[["不能直接套用","不能套用同事体验","不套用他人体验"],["不能承诺具体效果","不能承诺效果","不承诺效果"]],"must_not_include":[]}}
+{"qid":"gen-C13_s72-paraphrase","expect":{"must_include":["效果更好","隔开吃","不做叠加效果承诺","不确定则不说","不套用他人"],"any_of":[["我看别人都一起吃","别人都一起吃","别人一起吃"]],"must_not_include":[]}}
+{"qid":"gen-C13_s72-scenario","expect":{"must_include":["效果更好","隔开吃","别人都一起吃"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C13_s75-paraphrase","expect":{"must_include":["成人不超过 2000mg","鱼油每日不超过 4g","各自说明的用量","不能叠加着加量"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C13_s75-scenario","expect":{"must_include":["具体成分","判断"],"any_of":[["建议咨询医生或药师","建议问医生或药师","咨询医生","咨询药师"],["给不了确定答案","不能给确定答案","不应该猜","不能猜测"]],"must_not_include":[]}}
+{"qid":"gen-C14_s79-scenario","expect":{"must_include":["绝不给用量","不淡化风险"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C14_s82-scenario","expect":{"must_include":["肾功能不全者慎用","成分表","复诊"],"any_of":[["不建议您自己开始吃","不建议自己开始吃","先不要自己决定"],["肾内科医生","临床营养师","营养师"]],"must_not_include":[]}}
+{"qid":"gen-C16_s102-scenario","expect":{"must_include":["D001–D015","培训文档","P001–P020","产品资料","业务与合规双审"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C16_s92-scenario","expect":{"must_include":["想多比较","不急于决定"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C16_s93-scenario","expect":{"must_include":["不鼓励","叠加"],"any_of":[],"must_not_include":[]}}
+{"qid":"gen-C16_s94-scenario","expect":{"must_include":["回到客户需求","问具体情况"],"any_of":[],"must_not_include":[]}}

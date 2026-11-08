@@ -1,0 +1,20 @@
+{
+  "collected_at_utc": "2026-10-31T01:51:16.555367+00:00",
+  "eval_sha256": "27ade6437dedc0a0fb79e79e9b08fb7d9776aaa8667dcc35cbfc7b4706fb1460",
+  "questions": 45,
+  "graph_products": 20,
+  "rag_chunks": 293,
+  "permissions": [
+    "public",
+    "internal"
+  ],
+  "review_status": "approved",
+  "embedding_model": "bge-m3",
+  "embedding_device": "cpu",
+  "classification": "project rules; no LLM fallback",
+  "top_k": 20,
+  "fused_limit": 10,
+  "generation_model_called": false,
+  "degraded_questions": 0,
+  "elapsed_sec": 53.987
+}

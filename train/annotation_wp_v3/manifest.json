@@ -1,0 +1,15 @@
+{
+  "purpose": "answer-level rubric annotation for case library",
+  "n_targets": 31,
+  "n_existing_rubrics": 69,
+  "n_total_after_merge": 100,
+  "sources": {
+    "eval_v3": "D:\\AI260803\\健康培训移动\\train\\data\\eval_questions_v3.jsonl",
+    "heldout": [
+      "D:\\AI260803\\健康培训移动\\train\\data\\heldout_questions.jsonl",
+      "D:\\AI260803\\健康培训移动\\train\\data\\heldout2_questions.jsonl"
+    ],
+    "remap": "D:\\AI260803\\健康培训移动\\train\\data\\retrieval_eval_v1_remap.jsonl"
+  },
+  "generated_at": "2026-11-08T12:45:42+08:00"
+}

@@ -1,0 +1,23 @@
+{
+  "purpose": "BGE-M3 contrastive fine-tuning annotation package v2",
+  "n_targets": 225,
+  "n_questions": 450,
+  "counts": {
+    "single": 99,
+    "zero": 126,
+    "case": 40,
+    "docs": 185
+  },
+  "rules": {
+    "single_question_chunks": "被 205 题覆盖 1 次的块，每块补 2 问",
+    "zero_coverage": "案例库全取 + 文档库排除 <50 字后按 doc_id 轮转取 100",
+    "new_per_chunk": 2
+  },
+  "sources": {
+    "eval": "D:\\AI260803\\健康培训移动\\train\\data\\retrieval_eval_v1_remap.jsonl",
+    "eval_sha256": "c34941a256b54ec819202a97630e06d46295f4662fd99774200aa8959c505b4f",
+    "wp_v1_docs": "D:\\AI260803\\健康培训移动\\train\\annotation_wp_v1\\chunks\\health_training_docs.jsonl",
+    "case_map": "D:\\AI260803\\健康培训移动\\08_数据入库\\milvus\\case_chunk_map.json"
+  },
+  "generated_at": "2026-11-07T20:59:08+08:00"
+}

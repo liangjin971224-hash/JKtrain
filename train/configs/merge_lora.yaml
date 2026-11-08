@@ -1,0 +1,12 @@
+### 合并 Adapter 到基础模型。先用 sed 把 __ADAPTER__ 替换成实际 checkpoint 路径。
+### 注意：合并必须用未量化的基础模型；不要把 4bit 训练产物当合并目标。
+model_name_or_path: /mnt/workspace/models/R1-0528-Qwen3-8B
+adapter_name_or_path: __ADAPTER__
+template: deepseekr1
+finetuning_type: lora
+trust_remote_code: true
+
+export_dir: /mnt/workspace/output/merged
+export_size: 4
+export_device: cpu
+export_legacy_format: false

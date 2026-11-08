@@ -1,0 +1,178 @@
+{
+  "label": "p03_union",
+  "eval_set": "train\\data\\retrieval_eval_v1_remap.jsonl",
+  "n_queries": 205,
+  "retrieval_mode": "union",
+  "case_window": 10,
+  "route_map": {
+    "health_case_library": "union",
+    "health_training_docs": "hybrid",
+    "health_question_bank": "dense"
+  },
+  "metric_semantics": {
+    "changed": true,
+    "case_collection": "health_case_library",
+    "case_library_hit@5": "gold 是否落在 dense top5 ∪ sparse top5 去重后的候选窗口（≤10 条）内；这是 10 候选窗口覆盖率，不是单列表前 5 的 R@5，hit@10 与 hit@5 同值。",
+    "gold_rank": "gold 在合并窗口内的名次（1~10），未命中 null；MRR 用该名次计算。",
+    "merge_order": "按名次轮转交错 d1,s1,d2,s2,… 后去重；dense(COSINE) 与 sparse(IP) 分数尺度不可比，不做跨路分数排序。两路仍按 TOP_K_SEARCH=20 检索后各取前 5。",
+    "other_collections": "health_training_docs=hybrid、health_question_bank=dense，与 p03_route 一致，仍为单列表 R@5。",
+    "comparability": "★ 口径已变更，禁止把本 run 的案例库命中数与整体 R@5 与 p03_dense / p03_sparse / p03_hybrid / p03_route 等历史 R@5 放在同一口径里比较；本次整体 R@5 是混合口径，仅作归档记录，不得作为同口径门禁或 delta 结论的依据。"
+  },
+  "hit_counts": {
+    "total": 173,
+    "by_collection": {
+      "health_case_library": {
+        "n": 34,
+        "hits": 28
+      },
+      "health_question_bank": {
+        "n": 40,
+        "hits": 40
+      },
+      "health_training_docs": {
+        "n": 131,
+        "hits": 105
+      }
+    }
+  },
+  "embed_model": "D:\\AI260803\\健康培训移动\\models\\bge-m3",
+  "rerank_model": null,
+  "r@5": 0.8439,
+  "r@10": 0.8732,
+  "mrr": 0.701,
+  "latency_ms": {
+    "embed": 104,
+    "search": 8,
+    "rerank": null
+  },
+  "breakdown": {
+    "origin": {
+      "auto_exact": {
+        "n": 40,
+        "r@5": 1.0,
+        "mrr": 0.9875
+      },
+      "eval_v3": {
+        "n": 45,
+        "r@5": 0.8444,
+        "mrr": 0.7282
+      },
+      "gen_b": {
+        "n": 120,
+        "r@5": 0.7917,
+        "mrr": 0.5952
+      }
+    },
+    "collection": {
+      "health_case_library": {
+        "n": 34,
+        "r@5": 0.8235,
+        "mrr": 0.5476
+      },
+      "health_question_bank": {
+        "n": 40,
+        "r@5": 1.0,
+        "mrr": 0.9875
+      },
+      "health_training_docs": {
+        "n": 131,
+        "r@5": 0.8015,
+        "mrr": 0.6533
+      }
+    }
+  },
+  "gate": {
+    "threshold": null,
+    "verdict": null
+  },
+  "generated_at": "2026-11-07T15:34:51+08:00",
+  "compare": {
+    "prev_detail": "train\\eval_runs\\p03_dense_20261107_130202\\detail.jsonl",
+    "n_prev": 205,
+    "n_cur": 205,
+    "n_common": 205,
+    "only_in_prev": 0,
+    "only_in_cur": 0,
+    "prev_r5_on_common": 0.7756,
+    "cur_r5_on_common": 0.8439,
+    "delta": 0.0683,
+    "flips_up": 18,
+    "flips_down": 4,
+    "up_qids": [
+      "ev2-01",
+      "ev2-14",
+      "gen-C01_s06-paraphrase",
+      "gen-C04_s11-scenario",
+      "gen-C07_s28-scenario",
+      "gen-C07_s31-scenario",
+      "gen-C08_s40-scenario",
+      "gen-C13_s75-scenario",
+      "gen-C16_s93-scenario",
+      "gen-D003_c017-paraphrase",
+      "gen-D005_c017-paraphrase",
+      "gen-D006_c007-keyword",
+      "gen-D007_c006-paraphrase",
+      "gen-D007_c015-paraphrase",
+      "gen-D007_c017-paraphrase",
+      "gen-D013_c000-keyword",
+      "gen-D013_c017-paraphrase",
+      "gen-D015_c014-keyword"
+    ],
+    "down_qids": [
+      "ev2-25",
+      "ev2-26",
+      "gen-D004_c023-paraphrase",
+      "gen-D015_c014-paraphrase"
+    ],
+    "mcnemar": {
+      "p": 0.0043,
+      "method": "exact"
+    },
+    "by_origin": {
+      "auto_exact": {
+        "n": 40,
+        "delta": 0.0,
+        "up": 0,
+        "down": 0
+      },
+      "eval_v3": {
+        "n": 45,
+        "delta": 0.0,
+        "up": 2,
+        "down": 2
+      },
+      "gen_b": {
+        "n": 120,
+        "delta": 0.1167,
+        "up": 16,
+        "down": 2
+      }
+    },
+    "by_collection": {
+      "health_case_library": {
+        "n": 34,
+        "delta": 0.2059,
+        "up": 7,
+        "down": 0
+      },
+      "health_question_bank": {
+        "n": 40,
+        "delta": 0.0,
+        "up": 0,
+        "down": 0
+      },
+      "health_training_docs": {
+        "n": 131,
+        "delta": 0.0534,
+        "up": 11,
+        "down": 4
+      }
+    }
+  },
+  "gate_delta": {
+    "threshold": null,
+    "delta": 0.0683,
+    "verdict": null
+  },
+  "compare_caveat": "★ 逐题翻转 / McNemar 仍按 hit@5 字段计算，但案例库那部分口径已改为 ≤10 候选窗口覆盖；本次 delta 与 p 值不得作为与历史 R@5 同口径的显著性结论，仅供逐题归因排障。"
+}

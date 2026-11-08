@@ -1,0 +1,27 @@
+{
+  "label": "ft_v1_holdout_attr",
+  "baseline_run": "..\\train\\eval_runs\\ft_v1_holdout_final_20261108_000816\\detail.jsonl",
+  "n_misses": 3,
+  "buckets": {
+    "1-5": 3
+  },
+  "causes": {
+    "fusion_missed": 3
+  },
+  "by_collection": {
+    "health_training_docs": {
+      "fusion_missed": 1
+    },
+    "health_case_library": {
+      "fusion_missed": 2
+    }
+  },
+  "top_k": 50,
+  "thresholds": {
+    "min_vector_score": 0.5,
+    "min_keyword_score": 14.0,
+    "min_keyword_relative": 0.35,
+    "min_sparse_score": 0.02
+  },
+  "generated_at": "2026-11-08T15:39:04+08:00"
+}

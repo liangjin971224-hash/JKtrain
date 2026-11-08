@@ -1,0 +1,11 @@
+{
+  "generated_at": "2026-11-06T23:50:16+08:00",
+  "gen_b_chunks": 410,
+  "gen_b_expected_questions": 820,
+  "judge_a_queries": 47,
+  "judge_a_candidates": 1410,
+  "candidate_k": 30,
+  "judge_collection": "health_training_docs",
+  "shuffle_seed": 20261106,
+  "skip_retrieval": false
+}

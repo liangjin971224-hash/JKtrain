@@ -1,0 +1,104 @@
+{"chunk_id": "D008_c016", "collection": "health_training_docs", "question": "顾客想弄清楚 P017 到底有没有作用，顾问若答“效果因人而异”，这句话错在哪里？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c016", "collection": "health_training_docs", "question": "普通食品被问到作用时，规定的标准答复是什么？", "difficulty": "keyword"}
+{"chunk_id": "D008_c017", "collection": "health_training_docs", "question": "卖 P018 时顾问讲“枸杞本身对肝和眼睛都有好处”，借原料的功效来抬产品，为什么这条路走不通？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c017", "collection": "health_training_docs", "question": "可以用原料的功效来代替产品功效做宣传吗？", "difficulty": "keyword"}
+{"chunk_id": "D008_c020", "collection": "health_training_docs", "question": "P016 到 P020 这几款产品，允许介绍的内容有哪些？哪些话一律不许说？", "difficulty": "paraphrase"}
+{"chunk_id": "D008_c020", "collection": "health_training_docs", "question": "客户不理解为什么普通食品不能讲功效时，该怎么跟他解释？", "difficulty": "keyword"}
+{"chunk_id": "D009_c000", "collection": "health_training_docs", "question": "D009 这份指引在送审时，重点检查话术的哪两个方面？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c000", "collection": "health_training_docs", "question": "D009 的编制日期和目标读者分别是什么？", "difficulty": "keyword"}
+{"chunk_id": "D009_c002", "collection": "health_training_docs", "question": "面对客户提出的异议，规范的应对流程一共几步？请依次说明每一步的内容。", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c002", "collection": "health_training_docs", "question": "异议处理的第二步具体指什么？", "difficulty": "keyword"}
+{"chunk_id": "D009_c003", "collection": "health_training_docs", "question": "当顾客表示担心西药对肾脏有损害、因此不敢服药时，顾问应如何表达理解而不顺着他的错误说法附和？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c003", "collection": "health_training_docs", "question": "第三步“如实回应”要遵守哪几条原则？", "difficulty": "keyword"}
+{"chunk_id": "D009_c004", "collection": "health_training_docs", "question": "顾客抱怨价格承受不起时，顾问可以帮他算一笔什么样的账，再提供哪几条出路？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c004", "collection": "health_training_docs", "question": "应对“太贵了”这一异议的关键要求是什么？", "difficulty": "keyword"}
+{"chunk_id": "D009_c005", "collection": "health_training_docs", "question": "顾客以亲友的无效体验来质疑产品时，回应中有哪些雷区不能踩？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c005", "collection": "health_training_docs", "question": "客户说朋友吃了没效果，回应的第一要点是什么？", "difficulty": "keyword"}
+{"chunk_id": "D009_c006", "collection": "health_training_docs", "question": "顾客怀疑公司在骗人时，指引为什么强调要提供他自己动手就能核实的途径？具体有哪些？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c006", "collection": "health_training_docs", "question": "顾客质疑产品是骗局时，处理的总原则是什么？", "difficulty": "keyword"}
+{"chunk_id": "D009_c007", "collection": "health_training_docs", "question": "顾客拿其他店家的低价来施压，为什么顾问只能介绍自己产品的客观信息，而不对对方作任何评价？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c007", "collection": "health_training_docs", "question": "回应“别家更便宜”时，哪些话绝对禁止？", "difficulty": "keyword"}
+{"chunk_id": "D009_c008", "collection": "health_training_docs", "question": "顾客想回家与家人商量，顾问应当把哪些要点整理给他带回去？为什么不能反复催问结果？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c008", "collection": "health_training_docs", "question": "客户说要回去问问家里人，第一句应该怎么接？", "difficulty": "keyword"}
+{"chunk_id": "D009_c009", "collection": "health_training_docs", "question": "顾客反映服用后身体没有任何感觉、担心钱打了水漂，顾问核实情况时要问清哪三件事？为什么不能许诺他坚持下去就有反应？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c009", "collection": "health_training_docs", "question": "客户服用后出现不舒服，正确的第一处理动作是什么？", "difficulty": "keyword"}
+{"chunk_id": "D009_c010", "collection": "health_training_docs", "question": "顾客拿网上的负面文章来质疑，为什么顾问不与他争论对错？正确的做法是回到什么内容上？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c010", "collection": "health_training_docs", "question": "向客户定位产品作用时，合规的说法是什么？", "difficulty": "keyword"}
+{"chunk_id": "D009_c011", "collection": "health_training_docs", "question": "顾客以药店的售价作对比认为这里更贵，顾问如何在不去贬低药店的前提下转移他的关注点？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c011", "collection": "health_training_docs", "question": "除了比价格，顾问建议客户购买保健食品时更要核对哪几点？", "difficulty": "keyword"}
+{"chunk_id": "D009_c012", "collection": "health_training_docs", "question": "顾客说宁愿靠一日三餐获取营养、不想吃保健食品，为什么这个异议反而最容易化解？顾问接着怎么做？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c012", "collection": "health_training_docs", "question": "“想靠饮食”的异议若处理得好，会有什么额外收获？", "difficulty": "keyword"}
+{"chunk_id": "D009_c013", "collection": "health_training_docs", "question": "顾客害怕吃了出问题，顾问该怎么坦率讲清这款产品的三条使用限制，而不是空口保证安全？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c013", "collection": "health_training_docs", "question": "客户问副作用时，哪些回复属于禁语？", "difficulty": "keyword"}
+{"chunk_id": "D009_c014", "collection": "health_training_docs", "question": "顾客声称自己血压偏高、靠产品就不用吃药了，这暴露了他心中哪种错误认识？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c014", "collection": "health_training_docs", "question": "顾客提到熟人擅自停药后身体没事，这种说法错在哪里？", "difficulty": "keyword"}
+{"chunk_id": "D009_c015", "collection": "health_training_docs", "question": "指引中写明绝不让步的三条底线分别是哪三条？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c015", "collection": "health_training_docs", "question": "要不要调整用药，最终由谁来定？", "difficulty": "keyword"}
+{"chunk_id": "D009_c016", "collection": "health_training_docs", "question": "有顾客以朋友停用降压药后状态良好为例想效仿，顾问该用哪种风格的回答回应，为什么另一种回答最危险？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c016", "collection": "health_training_docs", "question": "拒绝客户停药之后，还能给他哪些替代性帮助？", "difficulty": "keyword"}
+{"chunk_id": "D009_c017", "collection": "health_training_docs", "question": "为什么说在停药问题上退让半步都不行？妥协可能引发哪些严重后果？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c017", "collection": "health_training_docs", "question": "在客户停药的要求上允许灵活处理吗？", "difficulty": "keyword"}
+{"chunk_id": "D009_c018", "collection": "health_training_docs", "question": "当客户因听到实话而不快、决定不买时，顾问应该持什么态度？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c018", "collection": "health_training_docs", "question": "做这行最难得的品质指的是什么？", "difficulty": "keyword"}
+{"chunk_id": "D009_c019", "collection": "health_training_docs", "question": "异议处理的三条纪律，各自违反后会带来什么后果？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c019", "collection": "health_training_docs", "question": "靠制造紧俏气氛催客户下单，违反了哪条纪律？后果是什么？", "difficulty": "keyword"}
+{"chunk_id": "D009_c020", "collection": "health_training_docs", "question": "为什么健康服务行业不能效仿其他销售培训去制造“机不可失”的氛围？这样做容易引发什么连锁问题？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c020", "collection": "health_training_docs", "question": "顾客问货是不是快卖完了，标准答复怎么说？", "difficulty": "keyword"}
+{"chunk_id": "D009_c021", "collection": "health_training_docs", "question": "对照速查表，顾客分别抱怨价格贵、怀疑受骗、想停药时，顾问的第一步动作分别是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D009_c021", "collection": "health_training_docs", "question": "顾客说吃了没感觉时，速查表给的第一步是什么？哪句话绝对不能讲？", "difficulty": "keyword"}
+{"chunk_id": "D010_c000", "collection": "health_training_docs", "question": "这份体脂仪培训文档审核时把什么关？在解读测量结果方面设了哪条合规红线？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c000", "collection": "health_training_docs", "question": "D010 的类别和预计字数是什么？", "difficulty": "keyword"}
+{"chunk_id": "D010_c002", "collection": "health_training_docs", "question": "这台体成分分析仪靠什么原理测出身体成分？测一次大约花多长时间？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c002", "collection": "health_training_docs", "question": "体脂仪一次测量会输出哪些指标？", "difficulty": "keyword"}
+{"chunk_id": "D010_c003", "collection": "health_training_docs", "question": "为什么电流穿过身体后能推算出脂肪和肌肉各占多少？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c003", "collection": "health_training_docs", "question": "刚吃完饭就测体脂，数值会偏高还是偏低？", "difficulty": "keyword"}
+{"chunk_id": "D010_c004", "collection": "health_training_docs", "question": "测量前为什么要把随身的金属物件（比如手机和首饰）摘掉？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c004", "collection": "health_training_docs", "question": "测体脂前一小时对喝水有什么讲究？", "difficulty": "keyword"}
+{"chunk_id": "D010_c005", "collection": "health_training_docs", "question": "为什么客户的性别年龄和身高等基础信息必须核对准确？录错了会带来什么后果？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c005", "collection": "health_training_docs", "question": "客户站上设备后，操作人员要叮嘱他哪两点？", "difficulty": "keyword"}
+{"chunk_id": "D010_c006", "collection": "health_training_docs", "question": "结果登记时除了体脂率还要写哪些内容？为什么要连当时的状态一起记？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c006", "collection": "health_training_docs", "question": "记录里的测量时间要写到多细？", "difficulty": "keyword"}
+{"chunk_id": "D010_c007", "collection": "health_training_docs", "question": "告知顾客体脂率时，公司允许的说法长什么样？哪些表达是明令禁止的？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c007", "collection": "health_training_docs", "question": "BMI 的计算公式是什么？", "difficulty": "keyword"}
+{"chunk_id": "D010_c008", "collection": "health_training_docs", "question": "解读体脂数据时为什么只能报数字和区间？比这更进一步的哪些话都不能出口？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c008", "collection": "health_training_docs", "question": "能对客户说他的内脏脂肪高、将来容易得脂肪肝吗？", "difficulty": "keyword"}
+{"chunk_id": "D010_c009", "collection": "health_training_docs", "question": "一套标准的测量结果讲解，必须包含哪四个组成部分？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c009", "collection": "health_training_docs", "question": "体脂率的正常参考区间，男女各是多少？", "difficulty": "keyword"}
+{"chunk_id": "D010_c010", "collection": "health_training_docs", "question": "用“再不控制就麻烦了”这种话去吓顾客重视数据，为什么被列入禁止表述？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c010", "collection": "health_training_docs", "question": "拿测量数据预测客户今后会得什么病，这属于哪一类禁止表述？理由是什么？", "difficulty": "keyword"}
+{"chunk_id": "D010_c011", "collection": "health_training_docs", "question": "为什么体脂仪的数据拿去做疾病方面的判断既不可靠又不合规？请从设备的测量性质和参考范围的来历两个角度说明。", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c011", "collection": "health_training_docs", "question": "体脂仪算不算医疗器械？", "difficulty": "keyword"}
+{"chunk_id": "D010_c012", "collection": "health_training_docs", "question": "顾客反复追问自己的结果是不是很严重，顾问既不能吓唬也不能安抚，那应该怎么说？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c012", "collection": "health_training_docs", "question": "回一句“不严重，放心”行不行？", "difficulty": "keyword"}
+{"chunk_id": "D010_c013", "collection": "health_training_docs", "question": "一位体态正常的人却测出很高的体脂率，可能是什么环节出了问题？复测前要先了解哪些情况？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c013", "collection": "health_training_docs", "question": "客户身高体重录错了会怎样？", "difficulty": "keyword"}
+{"chunk_id": "D010_c014", "collection": "health_training_docs", "question": "顾客不好意思脱鞋袜，顾问可以给出哪个替代方案？这个方案的局限是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c014", "collection": "health_training_docs", "question": "穿着袜子测出来的数据能直接给客户吗？", "difficulty": "keyword"}
+{"chunk_id": "D010_c015", "collection": "health_training_docs", "question": "看到数值后顾客明显紧张，处理时应按怎样的先后顺序进行？为什么顺序颠倒效果更糟？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c015", "collection": "health_training_docs", "question": "安抚之后，第二步要向客户说明什么？", "difficulty": "keyword"}
+{"chunk_id": "D010_c016", "collection": "health_training_docs", "question": "测出内脏脂肪等级偏高后，顾问立刻推销自家产品并催促购买，这种连带推销踩了哪些红线？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c016", "collection": "health_training_docs", "question": "客户肌肉率偏低，能借此推荐蛋白粉吗？", "difficulty": "keyword"}
+{"chunk_id": "D010_c017", "collection": "health_training_docs", "question": "拿到检测结果之后，规范的做法按什么链条推进？如果客户自己开口打听产品又该怎么办？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c017", "collection": "health_training_docs", "question": "做检测的根本目的是什么？", "difficulty": "keyword"}
+{"chunk_id": "D010_c018", "collection": "health_training_docs", "question": "不绑定卖货，一次规范的检测本身能给顾问带来哪四方面价值？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c018", "collection": "health_training_docs", "question": "第一次的测量数据有什么用处？", "difficulty": "keyword"}
+{"chunk_id": "D010_c021", "collection": "health_training_docs", "question": "设备旁那张卡片把结果讲解压缩成了三句话，分别要说哪三句？", "difficulty": "paraphrase"}
+{"chunk_id": "D010_c021", "collection": "health_training_docs", "question": "按照操作卡，测前要交代客户的七件事分别是哪些？", "difficulty": "keyword"}
+{"chunk_id": "D011_c000", "collection": "health_training_docs", "question": "这份骨密度培训材料为什么强调解读尺度要卡得比体脂仪更紧？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c000", "collection": "health_training_docs", "question": "D011 这份文档预计有多少字？属于什么类别？", "difficulty": "keyword"}
+{"chunk_id": "D011_c002", "collection": "health_training_docs", "question": "按 WHO 的划分，T 值落在三个不同区间时分别判定为什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c002", "collection": "health_training_docs", "question": "骨密度仪的数据为什么比体脂仪更接近诊断含义？", "difficulty": "keyword"}
+{"chunk_id": "D011_c003", "collection": "health_training_docs", "question": "关于骨密度数据，顾问可以说到哪一步？再往下的话归谁讲？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c003", "collection": "health_training_docs", "question": "判定“这是什么病”的话，能从顾问口中说出吗？", "difficulty": "keyword"}
+{"chunk_id": "D011_c004", "collection": "health_training_docs", "question": "这台超声骨密度设备一般测哪个部位？做完一次大约需要几分钟？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c004", "collection": "health_training_docs", "question": "骨密度仪的输出指标有哪些？", "difficulty": "keyword"}
+{"chunk_id": "D011_c005", "collection": "health_training_docs", "question": "超声骨密度筛查发现异常后为什么要去医院再做双能X线？这台设备的定性是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c005", "collection": "health_training_docs", "question": "骨质疏松诊断的金标准是哪种检查？", "difficulty": "keyword"}
+{"chunk_id": "D011_c006", "collection": "health_training_docs", "question": "骨密度数值为什么要分 T 值和 Z 值两套参照来比较？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c006", "collection": "health_training_docs", "question": "T 值适用于哪些人？", "difficulty": "keyword"}
+{"chunk_id": "D011_c007", "collection": "health_training_docs", "question": "客户测出 T 值 -1.8 时，按照规定口径要怎么向他说明？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c007", "collection": "health_training_docs", "question": "看到 T 值偏低，能催客户“赶紧补钙”吗？", "difficulty": "keyword"}
+{"chunk_id": "D011_c008", "collection": "health_training_docs", "question": "一套规范的骨密度结果讲解要覆盖哪五个要点？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c008", "collection": "health_training_docs", "question": "日常护骨方面可以给客户哪些建议？", "difficulty": "keyword"}
+{"chunk_id": "D011_c009", "collection": "health_training_docs", "question": "“您这样拖下去发生骨折的风险很大”这句提醒被划入哪一类禁语？为什么不让说？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c009", "collection": "health_training_docs", "question": "六类禁止表述里后果最严重的是哪一类？严重在哪里？", "difficulty": "keyword"}

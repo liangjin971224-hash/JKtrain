@@ -1,0 +1,12 @@
+{
+  "label": "mt_v1",
+  "n": 20,
+  "passed": 12,
+  "pass_rate": 0.6,
+  "rewrite_checked": 12,
+  "rewrite_ok": 12,
+  "forbidden": 0,
+  "refused": 0,
+  "gate": "FAIL",
+  "generated_at": "2026-11-08T16:36:13+08:00"
+}

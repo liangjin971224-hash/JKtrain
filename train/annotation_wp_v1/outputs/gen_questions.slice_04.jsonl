@@ -1,0 +1,104 @@
+{"chunk_id": "D011_c010", "collection": "health_training_docs", "question": "骨密度数值已经达到骨质疏松范围的顾客，若被顾问拦着不去医院、只让他自己补钙，最坏会导致什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c010", "collection": "health_training_docs", "question": "骨密度测完以后，不管结果怎样都建议客户做什么？", "difficulty": "keyword"}
+{"chunk_id": "D011_c011", "collection": "health_training_docs", "question": "给顾客做骨密度检测之前，有哪些事情要先办好？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c011", "collection": "health_training_docs", "question": "测量前客户需要摘下哪些饰品？", "difficulty": "keyword"}
+{"chunk_id": "D011_c012", "collection": "health_training_docs", "question": "整个检测流程里，耦合剂是在哪一步用上的，测完之后又要怎么处理？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c012", "collection": "health_training_docs", "question": "做一次骨密度扫描大概需要多久？", "difficulty": "keyword"}
+{"chunk_id": "D011_c013", "collection": "health_training_docs", "question": "这次测的是左桡骨，下次复查时部位应该怎么选，为什么要这样定？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c013", "collection": "health_training_docs", "question": "T 值和 Z 值是记一个还是两个都要记？", "difficulty": "keyword"}
+{"chunk_id": "D011_c014", "collection": "health_training_docs", "question": "顾客看到偏低的骨数据心里很紧张，顾问沟通时要按什么顺序来？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c014", "collection": "health_training_docs", "question": "客户因为结果偏低而焦虑时，第一步该做什么？", "difficulty": "keyword"}
+{"chunk_id": "D011_c015", "collection": "health_training_docs", "question": "顾客追问自己的数值是不是已经构成骨质疏松，回答的分寸该怎么把握？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c015", "collection": "health_training_docs", "question": "WHO 标准中骨质疏松对应的 T 值是多少？", "difficulty": "keyword"}
+{"chunk_id": "D011_c016", "collection": "health_training_docs", "question": "顾客要求我直接按这次的数据给他定制一套方案，怎样回应才稳妥？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c016", "collection": "health_training_docs", "question": "对骨骼健康有帮助的日常做法有哪些？", "difficulty": "keyword"}
+{"chunk_id": "D011_c017", "collection": "health_training_docs", "question": "借着偏低的筛查数据向顾客推销自家的钙制品，踩中了哪些禁区？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c017", "collection": "health_training_docs", "question": "承诺补钙三个月骨密度就会提高，属于什么问题？", "difficulty": "keyword"}
+{"chunk_id": "D011_c018", "collection": "health_training_docs", "question": "检测做完以后，顾问应当按照怎样的先后次序向顾客交代？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c018", "collection": "health_training_docs", "question": "客户主动问起产品时应该怎么回应？", "difficulty": "keyword"}
+{"chunk_id": "D011_c019", "collection": "health_training_docs", "question": "向顾客介绍这款钙剂时，它核准的用途该怎么讲，哪些提法不能说？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c019", "collection": "health_training_docs", "question": "这款钙产品少年儿童可以吃吗？", "difficulty": "keyword"}
+{"chunk_id": "D011_c022", "collection": "health_training_docs", "question": "给顾客讲骨密度结果时，规定要依序说完的三句话分别是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D011_c022", "collection": "health_training_docs", "question": "修改 T 值和 Z 值的解释口径需要经过什么审核？", "difficulty": "keyword"}
+{"chunk_id": "D012_c000", "collection": "health_training_docs", "question": "D012 这份规范写出来是给谁看的？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c000", "collection": "health_training_docs", "question": "这份客户档案规范的编制日期是什么时候？", "difficulty": "keyword"}
+{"chunk_id": "D012_c002", "collection": "health_training_docs", "question": "门店为什么要坚持把客户情况记进档案？说出三条理由。", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c002", "collection": "health_training_docs", "question": "客户的健康资料在法律上被归为哪一类信息？", "difficulty": "keyword"}
+{"chunk_id": "D012_c003", "collection": "health_training_docs", "question": "把顾客随口讲的身体状况当成确诊疾病写进档案，会给公司惹来什么麻烦？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c003", "collection": "health_training_docs", "question": "在档案里注明情况是客户自己说的，有什么作用？", "difficulty": "keyword"}
+{"chunk_id": "D012_c004", "collection": "health_training_docs", "question": "顾客到店登记时要填的基础信息都有哪几项？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c004", "collection": "health_training_docs", "question": "到店时间这一栏要求写到多精确？", "difficulty": "keyword"}
+{"chunk_id": "D012_c005", "collection": "health_training_docs", "question": "顾客自己讲的健康困扰要怎样落笔，才算符合记录要求？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c005", "collection": "health_training_docs", "question": "用药情况该不该追问药名和剂量？", "difficulty": "keyword"}
+{"chunk_id": "D012_c006", "collection": "health_training_docs", "question": "沟通这一块要写下哪四样内容？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c006", "collection": "health_training_docs", "question": "客户嫌贵时，规范的做法是记录什么并向他说明什么？", "difficulty": "keyword"}
+{"chunk_id": "D012_c007", "collection": "health_training_docs", "question": "哪些东西绝对不能写进客户档案？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c007", "collection": "health_training_docs", "question": "客户家人的身体状况可以直接写进他的档案吗？", "difficulty": "keyword"}
+{"chunk_id": "D012_c008", "collection": "health_training_docs", "question": "为什么像空腹血糖数值这样的检查结果不能往档案里写？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c008", "collection": "health_training_docs", "question": "觉得客户难缠这类主观印象，档案里应该怎么处理？", "difficulty": "keyword"}
+{"chunk_id": "D012_c009", "collection": "health_training_docs", "question": "同事来打听昨天接待的客人是什么情况，标准的应对方式是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c009", "collection": "health_training_docs", "question": "客户的女儿来问妈妈的检测结果，能直接告诉她吗？", "difficulty": "keyword"}
+{"chunk_id": "D012_c010", "collection": "health_training_docs", "question": "保守客户秘密方面划出了哪三条不能碰的底线？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c010", "collection": "health_training_docs", "question": "把客户资料拍照存到自己手机上可以吗？", "difficulty": "keyword"}
+{"chunk_id": "D012_c011", "collection": "health_training_docs", "question": "判断一份客户档案合不合格，要从哪四个维度看？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c011", "collection": "health_training_docs", "question": "档案最晚什么时候必须写完？", "difficulty": "keyword"}
+{"chunk_id": "D012_c012", "collection": "health_training_docs", "question": "档案提交之前，要照着清单逐项核对哪些事项？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c012", "collection": "health_training_docs", "question": "如果发现自己写了用药剂量，应该怎么办？", "difficulty": "keyword"}
+{"chunk_id": "D012_c015", "collection": "health_training_docs", "question": "按照模板，一份完整的客户记录要包含哪几个板块？", "difficulty": "paraphrase"}
+{"chunk_id": "D012_c015", "collection": "health_training_docs", "question": "这份记录规范依据的法律法规是什么？", "difficulty": "keyword"}
+{"chunk_id": "D013_c000", "collection": "health_training_docs", "question": "这份售后文档在保健品宣传上给了什么合规提醒？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c000", "collection": "health_training_docs", "question": "D013 的文档类别和权限分别是什么？", "difficulty": "keyword"}
+{"chunk_id": "D013_c002", "collection": "health_training_docs", "question": "处理售后问题时要守住的三条原则是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c002", "collection": "health_training_docs", "question": "退款金额这类事情顾问能自己拍板吗？", "difficulty": "keyword"}
+{"chunk_id": "D013_c003", "collection": "health_training_docs", "question": "为什么一线顾问不能随口答应客户退货或者承诺钱什么时候到账？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c003", "collection": "health_training_docs", "question": "顾问在售后中可以做的事情有哪些？", "difficulty": "keyword"}
+{"chunk_id": "D013_c004", "collection": "health_training_docs", "question": "什么情况下顾客的商品是可以退可以换的？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c004", "collection": "health_training_docs", "question": "客户反馈食用后身体不舒服，这类诉求为什么不能按普通退换货处理？", "difficulty": "keyword"}
+{"chunk_id": "D013_c005", "collection": "health_training_docs", "question": "哪些退换请求是没法答应的？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c005", "collection": "health_training_docs", "question": "顾客以「没有效果」为由要求退货，政策上允许吗？", "difficulty": "keyword"}
+{"chunk_id": "D013_c006", "collection": "health_training_docs", "question": "顾客吃了两个月觉得没效果要退货，正确的应对思路是怎样的？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c006", "collection": "health_training_docs", "question": "「您再吃一个月，还不行就退」这种说法为什么不对？", "difficulty": "keyword"}
+{"chunk_id": "D013_c007", "collection": "health_training_docs", "question": "从客户提出诉求到最终答复，标准流程要走哪五步？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c007", "collection": "health_training_docs", "question": "第一步倾听记录的要求是什么？", "difficulty": "keyword"}
+{"chunk_id": "D013_c008", "collection": "health_training_docs", "question": "受理时首先要登记客户的哪些信息？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c008", "collection": "health_training_docs", "question": "上报申请单里必填的内容包括哪些？", "difficulty": "keyword"}
+{"chunk_id": "D013_c009", "collection": "health_training_docs", "question": "顾客反映服用产品后身体不舒服，顾问第一时间该做什么、不能说什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c009", "collection": "health_training_docs", "question": "客户吃剩的产品和包装要怎么处理？", "difficulty": "keyword"}
+{"chunk_id": "D013_c010", "collection": "health_training_docs", "question": "碰到情绪激动、坚持当场退钱的顾客，处置步骤是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c010", "collection": "health_training_docs", "question": "为什么不能对发火的客户说「让他冷静一下」？", "difficulty": "keyword"}
+{"chunk_id": "D013_c011", "collection": "health_training_docs", "question": "客户扬言要投诉或者曝光，正确的处理态度是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c011", "collection": "health_training_docs", "question": "客户一发威胁就多让步会怎样？", "difficulty": "keyword"}
+{"chunk_id": "D013_c012", "collection": "health_training_docs", "question": "向顾客许诺「没效果就退钱」，问题出在哪里？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c012", "collection": "health_training_docs", "question": "一边保证见效、一边许诺不见效就退钱，这句话错在哪？", "difficulty": "keyword"}
+{"chunk_id": "D013_c013", "collection": "health_training_docs", "question": "「退款」两个字什么时候能说、什么时候不能说，规范是怎么划的？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c013", "collection": "health_training_docs", "question": "跟客户说明 7 天无理由可以退款，这话能说吗？", "difficulty": "keyword"}
+{"chunk_id": "D013_c014", "collection": "health_training_docs", "question": "对「无效就退」这类误导说法，标准版本的答复要包含哪些要点？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c014", "collection": "health_training_docs", "question": "为什么建议客户先买小规格的？", "difficulty": "keyword"}
+{"chunk_id": "D013_c017", "collection": "health_training_docs", "question": "退换诉求接进来以后，按什么逻辑分流处理？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c017", "collection": "health_training_docs", "question": "未开封并且没超过 7 天的退货走什么政策？", "difficulty": "keyword"}
+{"chunk_id": "D013_c018", "collection": "health_training_docs", "question": "退换货这件事上顾问的职权边界是怎么划的？", "difficulty": "paraphrase"}
+{"chunk_id": "D013_c018", "collection": "health_training_docs", "question": "判断能不能退这件事由谁来做？", "difficulty": "keyword"}
+{"chunk_id": "D014_c000", "collection": "health_training_docs", "question": "这篇应急处理文档在定稿前要重点核对哪两件事？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c000", "collection": "health_training_docs", "question": "文档里对这篇内容的重要程度是怎么标注的？", "difficulty": "keyword"}
+{"chunk_id": "D014_c002", "collection": "health_training_docs", "question": "面对突发状况要遵守的三条总原则分别是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c002", "collection": "health_training_docs", "question": "门店里有人突然不舒服，应该通知哪些人？", "difficulty": "keyword"}
+{"chunk_id": "D014_c003", "collection": "health_training_docs", "question": "凭表象去猜顾客得了什么病，为什么不可以？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c003", "collection": "health_training_docs", "question": "客户头晕、说话不清时，千万不能当成什么来处理？", "difficulty": "keyword"}
+{"chunk_id": "D014_c004", "collection": "health_training_docs", "question": "为什么说紧急时刻「只打电话叫救护车、别的都不做」往往反而是最妥当的？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c004", "collection": "health_training_docs", "question": "给意识不清的人喂水有什么危险？", "difficulty": "keyword"}
+{"chunk_id": "D014_c005", "collection": "health_training_docs", "question": "看到哪些身体表现时必须马上叫救护车？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c005", "collection": "health_training_docs", "question": "客户突然口角歪斜、一边胳膊抬不起来，除了打 120 还要做什么？", "difficulty": "keyword"}
+{"chunk_id": "D014_c006", "collection": "health_training_docs", "question": "快速识别脑卒中的口诀有哪四个环节，各自怎么做？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c006", "collection": "health_training_docs", "question": "为什么脑卒中发作要赶紧记下发病时间？", "difficulty": "keyword"}
+{"chunk_id": "D014_c007", "collection": "health_training_docs", "question": "客户自己说没事、看起来状态也还行，顾问能不能就此放心？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c007", "collection": "health_training_docs", "question": "拨打 120 之后客户状态好转了，还要不要送医？", "difficulty": "keyword"}
+{"chunk_id": "D014_c008", "collection": "health_training_docs", "question": "顾客在店里突然不舒服，规范的处理顺序是怎样的？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c008", "collection": "health_training_docs", "question": "救护车还没到的时候，为什么不能给客户喝水或吃东西？", "difficulty": "keyword"}
+{"chunk_id": "D014_c009", "collection": "health_training_docs", "question": "看到客户摔倒，第一步为什么不能急着把人扶起来？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c009", "collection": "health_training_docs", "question": "摔倒的客户说剧痛动不了，应该怎么办？", "difficulty": "keyword"}
+{"chunk_id": "D014_c010", "collection": "health_training_docs", "question": "顾客大哭大喊甚至出现攻击举动时，该怎么应对？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c010", "collection": "health_training_docs", "question": "面对情绪失控的客户，可以说哪些话来安抚？", "difficulty": "keyword"}
+{"chunk_id": "D014_c011", "collection": "health_training_docs", "question": "两拨人在店里起了争执，正确的处置流程是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c011", "collection": "health_training_docs", "question": "门店纠纷里顾问能不能当场评理和调解？", "difficulty": "keyword"}
+{"chunk_id": "D014_c012", "collection": "health_training_docs", "question": "突发事件中有哪六种动作是绝对禁止的？", "difficulty": "paraphrase"}
+{"chunk_id": "D014_c012", "collection": "health_training_docs", "question": "客户不适时能不能喂他吃救心丸这类药物？", "difficulty": "keyword"}

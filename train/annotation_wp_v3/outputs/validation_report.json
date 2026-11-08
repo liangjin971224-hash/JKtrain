@@ -1,0 +1,8 @@
+{
+  "wp_dir": "train\\annotation_wp_v3",
+  "n_targets": 31,
+  "n_pred": 31,
+  "hard": [],
+  "warn": [],
+  "verdict": "PASS"
+}

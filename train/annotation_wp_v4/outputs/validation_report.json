@@ -1,0 +1,7 @@
+{
+  "n_targets": 20,
+  "n_pred": 20,
+  "hard": [],
+  "warn": [],
+  "verdict": "PASS"
+}

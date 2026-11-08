@@ -1,0 +1,95 @@
+{
+  "stage": "P0-1",
+  "sources": {
+    "checks": "train/eval_runs/p01_checks.json",
+    "holdout_summary": "train/eval_runs/baseline_holdout55_20261107_104811/summary.json",
+    "full_summary": "train/eval_runs/baseline_v1_recheck_20261107_104850/summary.json"
+  },
+  "items": [
+    {
+      "item": "分层逐格相等",
+      "expected": "11/12/9/23",
+      "actual": "11/12/9/23",
+      "verdict": "PASS"
+    },
+    {
+      "item": "holdout ∩ train",
+      "expected": 0,
+      "actual": 0,
+      "verdict": "PASS"
+    },
+    {
+      "item": "并集 == 原 205 题",
+      "expected": 205,
+      "actual": 205,
+      "verdict": "PASS"
+    },
+    {
+      "item": "holdout 唯一 gold 块数",
+      "expected": ">=45",
+      "actual": 68,
+      "verdict": "PASS"
+    },
+    {
+      "item": "train150 行数",
+      "expected": 150,
+      "actual": 150,
+      "verdict": "PASS"
+    },
+    {
+      "item": "split==val 条数",
+      "expected": 15,
+      "actual": 15,
+      "verdict": "PASS"
+    },
+    {
+      "item": "baseline_holdout55 summary 落盘",
+      "expected": "存在",
+      "actual": "baseline_holdout55_20261107_104811",
+      "verdict": "PASS"
+    },
+    {
+      "item": "全量 205 复测 R@5",
+      "expected": "0.7610±0.0005",
+      "actual": 0.761,
+      "verdict": "PASS"
+    }
+  ],
+  "r5_breakdown": {
+    "overall": {
+      "r@5": 0.7273,
+      "n": 55
+    },
+    "by_origin": {
+      "auto_exact": {
+        "r@5": 1.0,
+        "n": 11
+      },
+      "eval_v3": {
+        "r@5": 0.9167,
+        "n": 12
+      },
+      "gen_b": {
+        "r@5": 0.5625,
+        "n": 32
+      }
+    },
+    "by_collection": {
+      "health_case_library": {
+        "r@5": 0.4444,
+        "n": 9
+      },
+      "health_question_bank": {
+        "r@5": 1.0,
+        "n": 11
+      },
+      "health_training_docs": {
+        "r@5": 0.7143,
+        "n": 35
+      }
+    }
+  },
+  "holdout_baseline_r5": 0.7273,
+  "full_recheck_r5": 0.761,
+  "verdict": "PASS"
+}

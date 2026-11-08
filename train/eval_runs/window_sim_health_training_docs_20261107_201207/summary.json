@@ -1,0 +1,88 @@
+{
+  "collection": "health_training_docs",
+  "n": 131,
+  "baseline_run": "D:\\AI260803\\健康培训移动\\train\\eval_runs\\app_path_head_v1_20261107_194150\\detail.jsonl",
+  "hits": {
+    "rrf": 106,
+    "v1_k1（现状 P1-a）": 111,
+    "v1_k1_v2": 110,
+    "v1_k1_k2": 109,
+    "v1_k1_k2_k3": 111,
+    "v1_k1_k2_k3_k4": 115,
+    "v1_k1_v2_k2": 109,
+    "v1_v2_k1": 110,
+    "v1_k1_v2_v3": 110,
+    "v1_k1_k2_v2": 109,
+    "v1_v2_k1_k2": 109
+  },
+  "baseline": 111,
+  "best": "v1_k1_k2_k3_k4",
+  "flips_up": {
+    "rrf": [],
+    "v1_k1（现状 P1-a）": [],
+    "v1_k1_v2": [],
+    "v1_k1_k2": [],
+    "v1_k1_k2_k3": [
+      "gen-D015_c012-keyword",
+      "gen-D004_c023-keyword"
+    ],
+    "v1_k1_k2_k3_k4": [
+      "ev2-27",
+      "ev2-35",
+      "gen-D015_c012-keyword",
+      "gen-D015_c017-keyword",
+      "gen-D004_c023-keyword",
+      "gen-D001_c010-keyword"
+    ],
+    "v1_k1_v2_k2": [],
+    "v1_v2_k1": [],
+    "v1_k1_v2_v3": [],
+    "v1_k1_k2_v2": [],
+    "v1_v2_k1_k2": []
+  },
+  "flips_down": {
+    "rrf": [
+      "ev2-34",
+      "ev2-37",
+      "gen-D003_c017-paraphrase",
+      "gen-D009_c013-keyword",
+      "gen-D012_c011-paraphrase"
+    ],
+    "v1_k1（现状 P1-a）": [],
+    "v1_k1_v2": [
+      "gen-D011_c011-paraphrase"
+    ],
+    "v1_k1_k2": [
+      "gen-D011_c011-paraphrase",
+      "gen-D013_c017-paraphrase"
+    ],
+    "v1_k1_k2_k3": [
+      "gen-D011_c011-paraphrase",
+      "gen-D009_c013-paraphrase"
+    ],
+    "v1_k1_k2_k3_k4": [
+      "gen-D011_c011-paraphrase",
+      "gen-D009_c013-paraphrase"
+    ],
+    "v1_k1_v2_k2": [
+      "gen-D011_c011-paraphrase",
+      "gen-D013_c017-paraphrase"
+    ],
+    "v1_v2_k1": [
+      "gen-D011_c011-paraphrase"
+    ],
+    "v1_k1_v2_v3": [
+      "gen-D011_c011-paraphrase"
+    ],
+    "v1_k1_k2_v2": [
+      "gen-D011_c011-paraphrase",
+      "gen-D013_c017-paraphrase"
+    ],
+    "v1_v2_k1_k2": [
+      "gen-D011_c011-paraphrase",
+      "gen-D013_c017-paraphrase"
+    ]
+  },
+  "window": 5,
+  "generated_at": "2026-11-07T20:12:07+08:00"
+}

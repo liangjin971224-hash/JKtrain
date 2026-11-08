@@ -1,0 +1,102 @@
+{
+  "label": "a_100_deepseek",
+  "eval_set": "..\\train\\data\\eval_questions_v4_100.jsonl",
+  "n_queries": 100,
+  "variants": [
+    5
+  ],
+  "prompt_variant": "v3",
+  "results": {
+    "5": {
+      "n": 100,
+      "passed": 65,
+      "pass_rate": 0.65,
+      "missed_points": 66,
+      "forbidden_questions": 3,
+      "refused": 1,
+      "refusal_rate": 0.01,
+      "gold_in_context": 71,
+      "gold_in_context_rate": 0.71,
+      "avg_answer_chars": 330.7,
+      "p50_elapsed_s": 8.12
+    }
+  },
+  "comparisons": {},
+  "gates": {},
+  "external_baseline": {
+    "detail": "..\\train\\eval_runs\\a_100_baseline_20261108_125606\\detail_5.jsonl",
+    "summary": {
+      "n": 100,
+      "passed": 64,
+      "pass_rate": 0.64,
+      "missed_points": 69,
+      "forbidden_questions": 2,
+      "refused": 2,
+      "refusal_rate": 0.02,
+      "gold_in_context": 71,
+      "gold_in_context_rate": 0.71,
+      "avg_answer_chars": 205.8,
+      "p50_elapsed_s": 1.81
+    },
+    "comparison": {
+      "n_common": 100,
+      "pass_up": 11,
+      "pass_down": 10,
+      "up_qids": [
+        "ev2-02",
+        "ev2-04",
+        "ev2-05",
+        "ev2-10",
+        "ev2-20",
+        "ev2-28",
+        "ev2-41",
+        "hq-11",
+        "h2-01",
+        "gen-C11_s61-paraphrase",
+        "gen-C16_s92-scenario"
+      ],
+      "down_qids": [
+        "ev2-15",
+        "ev2-22",
+        "ev2-24",
+        "hq-10",
+        "h2-05",
+        "h2-06",
+        "gen-C07_s29-scenario",
+        "gen-C10_s53-scenario",
+        "gen-C13_s75-scenario",
+        "gen-C16_s94-scenario"
+      ],
+      "mcnemar_p": 1.0,
+      "delta_passed": 1,
+      "new_forbidden_qids": [
+        "ev2-22",
+        "hq-03"
+      ],
+      "fixed_forbidden_qids": [
+        "ev2-41"
+      ]
+    },
+    "gate": {
+      "checks": {
+        "pass_not_drop_2": true,
+        "forbidden_not_up": false,
+        "refused_not_up": true
+      },
+      "verdict": "FAIL",
+      "delta_passed": 1
+    }
+  },
+  "llm_ready": true,
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage"
+  ],
+  "generated_at": "2026-11-08T13:23:21+08:00"
+}

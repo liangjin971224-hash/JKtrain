@@ -1,0 +1,72 @@
+{
+  "collection": "health_training_docs",
+  "n": 35,
+  "eval_set": "..\\train\\data\\retrieval_eval_v1_holdout_remap.jsonl",
+  "hits": {
+    "rrf": 30,
+    "v1_k1（现状 P1-a）": 31,
+    "v1_k1_v2": 30,
+    "v1_k1_k2": 30,
+    "v1_k1_k2_k3": 31,
+    "v1_k1_k2_k3_k4": 31,
+    "v1_k1_v2_k2": 30,
+    "v1_v2_k1": 30,
+    "v1_k1_v2_v3": 30,
+    "v1_k1_k2_v2": 30,
+    "v1_v2_k1_k2": 30
+  },
+  "baseline": 31,
+  "best": "v1_k1（现状 P1-a）",
+  "flips_up": {
+    "rrf": [],
+    "v1_k1（现状 P1-a）": [],
+    "v1_k1_v2": [],
+    "v1_k1_k2": [],
+    "v1_k1_k2_k3": [
+      "gen-D015_c012-keyword"
+    ],
+    "v1_k1_k2_k3_k4": [
+      "gen-D015_c012-keyword"
+    ],
+    "v1_k1_v2_k2": [],
+    "v1_v2_k1": [],
+    "v1_k1_v2_v3": [],
+    "v1_k1_k2_v2": [],
+    "v1_v2_k1_k2": []
+  },
+  "flips_down": {
+    "rrf": [
+      "gen-D003_c017-paraphrase"
+    ],
+    "v1_k1（现状 P1-a）": [],
+    "v1_k1_v2": [
+      "gen-D011_c011-paraphrase"
+    ],
+    "v1_k1_k2": [
+      "gen-D011_c011-paraphrase"
+    ],
+    "v1_k1_k2_k3": [
+      "gen-D011_c011-paraphrase"
+    ],
+    "v1_k1_k2_k3_k4": [
+      "gen-D011_c011-paraphrase"
+    ],
+    "v1_k1_v2_k2": [
+      "gen-D011_c011-paraphrase"
+    ],
+    "v1_v2_k1": [
+      "gen-D011_c011-paraphrase"
+    ],
+    "v1_k1_v2_v3": [
+      "gen-D011_c011-paraphrase"
+    ],
+    "v1_k1_k2_v2": [
+      "gen-D011_c011-paraphrase"
+    ],
+    "v1_v2_k1_k2": [
+      "gen-D011_c011-paraphrase"
+    ]
+  },
+  "window": 5,
+  "generated_at": "2026-11-07T20:12:55+08:00"
+}

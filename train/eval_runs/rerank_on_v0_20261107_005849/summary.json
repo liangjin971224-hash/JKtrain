@@ -1,0 +1,46 @@
+{
+  "label": "rerank_on_v0",
+  "eval_set": "D:\\AI260803\\健康培训移动\\train\\data\\retrieval_eval_v0_provisional.jsonl",
+  "n_queries": 72,
+  "embed_model": "D:\\AI260803\\健康培训移动\\models\\bge-m3",
+  "rerank_model": "models/bge-reranker-v2-m3",
+  "r@5": 0.8611,
+  "r@10": 0.8889,
+  "mrr": 0.7479,
+  "latency_ms": {
+    "embed": 150,
+    "search": 8,
+    "rerank": 17630
+  },
+  "breakdown": {
+    "origin": {
+      "auto_exact": {
+        "n": 40,
+        "r@5": 1.0,
+        "mrr": 0.9625
+      },
+      "eval_v3": {
+        "n": 32,
+        "r@5": 0.6875,
+        "mrr": 0.4798
+      }
+    },
+    "collection": {
+      "health_question_bank": {
+        "n": 40,
+        "r@5": 1.0,
+        "mrr": 0.9625
+      },
+      "health_training_docs": {
+        "n": 32,
+        "r@5": 0.6875,
+        "mrr": 0.4798
+      }
+    }
+  },
+  "gate": {
+    "threshold": 0.85,
+    "verdict": "PASS"
+  },
+  "generated_at": "2026-11-07T00:58:49+08:00"
+}

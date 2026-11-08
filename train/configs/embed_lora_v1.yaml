@@ -1,0 +1,57 @@
+# embedding 微调第一轮：bge-m3 **全量微调**（参数清单，非可执行配置）
+#
+# ★ 2026-11-07 实机修正：本版 FlagEmbedding 的 encoder_only.m3 训练入口**不支持 LoRA**。
+#   实测被 HfArgumentParser 拒绝的参数：
+#     --finetuning_type / --lora_rank / --lora_alpha / --lora_dropout / --target_modules
+#     --eval_data（该版本 AbsEmbedderDataArguments 里没有这个字段）
+#     --warmup_ratio（同样被拒，落进 remaining_args）
+#   源码依据：FlagEmbedding/abc/finetune/embedder/AbsArguments.py 只有
+#     temperature / negatives_cross_device / sentence_pooling_method /
+#     normalize_embeddings / sub_batch_size / kd_loss_type / use_mrl / mrl_dims
+#   因此本轮改为全量微调；文件名保留 embed_lora_v1 以免动 89 号打包路径。
+#
+# 数据：train/data/embed_pairs_v1.jsonl → cloud_package/data/{train,val}.jsonl
+#       {"query": str, "pos": [str...], "neg": [str...]}（FlagEmbedding 原生格式）
+# ⚠️ 该 205 条与评测集 retrieval_eval_v1.jsonl 的 205 条逐字相同（qid 一致），
+#    0.81 门禁只证明记忆，不证明泛化。见 cloud_package/README.md 的口径警告。
+
+model_name_or_path: /mnt/workspace/models/bge-m3
+train_data: data/train.jsonl          # 168 条（val 37 条本轮只做 sanity，不参与训练）
+output_dir: /mnt/workspace/output/bge-m3-ft-v1
+
+# ─── 对比学习 ─────────────────────────────────────────────────────
+train_group_size: 4                   # 每问 1 正 + 3 难负
+temperature: 0.02                     # MNRL 惯例 0.01–0.05
+negatives_cross_device: true          # 单卡为 no-op；显式难负例才是主力
+sentence_pooling_method: cls          # bge-m3 默认，与基座一致
+normalize_embeddings: true
+
+# ─── 长度 ─────────────────────────────────────────────────────────
+query_max_len: 128                    # 检索对是「问题↔块」，问题很短
+passage_max_len: 512                  # ★ 不用 4096：微调用不到超长上下文，512 省 8 倍显存
+
+# ─── 优化 ─────────────────────────────────────────────────────────
+learning_rate: 1.0e-5                 # 全量微调量级；embedding 对灾难性遗忘敏感，
+                                      # 若 auto_exact 掉 > 5pp 降到 5e-6 重训
+num_train_epochs: 3
+per_device_train_batch_size: 4        # 计数单位是 query，实际序列数 = 4×4 = 16
+gradient_accumulation_steps: 4        # → 16 query/step，168 条约 33 步
+bf16: true                            # A10/A100 可用；T4/V100 改 fp16
+
+# ─── 云端启动 ─────────────────────────────────────────────────────
+# cd /mnt/workspace/cloud_package && bash run_cloud.sh
+# 训练产物是纯 HF checkpoint（没有 1_Pooling/modules.json），
+# 必须用 merge_lora.py --base <原始> --ckpt <checkpoint-XX> --out ./merged 导出成 ST 目录。
+
+# ─── 训练后（云端 → 本机）─────────────────────────────────────────
+# 1. merge_lora.py 导出 ST 目录（含 1024 维断言）
+# 2. quick_val_eval.py sanity（未训练水位 0.7838；< 0.50 说明合并/数据坏了）
+# 3. 打包 bge-m3-ft-v1.tar.gz → 下载 → models/bge-m3-ft-v1/
+# 4. 本机门禁顺序（★ 重建 collection 必须在检索门禁之前，否则跨向量空间假 FAIL）：
+#    a) 维度 1024
+#    b) EMBED_MODEL_DIR=models/bge-m3-ft-v1 python 08_数据入库/milvus/build_collections.py
+#       → verify_v2.py 核对 293/117/140/30=580
+#    c) 81_retrieval_eval.py --gate 0.81（基线 R@5=0.7610）
+#    d) 88_calibrate_threshold.py → 更新 retrieve.py 的 MIN_VECTOR_SCORE
+#    e) eval_questions_v3 答案级回归 + pytest 全量
+#    f) 回滚演练：EMBED_MODEL_DIR 指回 models/bge-m3 重建 → 复现 0.7610

@@ -1,0 +1,93 @@
+{
+  "label": "app_holdout_baseline",
+  "eval_set": "..\\train\\data\\retrieval_eval_v1_holdout_remap.jsonl",
+  "n_queries": 55,
+  "retrieval_mode": "app_three_path",
+  "top_k": 20,
+  "fused_limit": 10,
+  "thresholds": {
+    "min_vector_score": 0.5,
+    "min_keyword_score": 14.0,
+    "min_sparse_score": 0.02,
+    "sparse_recall_enabled": true,
+    "sparse_collections": [
+      "health_case_library"
+    ],
+    "path_head_collections": [
+      "health_training_docs"
+    ],
+    "rerank_enabled": false
+  },
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage"
+  ],
+  "pending_ports": {
+    "rerank": "RERANK_ENABLED=true 且模型就位后启用（rerank_enabled=false（默认关闭））"
+  },
+  "r@5": 0.8545,
+  "r@10": 0.9091,
+  "mrr": 0.7016,
+  "path_avg_hits": {
+    "graph": 0.236,
+    "vector": 17.436,
+    "keyword": 6.455,
+    "sparse": 3.0,
+    "fused": 9.927
+  },
+  "degraded_counts": {},
+  "elapsed_ms_avg": {
+    "graph": 44.6,
+    "vector": 162.4,
+    "keyword": 10.3,
+    "sparse": 23.7,
+    "rerank": 0.0
+  },
+  "breakdown": {
+    "origin": {
+      "auto_exact": {
+        "n": 11,
+        "r@5": 1.0,
+        "mrr": 1.0
+      },
+      "eval_v3": {
+        "n": 12,
+        "r@5": 1.0,
+        "mrr": 0.7361
+      },
+      "gen_b": {
+        "n": 32,
+        "r@5": 0.75,
+        "mrr": 0.5861
+      }
+    },
+    "collection": {
+      "health_case_library": {
+        "n": 9,
+        "r@5": 0.5556,
+        "mrr": 0.4568
+      },
+      "health_question_bank": {
+        "n": 11,
+        "r@5": 1.0,
+        "mrr": 1.0
+      },
+      "health_training_docs": {
+        "n": 35,
+        "r@5": 0.8857,
+        "mrr": 0.6708
+      }
+    }
+  },
+  "gate": {
+    "threshold": null,
+    "verdict": null
+  },
+  "generated_at": "2026-11-07T20:55:48+08:00"
+}

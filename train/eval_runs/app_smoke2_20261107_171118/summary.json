@@ -1,0 +1,62 @@
+{
+  "label": "app_smoke2",
+  "eval_set": "D:\\AI260803\\健康培训移动\\train\\data\\retrieval_eval_v1_remap.jsonl",
+  "n_queries": 5,
+  "retrieval_mode": "app_three_path",
+  "top_k": 20,
+  "fused_limit": 10,
+  "thresholds": {
+    "min_vector_score": 0.5,
+    "min_keyword_score": 14.0,
+    "rerank_enabled": false
+  },
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage"
+  ],
+  "pending_ports": {
+    "rerank": "RERANK_ENABLED=true 且模型就位后启用（rerank_enabled=false（默认关闭））"
+  },
+  "r@5": 0.8,
+  "r@10": 0.8,
+  "mrr": 0.7,
+  "path_avg_hits": {
+    "graph": 0.0,
+    "vector": 13.0,
+    "keyword": 6.8,
+    "fused": 8.0
+  },
+  "degraded_counts": {},
+  "elapsed_ms_avg": {
+    "graph": 433.4,
+    "vector": 96.6,
+    "keyword": 10.5,
+    "rerank": 0.0
+  },
+  "breakdown": {
+    "origin": {
+      "eval_v3": {
+        "n": 5,
+        "r@5": 0.8,
+        "mrr": 0.7
+      }
+    },
+    "collection": {
+      "health_training_docs": {
+        "n": 5,
+        "r@5": 0.8,
+        "mrr": 0.7
+      }
+    }
+  },
+  "gate": {
+    "threshold": null,
+    "verdict": null
+  },
+  "generated_at": "2026-11-07T17:11:18+08:00"
+}

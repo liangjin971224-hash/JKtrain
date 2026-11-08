@@ -1,0 +1,104 @@
+{"chunk_id": "D003_c014", "collection": "health_training_docs", "question": "客户刚说自己睡眠不好就急着推销助眠产品，为什么这种做法不对？", "difficulty": "paraphrase"}
+{"chunk_id": "D003_c014", "collection": "health_training_docs", "question": "面对睡眠不好的客户，开场应该先问哪几个问题？", "difficulty": "keyword"}
+{"chunk_id": "D003_c015", "collection": "health_training_docs", "question": "顾客抱怨药物伤身，店员跟着附和贬低药品，这种做法问题出在哪？", "difficulty": "paraphrase"}
+{"chunk_id": "D003_c015", "collection": "health_training_docs", "question": "客户对药品有误解时，正确的回应思路是什么？", "difficulty": "keyword"}
+{"chunk_id": "D003_c016", "collection": "health_training_docs", "question": "顾问张口就是专业缩写和术语，为什么反而会把客户推远？", "difficulty": "paraphrase"}
+{"chunk_id": "D003_c016", "collection": "health_training_docs", "question": "BMI 偏高的客户，用大白话应该怎么讲建议？", "difficulty": "keyword"}
+{"chunk_id": "D003_c017", "collection": "health_training_docs", "question": "顾客打听产品能不能治某种病时，顺着他的话头聊下去有什么风险？", "difficulty": "paraphrase"}
+{"chunk_id": "D003_c017", "collection": "health_training_docs", "question": "客户问产品治不治病，标准答复包含哪几层？", "difficulty": "keyword"}
+{"chunk_id": "D003_c018", "collection": "health_training_docs", "question": "顾客打听店里有没有某款货，店员拿「不清楚」「去问大夫」应付，为什么算失职？", "difficulty": "paraphrase"}
+{"chunk_id": "D003_c018", "collection": "health_training_docs", "question": "产品信息和医学判断的界线怎么划分？", "difficulty": "keyword"}
+{"chunk_id": "D003_c019", "collection": "health_training_docs", "question": "顾客想补钙又查出骨密度偏低，顾问为什么不直接卖钙片而先让他去医院？", "difficulty": "paraphrase"}
+{"chunk_id": "D003_c019", "collection": "health_training_docs", "question": "对话里顾问推荐先从哪些食物补钙？", "difficulty": "keyword"}
+{"chunk_id": "D003_c020", "collection": "health_training_docs", "question": "示例对话里，顾客问起助眠产品后，顾问一共交代了哪几点说明？", "difficulty": "paraphrase"}
+{"chunk_id": "D003_c020", "collection": "health_training_docs", "question": "睡前刷手机为什么让人更难入睡？", "difficulty": "keyword"}
+{"chunk_id": "D003_c021", "collection": "health_training_docs", "question": "顾客喝牛奶会不舒服，顾问因此把推荐从乳清蛋白换成了哪一款？", "difficulty": "paraphrase"}
+{"chunk_id": "D003_c021", "collection": "health_training_docs", "question": "顾客总说自己累，顾问判断根源出在哪？", "difficulty": "keyword"}
+{"chunk_id": "D004_c000", "collection": "health_training_docs", "question": "D004 这份资料写给谁看，篇幅预计多大？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c000", "collection": "health_training_docs", "question": "D004 的编制日期和版本号分别是什么？", "difficulty": "keyword"}
+{"chunk_id": "D004_c002", "collection": "health_training_docs", "question": "对照表里，普通食品在功能宣传上受到什么限制？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c002", "collection": "health_training_docs", "question": "保健食品和普通食品的批准标识分别是什么？", "difficulty": "keyword"}
+{"chunk_id": "D004_c003", "collection": "health_training_docs", "question": "两款外观几乎一样的罐装粉末，靠什么快速分清各属于哪类产品？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c003", "collection": "health_training_docs", "question": "只带 SC 编号的产品，可以对外宣传功效吗？", "difficulty": "keyword"}
+{"chunk_id": "D004_c004", "collection": "health_training_docs", "question": "把保健食品包装成能治病的商品，会违反哪部法律、可能构成什么行为？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c004", "collection": "health_training_docs", "question": "宣称产品能代替药物，后果严重到什么程度？", "difficulty": "keyword"}
+{"chunk_id": "D004_c005", "collection": "health_training_docs", "question": "顾客拿起一盒产品找不到那顶蓝色草帽样标记，这意味着什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c005", "collection": "health_training_docs", "question": "蓝帽子标志的下面还印着什么信息？", "difficulty": "keyword"}
+{"chunk_id": "D004_c006", "collection": "health_training_docs", "question": "只看文号里的字母，怎么判断产品是本土生产还是境外引进？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c006", "collection": "health_training_docs", "question": "国食健注 G 开头的文号，数字部分分几段、各占几位？", "difficulty": "keyword"}
+{"chunk_id": "D004_c007", "collection": "health_training_docs", "question": "顾客拿着印老式卫食健字文号的产品来店里，该怎么看待和对待它？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c007", "collection": "health_training_docs", "question": "国食健字 G 加 8 位数字的文号是哪个年代使用的？", "difficulty": "keyword"}
+{"chunk_id": "D004_c008", "collection": "health_training_docs", "question": "在官方渠道查证产品时，除了输入文号，还要比对包装上的哪几项？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c008", "collection": "health_training_docs", "question": "客户怀疑买到假货，官方查询要走哪个网站和栏目？", "difficulty": "keyword"}
+{"chunk_id": "D004_c009", "collection": "health_training_docs", "question": "想向顾客讲睡眠方面的功能，目录里的标准原文是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c009", "collection": "health_training_docs", "question": "国家允许保健食品对外讲的功能，现在一共是多少项？", "difficulty": "keyword"}
+{"chunk_id": "D004_c010", "collection": "health_training_docs", "question": "客户随口提的要求、老同事传的经验、网上搜来的说法，能当作目录外宣称的依据吗？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c010", "collection": "health_training_docs", "question": "功能声称的红线有没有例外情况？", "difficulty": "keyword"}
+{"chunk_id": "D004_c011", "collection": "health_training_docs", "question": "把「减肥」随口说给客户，为什么不合规范，目录里对应的正式名称叫什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c011", "collection": "health_training_docs", "question": "「增强免疫力」漏了哪三个字就变成绝对化表述？", "difficulty": "keyword"}
+{"chunk_id": "D004_c012", "collection": "health_training_docs", "question": "法定要求印在保健食品上的那句提醒，讲的是产品和药物之间的什么关系？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c012", "collection": "health_training_docs", "question": "那句警示语能不能省略或改写？", "difficulty": "keyword"}
+{"chunk_id": "D004_c013", "collection": "health_training_docs", "question": "哪些情形下必须把那句话说出口，哪些情形只是建议讲？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c013", "collection": "health_training_docs", "question": "顾客问的是普通食品，还要不要讲那句提醒？", "difficulty": "keyword"}
+{"chunk_id": "D004_c014", "collection": "health_training_docs", "question": "三件必须主动交代的事里，最容易漏掉的是哪件？顾客说是给母亲买的，接下来该做什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c014", "collection": "health_training_docs", "question": "为什么必须主动告知客户每天最多吃多少？", "difficulty": "keyword"}
+{"chunk_id": "D004_c015", "collection": "health_training_docs", "question": "公司各条产品线的危险禁忌，为什么要求当场就能背出来而不是翻资料？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c015", "collection": "health_training_docs", "question": "要求背熟的内容具体指哪一块？", "difficulty": "keyword"}
+{"chunk_id": "D004_c016", "collection": "health_training_docs", "question": "顾客说自己在长期服用抗凝血药物，又想买鱼油，顾问第一步该做什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c016", "collection": "health_training_docs", "question": "鱼油和抗凝药同服的风险机理是什么？", "difficulty": "keyword"}
+{"chunk_id": "D004_c017", "collection": "health_training_docs", "question": "职业司机一类的顾客，什么时间段绝对不能碰褪黑素类产品？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c017", "collection": "health_training_docs", "question": "甲亢或类风湿患者能不能用褪黑素？", "difficulty": "keyword"}
+{"chunk_id": "D004_c018", "collection": "health_training_docs", "question": "顾客自述肾脏状况不佳还想要蛋白粉，正确处理方式是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c018", "collection": "health_training_docs", "question": "对植物蛋白过敏的人买蛋白粉要避开哪种原料？", "difficulty": "keyword"}
+{"chunk_id": "D004_c019", "collection": "health_training_docs", "question": "顾客说正在喝中药又想买参类滋补品，顾问接下来必须先弄清什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c019", "collection": "health_training_docs", "question": "人参与哪类药材不能一起用？", "difficulty": "keyword"}
+{"chunk_id": "D004_c020", "collection": "health_training_docs", "question": "听到顾客自述对海产过敏，速查表对应的应对动作是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c020", "collection": "health_training_docs", "question": "怀孕或哺乳期的顾客来买产品该怎么办？", "difficulty": "keyword"}
+{"chunk_id": "D004_c021", "collection": "health_training_docs", "question": "标准介绍的四段式里，第三步承担什么任务？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c021", "collection": "health_training_docs", "question": "四句式的收尾要落回什么话题？", "difficulty": "keyword"}
+{"chunk_id": "D004_c022", "collection": "health_training_docs", "question": "顾客问能不能把降压药停掉，范例答复的第一反应和理由分别是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c022", "collection": "health_training_docs", "question": "范例一中针对正在服用降糖药的顾客，提醒了什么？", "difficulty": "keyword"}
+{"chunk_id": "D004_c023", "collection": "health_training_docs", "question": "拿老年群体渲染效果的那句话为什么被列为禁语，归在哪类问题？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c023", "collection": "health_training_docs", "question": "向客户承诺无效退款，错的原因是什么？", "difficulty": "keyword"}
+{"chunk_id": "D004_c024", "collection": "health_training_docs", "question": "怕说错就推说不知道、让顾客去问大夫，为什么不行，分寸该怎么拿？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c024", "collection": "health_training_docs", "question": "客户问产品会不会影响自己的肾病，该怎么回应？", "difficulty": "keyword"}
+{"chunk_id": "D004_c027", "collection": "health_training_docs", "question": "宣称自家产品是「医院同款」属于什么性质的问题，规范说法该怎么回应？", "difficulty": "paraphrase"}
+{"chunk_id": "D004_c027", "collection": "health_training_docs", "question": "拿身边人的效果做卖点，为什么行不通？", "difficulty": "keyword"}
+{"chunk_id": "D005_c000", "collection": "health_training_docs", "question": "D005 的表述为什么容不得半点偏差？它在整套体系里起什么作用？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c000", "collection": "health_training_docs", "question": "D005 文档的权限等级是什么？", "difficulty": "keyword"}
+{"chunk_id": "D005_c002", "collection": "health_training_docs", "question": "产品功能方面的话术，国家按照什么思路来管？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c002", "collection": "health_training_docs", "question": "目录之外的功能表述能不能讲？", "difficulty": "keyword"}
+{"chunk_id": "D005_c003", "collection": "health_training_docs", "question": "涉及疾病防治的说法落在哪个层级、会触碰哪几部法律？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c003", "collection": "health_training_docs", "question": "目录里那 24 项功能，表述上有什么硬性要求？", "difficulty": "keyword"}
+{"chunk_id": "D005_c004", "collection": "health_training_docs", "question": "一旦放任这类产品宣称疗效，会接连引发哪三桩恶果？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c004", "collection": "health_training_docs", "question": "这类产品的本质属性是什么、作用定位在哪？", "difficulty": "keyword"}
+{"chunk_id": "D005_c005", "collection": "health_training_docs", "question": "排铅这条功能在目录里的序号是多少？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c005", "collection": "health_training_docs", "question": "2026 年起新增的功能声称是哪一项？", "difficulty": "keyword"}
+{"chunk_id": "D005_c006", "collection": "health_training_docs", "question": "按分组记忆法，第 6 到 8 号功能被划进哪个组？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c006", "collection": "health_training_docs", "question": "第 9、10 号归入哪个记忆组？", "difficulty": "keyword"}
+{"chunk_id": "D005_c007", "collection": "health_training_docs", "question": "为什么说这七组对照是整份文档里分量最重的部分？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c007", "collection": "health_training_docs", "question": "本章一共整理了几组最容易讲错的表述？", "difficulty": "keyword"}
+{"chunk_id": "D005_c008", "collection": "health_training_docs", "question": "想表达控制体重的那条功能，规范说法应该怎么称呼？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c008", "collection": "health_training_docs", "question": "「降血脂」的规范替换说法是什么？", "difficulty": "keyword"}
+{"chunk_id": "D005_c009", "collection": "health_training_docs", "question": "「有助于」是随口加的客套还是硬性规定？漏掉会有什么后果？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c009", "collection": "health_training_docs", "question": "继续沿用「减肥」这类旧名称有什么风险？", "difficulty": "keyword"}
+{"chunk_id": "D005_c010", "collection": "health_training_docs", "question": "快速判断一个功能说法是不是新规范表述，看哪个词的取舍就行？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c010", "collection": "health_training_docs", "question": "带「降」字的说法为什么一律不能提？", "difficulty": "keyword"}
+{"chunk_id": "D005_c011", "collection": "health_training_docs", "question": "「提高免疫力」这种讲法被点名禁止，原因和正确表述分别是什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c011", "collection": "health_training_docs", "question": "这类禁用词的总体判定原则是什么？", "difficulty": "keyword"}
+{"chunk_id": "D005_c012", "collection": "health_training_docs", "question": "药物替代类禁语中哪一句危害被点名为最大，为什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c012", "collection": "health_training_docs", "question": "「天然无害、可以长期大量吃」这话错在哪里？", "difficulty": "keyword"}
+{"chunk_id": "D005_c013", "collection": "health_training_docs", "question": "「百分百见效」这类表述踩了哪条红线？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c013", "collection": "health_training_docs", "question": "绝对化表述的判定原则是什么？", "difficulty": "keyword"}
+{"chunk_id": "D005_c014", "collection": "health_training_docs", "question": "「7 天无理由」这类售后承诺和「没效果就退钱」的差别在哪？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c014", "collection": "health_training_docs", "question": "「三天见效」的说法踩了哪类红线？", "difficulty": "keyword"}
+{"chunk_id": "D005_c015", "collection": "health_training_docs", "question": "店员转述其他顾客的使用感受来推荐产品，为什么同样算违规？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c015", "collection": "health_training_docs", "question": "老客户回购多，能不能当成宣传点来讲？", "difficulty": "keyword"}
+{"chunk_id": "D005_c016", "collection": "health_training_docs", "question": "七步检查流程的最后两步分别在核对什么？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c016", "collection": "health_training_docs", "question": "七步检查的第三步查的是什么问题？", "difficulty": "keyword"}
+{"chunk_id": "D005_c017", "collection": "health_training_docs", "question": "回应「产品特别管用还卖得最火」时，除了报出批准功能，范例还交代了哪两条用药注意？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c017", "collection": "health_training_docs", "question": "顾客说「一个月瘦十斤」时，标准改写答复的要点有哪些？", "difficulty": "keyword"}
+{"chunk_id": "D005_c018", "collection": "health_training_docs", "question": "顾客追问多久能见到效果，按应答边界该怎么答？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c018", "collection": "health_training_docs", "question": "客户问「我能不能吃」时，哪条界线不能跨？", "difficulty": "keyword"}
+{"chunk_id": "D005_c019", "collection": "health_training_docs", "question": "熟人私下交底问你产品到底灵不灵，为什么照样不能松口？", "difficulty": "paraphrase"}
+{"chunk_id": "D005_c019", "collection": "health_training_docs", "question": "客户拿别家的宣传来施压时，标准回应怎么说？", "difficulty": "keyword"}
