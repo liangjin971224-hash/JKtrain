@@ -1,0 +1,37 @@
+[project]
+name = "health-training-system"
+version = "0.1.0"
+description = "健康顾问培训系统 —— 问答 + 演练 + 出卷"
+requires-python = ">=3.11"
+
+dependencies = [
+    "fastapi>=0.110",
+    "pydantic>=2.5",
+    "pydantic-settings>=2.1",
+    # 技术实现层（domain 层禁止依赖以下任何一项）
+    "neo4j>=5.20",
+    "pymilvus>=2.4",
+    "sqlalchemy>=2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-cov>=5.0"]
+# Redis 目前未安装，CachePort 先走内存实现；接真 Redis 时再装
+cache = ["redis>=5.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "integration: 需要真实 Neo4j/Milvus/MySQL 的测试（默认跳过）",
+    "slow: 耗时超过 5 秒的测试",
+]
+# 日常开发跳过集成测试，秒级反馈
+addopts = "-m 'not integration' --strict-markers -q"
+pythonpath = ["."]
+
+[tool.coverage.run]
+source = ["domain", "application", "infrastructure", "config", "interfaces"]
+omit = ["tests/*", "*/__init__.py"]

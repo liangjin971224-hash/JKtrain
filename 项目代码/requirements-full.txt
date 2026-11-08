@@ -1,0 +1,62 @@
+# 完整依赖（用于创建**完全独立**的虚拟环境）
+#
+# ────────────────────────────────────────────────────────────────
+# 什么时候用这个文件
+# ────────────────────────────────────────────────────────────────
+# 只有在你**不想继承** langchain_env 时才用，例如：
+#   · 部署到别的机器（没有 langchain_env）
+#   · 需要完全隔离，防止两边包版本互相影响
+#
+# 代价：torch GPU 版约 2.5GB，从 PyPI 下载可能 20–40 分钟。
+#
+# 用法：
+#     python -m venv .venv
+#     .venv\Scripts\python -m pip install --upgrade pip
+#     .venv\Scripts\pip install -r requirements-full.txt
+#
+# ────────────────────────────────────────────────────────────────
+# 版本锁定说明
+# ────────────────────────────────────────────────────────────────
+# 下列版本取自 2026-10-22 实测可用的 langchain_env，改动前先确认兼容性。
+# 特别是 torch 与 CUDA 的对应关系：cu124 要求 NVIDIA 驱动 >= 525。
+
+# ---- Web ----
+fastapi==0.142.2
+uvicorn==0.54.0
+pydantic==2.13.5
+pydantic-settings==2.15.0
+
+# ---- 图 / 向量数据库 ----
+neo4j==6.4.0
+pymilvus==2.6.17
+sqlalchemy==2.1.1
+# MySQL 驱动（DATABASE_URL 是 mysql+pymysql://，缺它连不上库）
+pymysql==1.2.3
+# 密码哈希（登录校验），缺它无法登录
+bcrypt==5.0.0
+
+# ---- LangGraph（月度报告状态机）----
+langgraph==1.2.12
+langgraph-checkpoint==4.2.0
+
+# ---- MCP 入站适配器 ----
+# interfaces/mcp/ 需要；不接 AI 助手入口可不装
+mcp==2.3.0
+
+# ---- 深度学习（重包）----
+# ★ GPU 版：需要 NVIDIA 显卡与驱动 >= 525
+#   纯 CPU 机器改用：
+#     pip install torch==2.5.0 --index-url https://download.pytorch.org/whl/cpu
+torch==2.5.0
+sentence-transformers==3.4.1
+transformers==4.44.2
+huggingface-hub==0.25.2
+numpy==2.4.6
+
+# ---- 测试 ----
+pytest==9.1.1
+pytest-cov==7.1.0
+
+# ---- 可选 ----
+# redis==8.1.0           CACHE_BACKEND=redis 时需要（多实例共享会话态）
+# pika==1.4.4            QUEUE_BACKEND=rabbitmq 时需要（RabbitMQ 客户端）

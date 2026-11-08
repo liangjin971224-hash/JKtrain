@@ -1,0 +1,59 @@
+# 本项目依赖清单
+#
+# ────────────────────────────────────────────────────────────────
+# ★ 重要：本项目的 .venv 是「继承式」虚拟环境
+# ────────────────────────────────────────────────────────────────
+# 创建方式：
+#     D:\conda\envs\langchain_env\python.exe -m venv --system-site-packages .venv
+#
+# 所以 torch / sentence-transformers / transformers 这些**重包**不用重装，
+# 直接从 langchain_env 继承（省下约 2.5GB 下载）。
+#
+# 判断方法的坑：`pip list` 里能看到 torch，不代表它装在 .venv 里。
+# 想知道某个包是从哪来的：
+#     .venv\Scripts\python.exe -c "import torch; print(torch.__file__)"
+# 路径在 D:\conda\envs\langchain_env\ 下 = 继承来的
+# 路径在 项目代码\.venv\ 下     = 本环境装的
+#
+# ────────────────────────────────────────────────────────────────
+# 若要从零建一个**完全独立**的环境（不继承系统包）
+# ────────────────────────────────────────────────────────────────
+#     python -m venv .venv
+#     .venv\Scripts\pip install -r requirements-full.txt
+# 见同目录 requirements-full.txt
+
+# ---- Web 层（接口层用）----
+fastapi>=0.110
+uvicorn>=0.29
+pydantic>=2.5
+pydantic-settings>=2.1
+
+# ---- 基础设施适配器 ----
+neo4j>=5.20
+pymilvus>=2.4
+sqlalchemy>=2.0
+# ★ MySQL 驱动：DATABASE_URL 写的是 mysql+pymysql，缺它启动就连不上库
+pymysql>=1.1
+# ★ 密码哈希：登录校验用 bcrypt，缺它无法登录
+bcrypt>=4.0
+
+# ---- LangGraph（月度报告状态机）----
+langgraph>=1.0
+
+# ---- MCP 入站适配器（interfaces/mcp/）----
+# 只提供 AI 助手入口（stdio / SSE），不用 MCP 可以不装；
+# 缺包时 HTTP 服务照常启动，只是接口层 import 会失败，所以建议装
+mcp>=2.3
+
+# ---- 测试 ----
+pytest>=8.0
+pytest-cov>=5.0
+
+# ---- 以下大包靠继承，若要独立环境见 requirements-full.txt ----
+# torch>=2.5.0          （GPU 版，约 2.5GB）
+# sentence-transformers>=3.0
+# transformers>=4.40
+
+# ---- 可选 ----
+# redis>=5.0            多实例共享会话态 / CACHE_BACKEND=redis 时需要
+# pika>=1.4             QUEUE_BACKEND=rabbitmq 时需要（RabbitMQ 客户端）

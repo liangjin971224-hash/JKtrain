@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>健康顾问培训系统</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- ============ 登录浮层 ============ -->
+<div id="loginMask" class="login-mask">
+  <div class="login-box">
+    <div class="login-brand">
+      <span class="logo">康</span>
+      <h2>健康顾问培训系统</h2>
+      <p>请用工号登录</p>
+    </div>
+    <label class="login-field">
+      <span>工号</span>
+      <input id="loginNo" class="input" type="text" placeholder="如 M001" autocomplete="username">
+    </label>
+    <label class="login-field">
+      <span>密码</span>
+      <input id="loginPwd" class="input" type="password" placeholder="请输入密码" autocomplete="current-password">
+    </label>
+    <button id="loginBtn" class="btn primary login-btn">登录</button>
+    <div id="loginErr" class="login-err"></div>
+    <div class="login-tip">
+      演示账号：M001 / admin123（主管）　E001 / trainee123（学员）
+    </div>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">康</span>
+    <div>
+      <h1>健康顾问培训系统</h1>
+      <p class="sub">知识问答 · 情景演练评阅</p>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="status" id="status">
+      <span class="dot pending"></span><span id="statusText">正在连接…</span>
+    </div>
+    <div class="who" id="who" hidden>
+      <span id="whoName"></span>
+      <span class="role-tag" id="whoRole"></span>
+      <button id="logoutBtn" class="btn ghost mini-btn">退出</button>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-panel="ask" data-feature="ask">知识问答</button>
+  <button class="tab" data-panel="drill" data-feature="drill">情景演练</button>
+  <button class="tab" data-panel="exam" data-feature="exam_manage">试卷</button>
+  <button class="tab" data-panel="daily" data-feature="daily_write">日报</button>
+  <button class="tab" data-panel="report" data-feature="drill">月度报告</button>
+</nav>
+
+<main>
+  <!-- ============ 知识问答 ============ -->
+  <section id="panel-ask" class="panel active">
+    <div class="card">
+      <div class="card-head">
+        <h2>问员工的问题</h2>
+        <label class="switch">
+          <input type="checkbox" id="useStream" checked>
+          <span>流式输出</span>
+        </label>
+      </div>
+
+      <div class="row">
+        <input id="question" class="input" type="text"
+               placeholder="例：鱼油有什么功能 / 客户在吃阿司匹林能吃吗"
+               autocomplete="off">
+        <button id="askBtn" class="btn primary">提问</button>
+      </div>
+
+      <div class="row small">
+        <label>产品
+          <select id="productId" class="input mini">
+            <option value="">（不指定）</option>
+            <option value="P001">P001 鱼油</option>
+            <option value="P002">P002 辅酶Q10</option>
+            <option value="P003">P003 褪黑素</option>
+            <option value="P004">P004 乳清蛋白粉</option>
+            <option value="P011">P011 钙维生素D</option>
+            <option value="P016">P016 复合蛋白固体饮料</option>
+          </select>
+        </label>
+        <label>身份
+          <select id="role" class="input mini">
+            <option value="trainee">学员</option>
+            <option value="manager">主管</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="samples">
+        <span>试试：</span>
+        <button class="chip" data-q="鱼油有什么功能" data-p="P001">鱼油有什么功能</button>
+        <button class="chip" data-q="在吃阿司匹林能吃鱼油吗" data-p="P001">在吃阿司匹林能吃鱼油吗</button>
+        <button class="chip" data-q="吃了能停降压药吗" data-p="">吃了能停降压药吗</button>
+        <button class="chip" data-q="复合蛋白固体饮料能增强免疫力吗" data-p="P016">普通食品能宣传功效吗</button>
+        <button class="chip" data-q="你们有没有量子能量水" data-p="">库里没有的东西</button>
+      </div>
+    </div>
+
+    <div class="card answer-card">
+      <div class="card-head">
+        <h2>对话</h2>
+        <div class="head-right">
+          <span class="history-hint" id="historyHint"></span>
+          <button id="newConvBtn" class="btn ghost small" type="button"
+                  title="清空当前对话历史，重新开始">新对话</button>
+          <span class="badge" id="answerBadge"></span>
+        </div>
+      </div>
+
+      <!-- 对话流：每轮追加一条，不再覆盖 -->
+      <div id="chatList" class="chat-list">
+        <div class="chat-empty" id="chatEmpty">提问后这里显示回答</div>
+      </div>
+
+      <div id="answer" class="answer empty" hidden></div>
+      <div id="answerMeta" class="meta"></div>
+    </div>
+  </section>
+
+  <!-- ============ 情景演练 ============ -->
+  <section id="panel-drill" class="panel">
+    <div class="card">
+      <div class="card-head">
+        <h2>选择案例</h2>
+        <span class="badge" id="caseBadge"></span>
+      </div>
+      <div class="row">
+        <input id="traineeId" class="input mini" type="text"
+               placeholder="学员编号（可空）" value="学员A">
+        <button id="startBtn" class="btn primary" disabled>开始演练</button>
+      </div>
+      <div id="caseList" class="case-list"></div>
+    </div>
+
+    <div class="card drill-card" id="drillCard" hidden>
+      <div class="card-head">
+        <h2 id="drillTitle">演练中</h2>
+        <span class="progress" id="drillProgress"></span>
+      </div>
+
+      <div id="chat" class="chat"></div>
+
+      <div class="row">
+        <textarea id="answerInput" class="input" rows="3"
+                  placeholder="以健康顾问的身份回答客户…"></textarea>
+      </div>
+      <div class="row">
+        <button id="submitBtn" class="btn primary">提交回答</button>
+        <button id="reviewBtn" class="btn ghost" disabled>结束并评阅</button>
+      </div>
+    </div>
+
+    <div class="card" id="cardResult" hidden>
+      <div class="card-head">
+        <h2>判定摘要卡</h2>
+        <span class="badge" id="cardBadge"></span>
+      </div>
+      <div id="summaryCard"></div>
+    </div>
+  </section>
+
+  <!-- ============ 试卷 ============ -->
+  <section id="panel-exam" class="panel">
+    <div class="card">
+      <div class="card-head">
+        <h2>组卷</h2>
+        <span class="badge" id="examBadge"></span>
+      </div>
+
+      <div class="row">
+        <label class="field">
+          <span>阶段</span>
+          <select id="exStage" class="input mini">
+            <option value="S1">S1 产品知识</option>
+            <option value="S2">S2 业务流程</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>题量</span>
+          <input id="exTotal" class="input mini" type="number" value="20" min="1" max="100">
+        </label>
+        <label class="field grow">
+          <span>标题</span>
+          <input id="exTitle" class="input" type="text" placeholder="如：S1 期中考核">
+        </label>
+      </div>
+
+      <div class="row">
+        <label class="field">
+          <span>难度配比</span>
+          <input id="exDiff" class="input mini wide" type="text"
+                 value="1:3, 2:9, 3:8" placeholder="易:中:难，如 3:9:8">
+        </label>
+        <label class="field">
+          <span>学员编号</span>
+          <input id="exTrainee" class="input mini" type="text"
+                 placeholder="防重复按此隔离">
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="exPersist" checked>
+          <span>落库保存</span>
+        </label>
+      </div>
+
+      <div class="row">
+        <button id="exBuildBtn" class="btn primary">生成试卷</button>
+        <button id="exRefreshBtn" class="btn ghost">刷新列表</button>
+      </div>
+    </div>
+
+    <div class="card" id="examResult" hidden>
+      <div class="card-head">
+        <h2 id="examResultTitle">试卷</h2>
+        <span class="badge" id="examResultBadge"></span>
+      </div>
+      <div id="examMeta" class="meta" style="border:none;padding:0;margin-bottom:12px"></div>
+      <div id="examWarnings"></div>
+      <div id="examPreview" class="paper-preview"></div>
+      <div class="row" style="margin-top:14px">
+        <button id="exActivateBtn" class="btn primary">定稿为生效</button>
+        <button id="exExportBtn" class="btn" disabled>导出（需先定稿）</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>试卷列表</h2>
+      </div>
+      <div id="paperList" class="case-list"></div>
+    </div>
+
+    <div class="card" id="exportBox" hidden>
+      <div class="card-head">
+        <h2>导出内容</h2>
+        <span class="badge" id="exportBadge"></span>
+      </div>
+      <div class="row small">
+        <button class="chip" data-export="exam">试卷页</button>
+        <button class="chip" data-export="answer">答案页</button>
+        <button class="chip" data-export="summary">组卷报告</button>
+        <button class="chip" id="copyExport">复制到剪贴板</button>
+      </div>
+      <pre id="exportText" class="export-pre"></pre>
+    </div>
+  </section>
+
+  <!-- ============ 日报 ============ -->
+  <section id="panel-daily" class="panel">
+    <div class="card">
+      <div class="card-head">
+        <h2>写每日总结</h2>
+        <span class="badge" id="dailyBadge"></span>
+      </div>
+      <div class="row">
+        <label class="field">
+          <span>工号</span>
+          <!-- ★ 只读：工号来自登录身份，不允许手填。
+               原先是输入框，导致两个问题：
+                 ① 不填就保存失败（用户实际遇到过）
+                 ② 填别人的工号就能写别人的日报（安全漏洞） -->
+          <input id="dlTrainee" class="input mini" type="text" readonly
+                 title="来自登录身份，不可修改">
+        </label>
+        <label class="field">
+          <span>日期</span>
+          <input id="dlDate" class="input mini" type="date">
+        </label>
+        <label class="field">
+          <span>身份</span>
+          <!-- ★ 只读展示：角色来自登录身份 -->
+          <input id="dlRoleText" class="input mini" type="text" readonly>
+        </label>
+      </div>
+      <div class="row">
+        <textarea id="dlContent" class="input" rows="5"
+                  placeholder="今天学了什么、哪里还不懂、遇到什么问题…"></textarea>
+      </div>
+      <div class="row">
+        <button id="dlSaveBtn" class="btn">保存草稿</button>
+        <button id="dlSubmitBtn" class="btn primary">提交（提交后不可改）</button>
+      </div>
+      <div id="dlHint" class="empty-tip"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>日报列表</h2>
+        <span class="badge" id="dlListBadge"></span>
+      </div>
+      <div class="row small">
+        <label class="field">
+          <span>只看学员</span>
+          <input id="dlFilterTrainee" class="input mini" type="text" placeholder="工号，空=全部">
+        </label>
+        <label class="field">
+          <span>状态</span>
+          <select id="dlFilterStatus" class="input mini">
+            <option value="">全部</option>
+            <option value="draft">草稿</option>
+            <option value="submitted">已提交</option>
+          </select>
+        </label>
+        <button id="dlRefreshBtn" class="btn ghost">刷新</button>
+      </div>
+      <div id="dlList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>未命中问题清单</h2>
+        <span class="badge" id="missBadge"></span>
+      </div>
+      <div class="partial-banner">
+        <span class="icon">ℹ</span>
+        <div>本清单用于发现<b>知识库缺口</b>，按问题内容统计。
+          它<b>不用于评价学员</b>——问得多说明想学，不是表现差。</div>
+      </div>
+      <div id="missTop"></div>
+      <h3 style="font-size:13px;margin:16px 0 8px;color:var(--text-2)">最近的问题</h3>
+      <div id="missRecent"></div>
+    </div>
+  </section>
+
+  <!-- ============ 月度报告 ============ -->
+  <section id="panel-report" class="panel">
+    <div class="card">
+      <div class="card-head">
+        <h2>生成月度报告</h2>
+      </div>
+      <div class="partial-banner">
+        <span class="icon">ℹ</span>
+        <div>报告分<b>三层</b>：能力项（哪块弱）→ 案例（哪个场景不好）→ 逐句明细（哪句话说错了）。
+          分数是<b>参考分</b>，正式判定权在企业。</div>
+      </div>
+      <div class="row">
+        <label class="field">
+          <span>学员工号</span>
+          <!-- ★ 改成下拉枚举（原来是手输文本框）：
+               ① 手输容易打错工号 → 查出空报告，看着像「没数据」其实是工号错
+               ② 学员看不到别人，手输别人也没用，不如直接限制可选范围
+               ③ 主管一眼能看出「谁有记录、叫什么」，不用去别处查
+               data-role 用来区分「我自己」与真实工号，避免同名歧义。 -->
+          <select id="rpTrainee" class="input mini"></select>
+        </label>
+        <label class="field">
+          <span>周期</span>
+          <input id="rpPeriod" class="input mini" type="month">
+        </label>
+        <button id="rpGenBtn" class="btn primary">生成（进复核流程）</button>
+        <button id="rpQuickBtn" class="btn ghost">快速查看（不复核）</button>
+      </div>
+      <div id="rpHint" class="empty-tip"></div>
+    </div>
+
+    <div class="card" id="rpBatchCard" hidden>
+      <div class="card-head">
+        <h2>批量生成（队列）</h2>
+        <span class="badge" id="rpBatchBadge"></span>
+      </div>
+      <div class="partial-banner">
+        <span class="icon">ℹ</span>
+        <div>批量是<b>异步</b>投递：点完立即返回，生成在后台跑。
+          已在排队/待复核/已定稿的人会被<b>自动跳过</b>，重复点不会重复生成。</div>
+      </div>
+      <div class="row">
+        <label class="field">
+          <span>周期</span>
+          <input id="rpBatchPeriod" class="input mini" type="month">
+        </label>
+        <button id="rpBatchRunBtn" class="btn primary">为本月全部学员生成</button>
+        <button id="rpBatchRefreshBtn" class="btn ghost">刷新进度</button>
+      </div>
+      <div id="rpBatchHint" class="empty-tip"></div>
+      <div id="rpBatchProgress"></div>
+      <div id="rpBatchList"></div>
+    </div>
+
+    <div class="card" id="rpPendingCard" hidden>
+      <div class="card-head">
+        <h2>待复核</h2>
+        <span class="badge warn" id="rpPendingBadge"></span>
+      </div>
+      <div id="rpPendingBody"></div>
+      <div class="row" style="margin-top:12px">
+        <label class="field" style="flex:1">
+          <span>复核意见（驳回时建议填写，会进提示词）</span>
+          <input id="rpReviewNote" class="input" type="text"
+                 placeholder="例如：建议太笼统，要说清怎么练">
+        </label>
+      </div>
+      <div class="row">
+        <button id="rpApproveBtn" class="btn primary">同意并定稿</button>
+        <button id="rpRejectBtn" class="btn ghost">驳回（重新生成建议）</button>
+      </div>
+      <div id="rpReviewHint" class="empty-tip"></div>
+    </div>
+
+    <div class="card" id="rpResultCard" hidden>
+      <div class="card-head">
+        <h2>报告内容</h2>
+        <span class="badge" id="rpResultBadge"></span>
+      </div>
+      <div id="rpOverview"></div>
+      <div id="rpRadar"></div>
+      <div id="rpCaps"></div>
+      <div id="rpCases"></div>
+      <div id="rpSuggestion"></div>
+    </div>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
