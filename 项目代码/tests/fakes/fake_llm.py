@@ -26,6 +26,8 @@ class FakeLanguageModelPort(LanguageModelPort):
         self._available = available
         self.calls: list[str] = []
         self.prompts: list[str] = []       # 便于断言 prompt 里是否漏了警示语
+        #: 便于断言系统提示词版本（P1-c 的 A/B 用）。
+        self.system_prompts: list[str] = []
 
     def generate(
         self,
@@ -37,6 +39,7 @@ class FakeLanguageModelPort(LanguageModelPort):
     ) -> GenerationResult:
         self.calls.append("generate")
         self.prompts.append(prompt)
+        self.system_prompts.append(system_prompt)
         return GenerationResult(
             text=self._reply,
             model="fake-llm",

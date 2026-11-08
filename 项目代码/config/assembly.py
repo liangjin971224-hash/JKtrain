@@ -25,8 +25,8 @@ from domain.ports import (
     GraphQueryPort,
     KeywordSearchPort,
     LanguageModelPort,
-    RepositoryPort,
     RerankPort,
+    RepositoryPort,
     VectorSearchPort,
 )
 
@@ -46,6 +46,8 @@ class Container:
     graph: GraphQueryPort | None = None
     vector: VectorSearchPort | None = None
     keyword: KeywordSearchPort | None = None
+    #: 稀疏检索端口（P0-3）。与 vector 共用同一个适配器实例。
+    sparse: Any = None
     llm: LanguageModelPort | None = None
     #: 候选重排。None 表示未启用/不可用——用例层必须容忍这一点，
     #: 直接按 RRF 顺序取前 top_k 条即可（重排是增强，不是必需）。
@@ -71,22 +73,29 @@ class Container:
 
     #: 图的 checkpoint 存储器（P2 月度报告）。
     #: ★ 放容器里而不是让接口层自己 new：
-    #   接口层不得 import infrastructure（门禁强制），
-    #   而 checkpointer 的实现在 infrastructure。
+    #:   接口层不得 import infrastructure（门禁强制），
+    #:   而 checkpointer 的实现在 infrastructure。
     checkpoint_saver: Any = None
 
     #: 案例目录（P5 演练用）。
     #: ★ 放进容器而不是让接口层自己读文件：
-    #   接口层不得 import infrastructure（门禁强制），
-    #   而「读案例文件」是 IO。所以由装配根注入 loader。
+    #:   接口层不得 import infrastructure（门禁强制），
+    #:   而「读案例文件」是 IO。所以由装配根注入 loader。
     case_catalog: Any = None
+
+    #: 多轮问答会话存储（B2）。纯内存、无外部依赖，不算作端口，
+    #: 因此不进 `ready_ports()`；由装配根构造，接口层只读。
+    conversation_store: Any = None
+
+    #: 运行指标（D3）。内存态、重启清零，不进 `ready_ports()`。
+    metrics: Any = None
 
     # 尚未实现的适配器：{端口名: 原因}
     pending: dict[str, str] = field(default_factory=dict)
 
     def ready_ports(self) -> list[str]:
         """已就绪的端口名。"""
-        names = ("graph", "vector", "keyword", "llm",
+        names = ("graph", "vector", "keyword", "sparse", "llm",
                  "repository", "cache", "file_storage", "rerank",
                  "task_queue", "checkpoint_saver")
         return [n for n in names if getattr(self, n) is not None]
@@ -249,13 +258,29 @@ def build_container(settings: Settings) -> Container:
         from infrastructure.search.bm25_adapter import Bm25SearchAdapter
         return Bm25SearchAdapter()
 
+    def _sparse():
+        """稀疏端口：复用向量适配器实例（同一模型、同一 Milvus 连接）。
+
+        ★ 为什么必须复用而不是另建一个 MilvusSearchAdapter：
+          它内部持有 bge-m3 权重（2.3 GB）。再建一个实例＝两份模型。
+        """
+        from infrastructure.vector.milvus_search_adapter import MilvusSearchAdapter
+
+        if not settings.sparse_recall_enabled:
+            raise ImportError("SPARSE_RECALL_ENABLED 未开启")
+        if container.milvus_client is None:
+            raise ImportError("Milvus 客户端不可用")
+        if isinstance(container.vector, MilvusSearchAdapter):
+            return container.vector
+        return MilvusSearchAdapter(container.milvus_client, settings=settings)
+
     def _llm() -> LanguageModelPort:
         """构建主备双通道 LLM。
 
         ★ 端点由 settings.llm_endpoints() 决定，按 kind 分派：
           · kind=http   → OpenAICompatibleAdapter（千问 / DeepSeek）
-          · kind=ollama → OllamaAdapter（llama.cpp，**推荐**，101–108 tok/s）
-          · kind=local  → LocalLLMAdapter（transformers + 4bit，仅训练后验证用）
+          · kind=ollama → OllamaAdapter（llama.cpp，本地推荐）
+          · kind=local  → LocalLLMAdapter（transformers + 4bit，训练后验证用）
           切换逻辑在 `FallbackLanguageModel` 里，用例完全感知不到。
         """
         from infrastructure.llm.fallback_adapter import FallbackLanguageModel
@@ -269,10 +294,14 @@ def build_container(settings: Settings) -> Container:
         if not endpoints:
             raise ImportError("未配置任何 LLM 端点（API Key 或本地模型路径）")
 
+        # ★ 推理模型必须显式关思考：不关时 qwen3.7-flash 约 14s/1200 tokens，
+        #   且 max_tokens 小的时候正文可能为空（2026-11-07 实测）。
+        #   ★ 只有 http 端点支持该参数，本地/Ollama 不传。
+        extra = {"enable_thinking": False} if settings.llm_disable_thinking else None
+
         adapters: list[LanguageModelPort] = []
         for ep in endpoints:
             if ep.get("kind") == "ollama":
-                # ★ 推荐方案：llama.cpp 内核，实测 101–108 tok/s
                 adapters.append(
                     OllamaAdapter(
                         name=ep["name"],
@@ -300,6 +329,7 @@ def build_container(settings: Settings) -> Container:
                         base_url=ep["base_url"],
                         model=ep["model"],
                         timeout_sec=settings.llm_timeout_sec,
+                        extra_payload=extra,
                     )
                 )
 
@@ -372,6 +402,24 @@ def build_container(settings: Settings) -> Container:
             max_bytes=settings.file_storage_max_bytes,
         )
 
+    def _rerank() -> RerankPort:
+        """构建 rerank 端口。
+
+        ★ 开关在 settings.rerank_enabled：关闭时这里直接 raise ImportError，
+          容器里 rerank 保持 None —— 用例层拿到的就是「无 rerank」的原始链路，
+          与历史行为逐字节一致（docs/TDD_检索质量优化 §4.3 降级矩阵）。
+        """
+        if not settings.rerank_enabled:
+            raise ImportError("rerank_enabled=false（默认关闭）")
+        from infrastructure.rerank.bge_reranker_adapter import BgeRerankerAdapter
+
+        return BgeRerankerAdapter(
+            model_dir=settings.rerank_model_dir,
+            max_length=settings.rerank_max_length,
+            batch_size=settings.rerank_batch_size,
+            slow_warn_sec=settings.rerank_slow_warn_sec,
+        )
+
     _try_build(container, "graph", _graph, "P1 阶段实现 Neo4jGraphAdapter")
     _try_build(container, "vector", _vector, "P2 阶段实现 MilvusSearchAdapter")
     _try_build(container, "keyword", _keyword, "P3 阶段实现 Bm25SearchAdapter")
@@ -381,24 +429,8 @@ def build_container(settings: Settings) -> Container:
     _try_build(container, "cache", _cache, "实现 InMemoryCacheAdapter")
     _try_build(container, "file_storage", _file_storage,
                "P6 阶段实现 LocalFileStorageAdapter")
-
-    # ---------------- 重排（可选增强） ----------------
-    # ★ 只在 settings.rerank_enabled=True 时构造。
-    #   默认关闭：模型约 2.2GB 显存，需先实测收益再决定常开。
-    #   未启用时 container.rerank 为 None，用例层按 RRF 原顺序取 top_k。
-    if settings.rerank_enabled:
-        def _rerank():
-            from infrastructure.search.bge_reranker_adapter import (
-                BgeRerankerAdapter,
-            )
-
-            return BgeRerankerAdapter(
-                model_dir=settings.rerank_model_dir,
-                batch_size=settings.rerank_batch_size,
-                max_length=settings.rerank_max_length,
-            )
-
-        _try_build(container, "rerank", _rerank, "配置 RERANK_MODEL_DIR")
+    _try_build(container, "rerank", _rerank,
+               "RERANK_ENABLED=true 且模型就位后启用")
 
     # ---------------- 任务队列（P3） ----------------
     def _task_queue():
@@ -474,6 +506,11 @@ def build_container(settings: Settings) -> Container:
     _try_build(container, "case_catalog", _case_catalog,
                "配置 CASE_DIR 指向 02_情景案例 目录")
 
+    # ---------------- 稀疏端口（P0-3） ----------------
+    # ★ 依赖 vector 先构建好，才能复用同一个适配器实例，
+    #   所以必须放在 vector 之后。
+    _try_build(container, "sparse", _sparse, "开启 SPARSE_RECALL_ENABLED")
+
     # ---------------- BM25 索引预热 ----------------
     # ★ 为什么必须在这里建索引：
     #   `Bm25SearchAdapter` 是纯内存索引，进程启动时是空的。
@@ -500,6 +537,22 @@ def build_container(settings: Settings) -> Container:
     # ★ 用例构造函数只接受 Port，不接受具体适配器类型
     container.use_cases = {}
 
+    # ---------------- 多轮会话存储（B2） ----------------
+    # ★ 不占端口、不碰外部服务，放在端口装配之后构造，
+    #   现有端口的装配顺序与降级行为完全不受影响。
+    from application.services.conversation import ConversationStore
+
+    container.conversation_store = ConversationStore(
+        max_sessions=settings.multi_turn_max_sessions,
+        max_turns=settings.multi_turn_max_turns,
+        ttl_sec=settings.multi_turn_ttl_sec,
+    )
+
+    # ---------------- 运行指标（D3） ----------------
+    from application.services.ops_metrics import OpsMetrics
+
+    container.metrics = OpsMetrics()
+
     logger.info(
         "容器构建完成: 就绪 %d 个端口 %s，待实现 %d 个",
         len(container.ready_ports()), container.ready_ports(), len(container.pending),
@@ -512,6 +565,8 @@ def build_test_container(settings: Settings) -> Container:
 
     ★ 这是「绝大多数测试不依赖外部服务」的落地手段。
     """
+    from application.services.conversation import ConversationStore
+    from application.services.ops_metrics import OpsMetrics
     from tests.fakes import (
         FakeCachePort,
         FakeGraphQueryPort,
@@ -531,4 +586,10 @@ def build_test_container(settings: Settings) -> Container:
         repository=FakeRepositoryPort(),
         cache=FakeCachePort(),
         file_storage=InMemoryFileStorage(),
+        conversation_store=ConversationStore(
+            max_sessions=settings.multi_turn_max_sessions,
+            max_turns=settings.multi_turn_max_turns,
+            ttl_sec=settings.multi_turn_ttl_sec,
+        ),
+        metrics=OpsMetrics(),
     )

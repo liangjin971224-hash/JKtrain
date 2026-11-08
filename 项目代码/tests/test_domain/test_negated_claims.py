@@ -278,3 +278,70 @@ class TestMedicalContextAllowed:
             f"合规回答被误拦\n"
             f"命中: {[(v.rule_id, v.matched) for v in result.violations]}"
         )
+
+
+# ===================================================================
+# 5. ★ A2（2026-11-08）：产品否定治疗表述必须放行
+# ===================================================================
+class TestProductTreatmentNegation:
+    """v3/FT 回答常写「本品不是治疗药物，不能治疗疾病」，DC-01 曾误拦。
+
+    只放行对**产品**的否定；肯定式与「不建议治疗」这类对疾病的建议仍拦。
+    """
+
+    @pytest.mark.parametrize("text", [
+        "本品不是治疗药物，不能治疗疾病。",
+        "保健食品不是治疗药物，不能治疗疾病。",
+        "它不能治疗糖尿病，只能辅助调理。",
+        "该产品不能用于治疗高血脂症。",
+        "不能作为治疗手段使用。",
+        "这不是治疗，是日常营养补充。",
+    ])
+    def test_product_negation_allowed(self, text: str) -> None:
+        result = check_forbidden_claims(text)
+        assert not result.has_critical, (
+            f"产品否定治疗被误拦: {text}\n"
+            f"命中: {[(v.rule_id, v.matched) for v in result.violations]}"
+        )
+
+    @pytest.mark.parametrize("text", [
+        "这个能治疗糖尿病",
+        "这个可以治疗高血脂",
+        "虽然不是药，但能治疗",
+        "该产品有治疗作用",
+        "不建议治疗，观察就行",
+    ])
+    def test_affirmative_or_medical_advice_blocked(self, text: str) -> None:
+        assert check_forbidden_claims(text).has_critical, f"漏检: {text}"
+
+
+# ===================================================================
+# 6. ★ A2b（2026-11-08）：无引号的「教学/劝阻/名词化提及」必须放行
+# ===================================================================
+class TestMentionContext:
+    """v3/FT 回答会写「绝不能暗示可以停药」等劝阻句，DC/DR/JD 曾误拦。"""
+
+    @pytest.mark.parametrize("text", [
+        "绝不能暗示可以停药，必须请遵医嘱。",
+        "别人没事不代表您也一定没事。",
+        "若涉及停药/替代药物，务必使用劝阻性表述。",
+        "不能承诺一定没事，要说个体差异较大。",
+        "禁止使用「可以停药」这类说法。",
+        "禁止使用他人背书：不要说很多人吃了都好。",
+    ])
+    def test_mention_allowed(self, text: str) -> None:
+        result = check_forbidden_claims(text)
+        assert not result.has_critical, (
+            f"教学/劝阻提及被误拦: {text}\n"
+            f"命中: {[(v.rule_id, v.matched) for v in result.violations]}"
+        )
+
+    @pytest.mark.parametrize("text", [
+        "这个可以替代药物",
+        "吃这个可以停药",
+        "保证一定没事",
+        "这个能治疗糖尿病",
+        "很多人吃了都好",
+    ])
+    def test_bare_claims_still_blocked(self, text: str) -> None:
+        assert check_forbidden_claims(text).has_critical, f"裸宣称被漏放: {text}"

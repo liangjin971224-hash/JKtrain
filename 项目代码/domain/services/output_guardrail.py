@@ -150,6 +150,68 @@ def split_sentences(text: str) -> list[str]:
     return out or [text.strip()]
 
 
+#: 需要核实的数字（阿拉伯数字，含小数）。
+_NUMBER_RE = re.compile(r"\d+(?:\.\d+)?")
+
+
+def ungrounded_numbers(text: str, evidence: str) -> tuple[str, ...]:
+    """返回回答里出现、但资料里找不到的数字。
+
+    ★ 为什么需要这道检查（端到端实测）：
+      模型为了让句子完整，会把资料里没有的数字补上——问价格答「128 元」、
+      问体脂答「参考范围 18% 到 25%」。这不是措辞问题，是事实编造；
+      提示词约束和 LoRA 微调都压不住（实测四轮迭代仍会编），
+      必须在输出侧确定性地拦。
+
+    ★ 只比数字，不做语义判断：数字有没有依据可以精确判定，
+      不存在「模型理解」的余地。
+
+    Args:
+        text: 模型的回答。
+        evidence: 模型收到的全部资料（含问题本身）。
+
+    Returns:
+        资料里没有的数字，按长度升序。空元组表示全部有依据。
+    """
+    if not text:
+        return ()
+    allowed = set(_NUMBER_RE.findall(evidence or ""))
+    found = {n for n in _NUMBER_RE.findall(text) if n not in allowed}
+    return tuple(sorted(found, key=lambda s: (len(s), s)))
+
+
+def strip_ungrounded_sentences(
+    text: str, evidence: str
+) -> tuple[str, tuple[str, ...]]:
+    """删掉含无依据数字的整句，返回 (保留文本, 被删掉的数字)。
+
+    ★ 为什么删句而不是整段拒答：
+      编造通常只发生在个别句子上，其余句子是有依据的。
+      整段拒答会把有用内容一起丢掉，用户只想要一个价格却得到「无法回答」。
+      删掉那一句后，剩下的往往正是「资料里没有价格信息」这句正确的表述。
+
+    Args:
+        text: 模型的回答。
+        evidence: 模型收到的全部资料。
+
+    Returns:
+        (保留的文本, 被删掉的数字元组)。文本可能为空（整段都在编）。
+    """
+    if not text:
+        return "", ()
+
+    kept: list[str] = []
+    dropped: set[str] = set()
+    for sentence in split_sentences(text):
+        bad = ungrounded_numbers(sentence, evidence)
+        if bad:
+            dropped.update(bad)
+            continue
+        kept.append(sentence)
+
+    return "".join(kept), tuple(sorted(dropped, key=lambda s: (len(s), s)))
+
+
 #: rule_id → 给学员看的类别标签。
 #:
 #: ★ 为什么不从 reason 里正则提 `[类别]`（实测踩坑）：

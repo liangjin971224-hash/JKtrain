@@ -99,6 +99,7 @@ class FallbackLanguageModel(LanguageModelPort):
                 temperature=temperature,
                 max_tokens=max_tokens,
             ),
+            require_text=True,
         )
 
     def classify(
@@ -156,9 +157,9 @@ class FallbackLanguageModel(LanguageModelPort):
                     temperature=temperature,
                     max_tokens=max_tokens,
                 ):
-                    if not emitted_any:
+                    if not emitted_any and piece and piece.strip():
                         emitted_any = True
-                        # 首帧成功即认为该端点可用（后续失败无法切换）
+                        # 首个**非空白**增量成功即认为该端点可用
                         self.last_used = name
                         stat.success += 1
                     yield piece
@@ -218,12 +219,16 @@ class FallbackLanguageModel(LanguageModelPort):
             self._stats[name] = _EndpointStat()
         return self._stats[name]
 
-    def _try_all(self, action: str, call):
+    def _try_all(self, action: str, call, *, require_text: bool = False):
         """按顺序尝试各端点。
 
         Args:
             action: 方法名，仅用于日志。
             call: 接受端点、返回结果的调用函数。
+            require_text: 是否要求返回体有非空正文。
+                ★ generate 必须为 True：推理模型（DeepSeek flash 等）在长
+                  prompt 下可能把 max_tokens 全花在 reasoning 上，正文为空但
+                  调用本身"成功"。不把它当失败，就不会切备用，用户拿到空答案。
 
         Returns:
             第一个成功的结果。
@@ -268,6 +273,22 @@ class FallbackLanguageModel(LanguageModelPort):
                     )
                     break
                 else:
+                    # ★ 空正文不算成功：推理模型可能把 max_tokens 全花在
+                    #   reasoning 上，正文为空但 finish_reason=length。
+                    #   不切备用的话，用户会拿到「refused=False + 空答案」。
+                    if require_text and not (
+                            getattr(result, "text", "") or "").strip():
+                        stat.failed += 1
+                        errors[name] = "空正文"
+                        logger.warning(
+                            "LLM 端点返回空正文: endpoint=%s, action=%s, "
+                            "attempt=%d/%d, finish_reason=%s",
+                            name, action, attempt + 1, attempts,
+                            getattr(result, "finish_reason", ""),
+                        )
+                        if attempt + 1 < attempts:
+                            continue        # 重试同一端点
+                        break               # 换下一个端点
                     stat.success += 1
                     # ★ 切换成功时也要记录 last_error。
                     #   只在「全部失败」时记录是不够的——最常见的场景恰恰是
@@ -276,9 +297,17 @@ class FallbackLanguageModel(LanguageModelPort):
                     if errors:
                         self.last_error = "；".join(
                             f"{k}: {v}" for k, v in errors.items())
-                        logger.warning(
-                            "LLM 已降级到 %s，前序端点失败原因: %s",
-                            name, self.last_error)
+                        # ★ 只有「换了端点」才叫降级；同一端点重试成功不是降级，
+                        #   否则日志会出现「已降级到 deepseek（deepseek: 空正文）」。
+                        prior = {k: v for k, v in errors.items() if k != name}
+                        if prior:
+                            logger.warning(
+                                "LLM 已降级到 %s，前序端点失败原因: %s",
+                                name, self.last_error)
+                        else:
+                            logger.info(
+                                "LLM 端点 %s 重试后成功（前次: %s）",
+                                name, errors.get(name, ""))
                     self.last_used = name
                     return result
 

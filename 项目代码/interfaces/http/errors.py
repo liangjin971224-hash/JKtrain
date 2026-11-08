@@ -117,6 +117,7 @@ _INFRA_BASE_NAMES = frozenset({
     "LLMResponseFormatError",
     "GraphQueryError",
     "StorageError",
+    "RerankError",
 })
 
 

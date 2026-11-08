@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import os
 import sys
 from pathlib import Path
 
@@ -45,9 +46,11 @@ from pymilvus import MilvusClient
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from text_clean import clean_light                     # noqa: E402
 
-BASE = Path(r"D:\项目\某健康公司培训系统\06_正式内容")
+BASE = Path(os.getenv(
+    "CONTENT_DIR",
+    str(Path(__file__).resolve().parents[2] / "06_正式内容")))
 COLLECTION = "health_question_bank"
-MILVUS_URI = "http://127.0.0.1:19530"
+MILVUS_URI = os.getenv("MILVUS_URI", "http://127.0.0.1:19530")
 
 #: 题目标题行匹配。
 #:

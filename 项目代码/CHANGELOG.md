@@ -382,3 +382,37 @@ HTTP 真链路：两个问题都跑通，法规说对了，比价如实说无法
 
 ★ 教训：**单测绿 ≠ 接口可用**（P4 已记一次，这是第二次）；
 **误报的代价与漏报同级**（JD-02 把整段合规回答换成了拒答模板）。
+
+## 两库合并 Step 1：检索栈并入（2026-11-08）
+
+> 主干保留主干能力（月报 / 队列 / MCP / 本地 LLM），
+> 从 `健康培训移动` 并入已评测的检索与问答能力。详细盘点见
+> `健康培训移动/docs/两库差异清单_2026-11-08.md`。
+
+### 新增（来自当前侧）
+- **稀疏检索**：`SparseSearchPort` + `MilvusSearchAdapter.search_sparse/encode_sparse`，
+  `RetrieveUseCase` 支持「RRF 头部 + 稀疏候选」并集与「每路头部进窗口」
+- **重排序契约**：`RankedHit` + `RerankError`，rerank 移入检索层；
+  失败由用例降级为原排序（不再静默吞异常）
+- **多轮问答**：`conversation`（3 轮摘要 + LRU/TTL）+ `query_rewriter`
+  （规则优先，LLM 兜底），路由按 `MULTI_TURN_ENABLED` + `session_id` 生效；
+  保留主干 `new_conversation`（只清历史不换 id）
+- **运维**：`/api/ops/retrieval`、`/api/ops/metrics` + `ops_metrics`
+- **答案质量**：无依据数字剔除（`strip_ungrounded_sentences`）、
+  教学示例块剔除（`_strip_example_blocks`）、提示词 v3、空答案不变量
+- **数据入库**：案例库 49 块（7 节合并 + 附录剥离）、四库统一 `sparse_vector` 字段
+
+### 合并决策
+| 项 | 结论 |
+|---|---|
+| 案例切片 | 49 块（与微调模型 / gold 同源） |
+| LLM 后端 | 保留 http/ollama/local 4 种 `kind`，生产仍 Qwen 主 + DeepSeek 备 |
+| 多轮 | 取「改写问题」方案（不把历史塞 prompt） |
+| Rerank | 取 `RankedHit` + 抛错降级 |
+| 端口 | 并集 10 个（+`SparseSearchPort`） |
+
+### 回归
+- `pytest`：**1775 passed / 0 failed / 47 skipped**（合并前 1655）
+- `scripts/ci_gate.py`：3 条门禁全 PASS
+- 删除 `test_rerank_integration.py`（测旧「答案层重排」，已由
+  `test_rerank_retrieve.py` 覆盖）；`test_param_forwarding.py` 退役 `history`

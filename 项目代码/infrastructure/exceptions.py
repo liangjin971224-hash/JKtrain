@@ -61,3 +61,10 @@ class LLMResponseFormatError(InfrastructureError):
 
 class EmbeddingError(InfrastructureError):
     """向量化失败。"""
+
+
+class RerankError(InfrastructureError):
+    """重排序失败（模型加载、推理、超时）。
+
+    ★ 调用方（RetrieveUseCase）捕获后必须降级为原排序，不得让问答失败。
+    """

@@ -3,9 +3,14 @@
 按两轮实验的最终结论重建 4 个 collection：
 
   health_training_docs   培训正文   C3 清洗 + 标题切 + 剔「学习目标」
-  health_case_library    情景案例   L1 清洗 + 按 一、二、三… 分段
+  health_case_library    情景案例   L1 清洗 + 7 节合并为 3 块（P0-2）
   health_question_bank   题库       L1 清洗 + 每题一块 + 知识点
   health_self_test       自测题/答案 从培训文档分流，restricted（仅主管）
+
+P0-2（2026-11-07）：案例库改用 chunking_variants.chunk_case_merge()，
+chunk_id 直接用新块 id（{cid}_m{N} / {cid}_APX_m1），与
+case_chunk_map.json、retrieval_eval_v1_remap.jsonl 同源 → 49 块。
+旧的 chunk_case_split 仍保留在 chunking_variants.py 中，可回滚。
 
 ──────────────────────────────────────────────────────────────────────
 与 V1 的差异（每一条都有实测依据，见 重建说明_V2.md）
@@ -44,7 +49,7 @@ os.environ.setdefault("HF_HUB_OFFLINE", "1")
 sys.path.insert(0, ".")
 from chunking_variants import (
     BASE_DIR_STR, TRAINING_PERMISSION,
-    chunk_case_split, chunk_heading,
+    chunk_case_merge, chunk_case_split, chunk_heading,   # split 保留供回滚
     is_meta_section, is_qa_section,
 )
 from common import Embedder, get_client
@@ -64,16 +69,20 @@ COLLECTIONS = {
 # ===================================================================
 # Schema
 # ===================================================================
-def create_collection(client, name: str, with_kp: bool = False) -> None:
-    """建 collection。with_kp=True 时追加题库专用字段。"""
-    from pymilvus import DataType
+def build_schema_and_index(client, with_kp: bool = False):
+    """构造 P0-3 的 schema 与索引，不落库（便于打印核对）。
 
-    if client.has_collection(name):
-        client.drop_collection(name)
+    P0-3：四个 collection 统一增加 sparse_vector（bge-m3 lexical_weights），
+    与原有 dense vector 共存；索引用 SPARSE_INVERTED_INDEX / IP，
+    drop_ratio_build=0.2。dense 侧的 HNSW/COSINE 参数保持不变，
+    确保 --retrieval dense 与历史基线可比。
+    """
+    from pymilvus import DataType
 
     s = client.create_schema(auto_id=True, enable_dynamic_field=False)
     s.add_field("id", DataType.INT64, is_primary=True, auto_id=True)
     s.add_field("vector", DataType.FLOAT_VECTOR, dim=EMBED_DIM)
+    s.add_field("sparse_vector", DataType.SPARSE_FLOAT_VECTOR)
 
     s.add_field("chunk_id", DataType.VARCHAR, max_length=64)
     s.add_field("text", DataType.VARCHAR, max_length=12000)
@@ -98,6 +107,8 @@ def create_collection(client, name: str, with_kp: bool = False) -> None:
     ip = client.prepare_index_params()
     ip.add_index(field_name="vector", index_type="HNSW", metric_type="COSINE",
                  params={"M": 16, "efConstruction": 200})
+    ip.add_index(field_name="sparse_vector", index_type="SPARSE_INVERTED_INDEX",
+                 metric_type="IP", params={"drop_ratio_build": 0.2})
     # 权限过滤 / 知识点过滤是高频 exact-match，建标量索引
     scl_fields = ["permission_level", "category", "doc_id"]
     if with_kp:
@@ -105,6 +116,15 @@ def create_collection(client, name: str, with_kp: bool = False) -> None:
     for f in scl_fields:
         ip.add_index(field_name=f, index_type="INVERTED")
 
+    return s, ip
+
+
+def create_collection(client, name: str, with_kp: bool = False) -> None:
+    """建 collection。with_kp=True 时追加题库专用字段。"""
+    if client.has_collection(name):
+        client.drop_collection(name)
+
+    s, ip = build_schema_and_index(client, with_kp=with_kp)
     client.create_collection(collection_name=name, schema=s, index_params=ip)
 
 
@@ -159,22 +179,25 @@ def parse_training() -> tuple[list[dict], list[dict]]:
 
 
 def parse_cases() -> list[dict]:
-    """情景案例 → 按 一、二、三… 分段。
+    """情景案例 → P0-2 合并粒度：7 节 → 3 块（场景/要求/示范）+ 附录块。
 
-    参考答案作为独立块保留（category=case，section 含「参考答案」），
-    P5 演练评阅需要它。共 16 个案例 → 约 117 块。
+    与 chunking_variants.chunk_case_merge() / case_chunk_map.json 同源：
+    先切块 → clean_light(body) → <30 字丢弃，chunk_id 直接用新块 id，
+    保证 §3.2 C-2 remap 后的 gold 逐字命中。16 个案例 → 49 块。
+    旧 chunk_case_split 保留在 chunking_variants.py 中供回滚。
     """
     units: list[dict] = []
     for f in sorted((BASE / "02_情景案例").glob("*.md")):
         md = f.read_text(encoding="utf-8")
-        for idx, (cid, ctitle, sec, body) in enumerate(chunk_case_split(md)):
+        for idx, (new_id, cid, ctitle, group, body, sections) in enumerate(
+                chunk_case_merge(md)):
             text = clean_light(body)
             if len(text) < 30:
                 continue
-            kind = "answer" if "参考答案" in sec else \
-                   "rubric" if ("评分" in sec or "违禁" in sec) else "scene"
+            kind = "answer" if group == "示范" else \
+                   "rubric" if group == "要求" else "scene"
             units.append(dict(
-                chunk_id=f"{cid}_s{idx:02d}",
+                chunk_id=new_id,
                 text=text[:11000],
                 source_dir="02_情景案例",
                 source_file=f.name,
@@ -184,9 +207,10 @@ def parse_cases() -> list[dict]:
                 permission_level="restricted",
                 review_status="approved",
                 data_origin="synthetic",
-                section=f"{ctitle} · {sec}",
+                section=f"{ctitle} · {group}",
                 chunk_index=idx,
-                extra=json.dumps({"section_type": kind}, ensure_ascii=False),
+                extra=json.dumps({"section_type": kind, "group": group,
+                                  "sections": sections}, ensure_ascii=False),
             ))
     return units
 
@@ -197,7 +221,8 @@ _KP_RE = re.compile(
     re.M,
 )
 _Q_RE = re.compile(
-    r"^#{2,3}\s+([QS]\d{3})\s*([★☆]{1,3})?\s*[（(]?[^）)\n]*[）)]?\s*$",
+    # 标题只能匹配本行；\s 会跨过空行并吞掉下一行的题干。
+    r"^#{2,3}[ \t]+([QS]\d{3})[ \t]*([★☆]{1,3})?[^\n]*?(?=\n|$)",
     re.M,
 )
 
@@ -283,17 +308,28 @@ def ingest(client, emb, key: str, units: list[dict], with_kp: bool = False) -> i
         return 0
 
     t0 = time.perf_counter()
-    vecs = emb.encode([u["text"] for u in units])
+    texts = [u["text"] for u in units]
+    vecs = emb.encode(texts)
+    # P0-3 4.2-C：与 dense 同批文本产出稀疏向量，逐行双写
+    sparse_vecs = emb.encode_sparse(texts)
+    if len(sparse_vecs) != len(units):
+        raise RuntimeError(f"[{key}] sparse 向量条数 {len(sparse_vecs)} != 块数 {len(units)}")
+    empty = sum(1 for s in sparse_vecs if not s)
+    if empty:
+        raise RuntimeError(f"[{key}] 有 {empty} 条空稀疏向量，拒绝入库")
     create_collection(client, name, with_kp=with_kp)
 
-    rows = [dict(u, vector=v) for u, v in zip(units, vecs)]
+    rows = [dict(u, vector=v, sparse_vector=s)
+            for u, v, s in zip(units, vecs, sparse_vecs)]
     for i in range(0, len(rows), 100):
         client.insert(collection_name=name, data=rows[i:i + 100])
     client.flush(name)
 
     lens = [len(u["text"]) for u in units]
+    avg_sparse = sum(len(s) for s in sparse_vecs) / len(sparse_vecs)
     print(f"  写入 {len(rows)} 条 | 平均 {sum(lens)/len(lens):.0f} 字 | "
-          f"最长 {max(lens)} 字 | 耗时 {time.perf_counter()-t0:.1f}s")
+          f"最长 {max(lens)} 字 | sparse 平均 {avg_sparse:.0f} token | "
+          f"耗时 {time.perf_counter()-t0:.1f}s")
     return len(rows)
 
 

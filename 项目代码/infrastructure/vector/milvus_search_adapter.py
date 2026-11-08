@@ -28,9 +28,11 @@ from typing import Any
 
 from pymilvus import MilvusClient
 
+from pathlib import Path
+
 from config.settings import Settings
 from domain.exceptions import EmbeddingDimensionError
-from domain.ports import VectorSearchPort
+from domain.ports import SparseSearchPort, VectorSearchPort
 from domain.value_objects import ChunkMeta, VectorHit
 from infrastructure.exceptions import VectorSearchError
 
@@ -57,8 +59,13 @@ _QUESTION_ONLY_FIELDS = ("knowledge_point", "question_type", "difficulty")
 _VALID_PERMISSIONS = frozenset({"public", "internal", "restricted", "confidential"})
 
 
-class MilvusSearchAdapter(VectorSearchPort):
-    """Milvus 语义检索实现。"""
+class MilvusSearchAdapter(VectorSearchPort, SparseSearchPort):
+    """Milvus 语义检索 + 稀疏检索实现。
+
+    ★ 两个端口同一个实例：共用一份模型、一个 Milvus 连接。
+      但**分数不共用阈值**（dense 余弦 0~1 / sparse IP 无上界），
+      阈值分别由调用方按路传入。
+    """
 
     def __init__(self, client: MilvusClient, *, settings: Settings) -> None:
         """
@@ -69,6 +76,8 @@ class MilvusSearchAdapter(VectorSearchPort):
         self._client = client
         self._settings = settings
         self._model: Any = None          # 惰性加载，见 _ensure_model
+        self._sparse_head: Any = None    # 惰性加载，见 _ensure_sparse_head
+        self._special_ids: frozenset[int] = frozenset()
         # collection → 该库实际存在的输出字段（惰性探测并缓存）
         self._field_cache: dict[str, list[str]] = {}
 
@@ -225,6 +234,13 @@ class MilvusSearchAdapter(VectorSearchPort):
                 limit=top_k,
                 filter=expr,
                 output_fields=self._output_fields(collection),
+                # ★ 必须显式指定 anns_field。
+                #   P0-3 给四个 collection 加了 sparse_vector 之后，库里存在
+                #   两个向量字段，不指定会报：
+                #     MilvusException: multiple anns_fields exist,
+                #     please specify a anns_field in search_params
+                #   后果是向量路整路降级、只剩 BM25（静默、不报错）。
+                anns_field="vector",
             )
         except Exception as exc:              # noqa: BLE001
             raise VectorSearchError(
@@ -262,6 +278,121 @@ class MilvusSearchAdapter(VectorSearchPort):
                 f"向量化失败: {type(exc).__name__}: {exc}") from exc
 
         return [v.tolist() for v in vectors]
+
+    # ---------------- 稀疏检索（P0-3 结论：案例库并集） ----------------
+    def _ensure_sparse_head(self) -> tuple[Any, Any]:
+        """加载 bge-m3 的稀疏线性头（`sparse_linear.pt`）。
+
+        ★ 为什么自己算，而不用 `FlagEmbedding.BGEM3FlagModel`：
+          模型就是内存里这一个（`SentenceTransformer` 已加载），
+          BGEM3FlagModel 会再加载一整份 2.3 GB 权重、多花约 4s 启动。
+          手工计算与官方输出实测一致：token 集合完全相同
+          （仅多出 `<s>`/`</s>`，已排除），权重最大绝对误差 1e-7。
+
+        ★ 缺文件必须报错，不能静默：
+          官方权重不在 `pytorch_model.bin` 里，缺 `sparse_linear.pt` 时
+          FlagEmbedding 会随机初始化该层、只打一行 warning，
+          产出的稀疏向量近乎全空（P0-3 本机实测踩过）。
+        """
+        if self._sparse_head is not None:
+            return self._sparse_head
+
+        import torch
+
+        path = Path(self._settings.embed_model_dir) / "sparse_linear.pt"
+        if not path.exists():
+            raise VectorSearchError(
+                f"缺少稀疏权重 {path}（bge-m3 的 sparse_linear.pt）",
+                collection="*",
+            )
+
+        state = torch.load(path, map_location="cpu", weights_only=True)
+        weight = state["weight"].float()
+        bias = state["bias"].float()
+        # 特殊 token（<s>/</s>）不参与词权重，与官方实现一致
+        self._special_ids = frozenset(
+            int(i) for i in self._ensure_model().tokenizer.all_special_ids)
+        self._sparse_head = (weight, bias)
+        logger.info("bge-m3 稀疏头加载完成: %s", path.name)
+        return self._sparse_head
+
+    def encode_sparse(self, text: str) -> dict[int, float]:
+        """文本 → 稀疏词权重 `{token_id: weight}`（bge-m3 lexical_weights）。"""
+        import torch
+
+        if not (text or "").strip():
+            return {}
+
+        weight, bias = self._ensure_sparse_head()
+        model = self._ensure_model()
+        tokenizer = model.tokenizer
+        encoder = model[0].auto_model          # bge-m3 的 XLMRobertaModel
+
+        inputs = tokenizer(
+            [text], padding=True, truncation=True,
+            max_length=self._settings.embed_max_seq_length,
+            return_tensors="pt",
+        )
+        with torch.no_grad():
+            hidden = encoder(**inputs).last_hidden_state.float()
+            scores = torch.relu(
+                torch.nn.functional.linear(hidden, weight, bias)
+            ).squeeze(-1)[0]
+
+        out: dict[int, float] = {}
+        for tid, score in zip(inputs["input_ids"][0].tolist(), scores.tolist()):
+            if tid in self._special_ids or score <= 0:
+                continue
+            # 同一 token 出现多次取最大权重，与官方实现一致
+            out[tid] = max(out.get(tid, 0.0), score)
+        return out
+
+    def search_sparse(
+        self,
+        query: str,
+        *,
+        collection: str,
+        top_k: int = 20,
+        filter_expr: str | None = None,
+        allowed_permissions: tuple[str, ...] | None = None,
+    ) -> list[VectorHit]:
+        """稀疏（IP）检索。`score` 是 IP 分数，不可与余弦分数比较。"""
+        text = (query or "").strip()
+        if not text or top_k <= 0:
+            return []
+
+        expr = self._build_filter(allowed_permissions, filter_expr)
+        sparse = self.encode_sparse(text)
+        if not sparse:
+            logger.debug("稀疏编码为空，跳过: %r", text[:30])
+            return []
+
+        try:
+            raw = self._client.search(
+                collection_name=collection,
+                data=[sparse],
+                anns_field="sparse_vector",
+                search_params={"metric_type": "IP"},
+                limit=top_k,
+                filter=expr,
+                output_fields=self._output_fields(collection),
+            )
+        except Exception as exc:              # noqa: BLE001
+            raise VectorSearchError(
+                f"稀疏检索失败: {type(exc).__name__}: {exc}",
+                collection=collection,
+            ) from exc
+
+        hits = raw[0] if raw else []
+        out = [
+            VectorHit(chunk=_to_chunk_meta(h["entity"]), score=float(h["distance"]))
+            for h in hits
+        ]
+        logger.debug(
+            "稀疏检索: collection=%s, top_k=%d, 返回=%d, tokens=%d, filter=%s",
+            collection, top_k, len(out), len(sparse), expr,
+        )
+        return out
 
     def get_chunks_by_ids(
         self, chunk_ids: list[str], *, collection: str

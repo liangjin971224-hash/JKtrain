@@ -42,7 +42,11 @@ from domain.services.intent_classifier import (
     IntentClassifier,
     IntentResult,
 )
-from domain.services.output_guardrail import OutputGuardrail
+from domain.services.output_guardrail import (
+    GuardrailVerdict,
+    OutputGuardrail,
+    strip_ungrounded_sentences,
+)
 from domain.services.rrf_fusion import INTENT_WEIGHTS
 from domain.services.stream_guard import StreamGuard
 from domain.value_objects import (
@@ -106,18 +110,20 @@ def _sanitize_reason(reason: str) -> str:
 
 
 #: 参考资料里需要剔除的「错误示范」标记。
+#:
+#: ★ 不能把 × 当标记：规格写法天然含乘号（`0.5g/片 × 120 片`、
+#:   `1.0g/粒 × 60 粒/瓶`）。按行剔除会把整条规格行删掉，
+#:   模型因此看不到规格，问规格只能答「资料里没有」。
 _BAD_EXAMPLE_MARK = re.compile(
-    r"(?:❌|✗|×|错误示范|错误说法|错误表述|反例|不建议这样|不要这样|别这么说)"
+    r"(?:❌|✗|错误示范|错误说法|错误表述|反例|不建议这样|不要这样|别这么说)"
 )
 
 #: 「教学示例块」的块标题标记。
 #:
 #: ★ 为什么需要（2026-11-06 端到端实测）：
 #:   问「在吃阿司匹林，能吃鱼油吗」，模型把 D012《客户档案记录规范》的
-#:   「**填写示例**」代码块**整段照抄**当答案：
-#:       后续安排：- 建议客户先咨询医生确认能否食用鱼油
-#:   那段是「怎么填档案」的教学样例，不是产品事实。检索把它当相关资料召回，
-#:   模型分不清「示例」和「事实」——3B 的能力上限，改 prompt 更可靠。
+#:   「**填写示例**」代码块**整段照抄**当答案。
+#:   那段是「怎么填档案」的教学样例，不是产品事实。
 _EXAMPLE_BLOCK_TITLE = re.compile(
     r"(?:填写示例|填写范例|示例[：:]|范例[：:]|模板[：:]|"
     r"标准话术模板|沟通示例|改写示例|示范[：:])"
@@ -126,9 +132,6 @@ _EXAMPLE_BLOCK_TITLE = re.compile(
 #: Markdown 代码围栏。
 #:
 #: ★ 必须容忍 2 个反引号（实测：源文档是 ```，但入库分块后变成 ``）。
-#:   2026-11-06 端到端排查发现 prompt 里 D012 的围栏只剩 2 个反引号，
-#:   只匹配 3 个的规则会漏掉——示例块剔不掉，模型就把它当答案抄。
-#:   这里按「2 个及以上」匹配，对两种数据都成立。
 _FENCE = re.compile(r"^\s*`{2,}")
 
 
@@ -137,15 +140,12 @@ def _strip_example_blocks(text: str) -> str:
 
     ★ 判据必须同时满足（避免误伤）：
       1. 某一行是**块标题**（命中 `_EXAMPLE_BLOCK_TITLE`）
-      2. 从该行往后（跳过空行）遇到的第一个非空行是**代码围栏 ``` **
+      2. 从该行往后（跳过空行）遇到的第一个非空行是**代码围栏** ```
 
       只有 1 没有 2 → 不剔。实测依据：
-        · `**填写示例**：` + ``` 围栏        → 要剔（D012 就栽在这）
-        · `## 七、评分示例` + `> 引用块`     → 不剔（是评分标准，有用）
-        · `### 5.2 八个改写示例` + 表格      → 不剔（改写对照表，有用）
-        · 正文「可以参考示例，但别照抄」      → 不剔（只是提了一句）
-
-      这个「标题 + 围栏」双条件，是把「教学样例」与「知识内容」分开的最小判据。
+        · `**填写示例**：` + 围栏        → 要剔（D012 就栽在这）
+        · `## 七、评分示例` + `> 引用块` → 不剔（是评分标准，有用）
+        · `### 5.2 八个改写示例` + 表格   → 不剔（改写对照表，有用）
 
     Returns:
         剔除示例块后的文本。
@@ -227,19 +227,34 @@ class AnswerQuestionUseCase:
         graph: GraphQueryPort | None = None,
         vector=None,
         keyword=None,
+        sparse=None,
+        sparse_collections: frozenset[str] = frozenset(),
+        min_sparse_score: float = 0.02,
+        path_head_collections: frozenset[str] = frozenset(),
         llm: LanguageModelPort | None = None,
         guardrail: OutputGuardrail | None = None,
+        llm_max_tokens: int = 2048,
         min_vector_score: float = 0.50,
         min_keyword_score: float = 14.0,
+        context_docs: int = 5,
+        prompt_variant: str = "v3",
         guardrail_retries: int = 1,
         repository=None,
         intent_classifier: IntentClassifier | None = None,
-        reranker=None,
-        rerank_candidates: int = 20,
-        rerank_top_k: int = 5,
+        rerank=None,
+        rerank_candidate_k: int = 20,
     ) -> None:
         """
         Args:
+            context_docs: 提示词里放多少条参考资料（默认 5）。
+                ★ 扩到 8/10 可提升上下文覆盖（案例库 26→28→30），但会增加
+                  噪声，必须经答案级 A/B 才改默认（见 settings.context_docs）。
+            prompt_variant: 系统提示词版本。`v3`（默认）= 八条硬约束 +
+                「回答前自检」四条（批准原文/替代说法/先问清/来源分级）；
+                `v2` = 只有八条硬约束（回滚用）。v3 已经 45 题主集 +
+                24 题独立 held-out 验证。
+            path_head_collections: 启用「每路头部进窗口」的 collection
+                （P1-a，默认由配置给文档库开启；空集 = 纯 RRF 回滚）。
             guardrail_retries: 护栏拦截后的重试次数。
 
             ★ 为什么需要重试（端到端实测发现）：
@@ -264,33 +279,32 @@ class AnswerQuestionUseCase:
               ★ 分类器**放在用例里**而不是接口层：这样流式、非流式、
                 以及将来任何调用方（CLI / 批处理）都自动获得意图，
                 不会再出现「某个入口忘了传」的情况。
-
-            reranker: 候选重排端口（可选）。为 None 时按 RRF 原顺序取前
-                `rerank_top_k` 条 —— 重排是**增强**，不是必需品，
-                所以这里必须容忍 None，不能让它变成启动依赖。
-
-            rerank_candidates: 送入重排的候选条数。
-                取 20 而不是全部：重排是 cross-encoder，延迟随条数线性增长。
-
-            rerank_top_k: 重排后进 prompt 的参考资料条数（原 `docs[:5]`）。
         """
         self._retriever = RetrieveUseCase(
             graph=graph, vector=vector, keyword=keyword,
+            sparse=sparse,
+            sparse_collections=sparse_collections,
+            min_sparse_score=min_sparse_score,
+            path_head_collections=path_head_collections,
+            rerank=rerank,
+            rerank_candidate_k=rerank_candidate_k,
             min_vector_score=min_vector_score,
             min_keyword_score=min_keyword_score,
         )
         self._graph = graph
         self._llm = llm
+        #: 单次生成 token 上限（A3：给推理模型留余量，避免正文为空）。
+        self._llm_max_tokens = max(int(llm_max_tokens), 256)
+        #: 参考资料条数（P1-b）。钳到 ≥1，避免配置成 0 时 prompt 无参考资料。
+        self._context_docs = max(int(context_docs), 1)
+        #: 系统提示词版本（P1-c）。未知值按 v2 处理，避免配置写错改变行为。
+        self._prompt_variant = (prompt_variant or "v2").strip().lower()
         self._guardrail = guardrail or OutputGuardrail()
         self._guardrail_retries = max(guardrail_retries, 0)
         #: 仓储（可选）。有值时，召回为空会写未命中日志（FR-047）
         self._repo = repository
         #: 意图分类器（默认纯规则，不调 LLM —— 见 `intent_classifier` 模块注释）
         self._intent_classifier = intent_classifier or IntentClassifier()
-        #: 重排（可选）。None 时走 RRF 原顺序。
-        self._reranker = reranker
-        self._rerank_candidates = max(rerank_candidates, rerank_top_k)
-        self._rerank_top_k = max(rerank_top_k, 1)
 
     # ---------------- 主流程 ----------------
     def execute(
@@ -305,7 +319,6 @@ class AnswerQuestionUseCase:
         intent: str = "",
         top_k: int = 20,
         fact_hints: list[str] | None = None,
-        history: str = "",
     ) -> UseCaseResult:
         """回答问题。
 
@@ -330,17 +343,6 @@ class AnswerQuestionUseCase:
 
                 所以：上一步查实的结论必须作为权威事实喂进去，
                 不能只用于比价而不进 prompt。
-            history: 前几轮的对话摘要（已渲染成文本，由会话存储给出）。
-
-                ★ 为什么只进 prompt、**不进召回**：
-                  追问的检索目标仍然是**当前这句话**。
-                  把历史也拿去召回会把结果带偏
-                  （问「第 1 点呢」，历史里有鱼油，召回就全跑鱼油去了）。
-                  历史的作用只有两个：让模型知道指代、让答案接得上。
-
-                ★ 为什么是字符串而不是对象：
-                  应用层不该知道「会话怎么存、留几轮、怎么编号」。
-
         Returns:
             回答结果。`refused=True` 时 `answer` 是拒答话术。
         """
@@ -399,8 +401,7 @@ class AnswerQuestionUseCase:
         facts = self._load_facts(product_ids, retrieval)
 
         # ---- 4. 分区组装 ----
-        prompt = self._build_prompt(
-            text, retrieval, facts, fact_hints=hints, history=history)
+        prompt = self._build_prompt(text, retrieval, facts, fact_hints=hints)
 
         # ---- 5~6. 生成 + 护栏（带重试）----
         category = self._category_of(facts, retrieval)
@@ -421,6 +422,7 @@ class AnswerQuestionUseCase:
                     prompt,
                     system_prompt=self._system_prompt(),
                     temperature=0.0,
+                    max_tokens=self._llm_max_tokens,
                 )
             except Exception as exc:              # noqa: BLE001 生成失败要转拒答
                 logger.error("LLM 生成失败: %s", exc, exc_info=True)
@@ -432,9 +434,35 @@ class AnswerQuestionUseCase:
                                     intent_result=intent_result),
                 )
 
+            # ---- 数字核实（★ 编造数字零容忍，先于护栏执行）----
+            # 模型会把资料里没有的价格、参考范围补成完整句子，实测四轮微调
+            # 都压不住。这里按句剔除含无依据数字的句子，其余内容照常输出。
+            last_text, ungrounded = strip_ungrounded_sentences(gen.text, prompt)
+            if ungrounded:
+                logger.warning(
+                    "剔除无依据数字所在的句子: numbers=%s", list(ungrounded))
+                if not last_text.strip():
+                    verdict = GuardrailVerdict(
+                        blocked=True,
+                        reason="回答中的数字在资料里找不到",
+                        violations=ungrounded,
+                        rule_ids=("NUM-01",),
+                    )
+                    return UseCaseResult(
+                        answer=BLOCKED_TEMPLATE.format(
+                            reason=_sanitize_reason(verdict.reason)),
+                        refused=True,
+                        refusal_reason=f"输出护栏拦截: {verdict.reason}",
+                        cited_chunk_ids=tuple(h.chunk_id for h in retrieval.fused),
+                        product_ids=tuple(f.product_id for f in facts),
+                        meta=self._meta(retrieval, t0, llm_called=True,
+                                        intent_result=intent_result,
+                                        blocked_rules=verdict.rule_ids,
+                                        llm_attempts=attempts),
+                    )
+
             # ---- 护栏（★ 必经节点，每次生成都要过）----
-            last_text = gen.text
-            verdict = self._guardrail.check(gen.text, category=category)
+            verdict = self._guardrail.check(last_text, category=category)
             if not verdict.blocked:
                 break
 
@@ -449,7 +477,7 @@ class AnswerQuestionUseCase:
             annotation = self._guardrail.annotate(
                 last_text, category=category)
 
-            if annotation.has_safe_content:
+            if annotation.has_safe_content and annotation.safe_text.strip():
                 # ★ 部分保留：给出合规内容 + 标注明细供前端标红
                 logger.info(
                     "护栏部分拦截：保留 %d 段，剔除 %d 段",
@@ -493,8 +521,28 @@ class AnswerQuestionUseCase:
             )
 
         # ---- 7. 正常返回 ----
+        # ★ A3 不变量：refused=False 时正文必须非空。推理模型可能把
+        #   max_tokens 全花在 reasoning 上（finish_reason=length），
+        #   此时宁可拒答，也不能给用户一个空答案。
+        if not last_text.strip():
+            logger.warning(
+                "LLM 返回空正文，转拒答: finish_reason=%s",
+                getattr(gen, "finish_reason", ""))
+            return UseCaseResult(
+                answer=BLOCKED_TEMPLATE.format(reason="模型未产出正文"),
+                refused=True,
+                refusal_reason="输出为空: 模型未产出正文",
+                cited_chunk_ids=tuple(h.chunk_id for h in retrieval.fused),
+                product_ids=tuple(f.product_id for f in facts),
+                meta=self._meta(
+                    retrieval, t0, llm_called=True,
+                    intent_result=intent_result,
+                    finish_reason=getattr(gen, "finish_reason", ""),
+                    llm_attempts=attempts),
+            )
+
         return UseCaseResult(
-            answer=gen.text,
+            answer=last_text,
             refused=False,
             cited_chunk_ids=tuple(h.chunk_id for h in retrieval.fused),
             product_ids=tuple(f.product_id for f in facts),
@@ -520,7 +568,6 @@ class AnswerQuestionUseCase:
         intent: str = "",
         top_k: int = 20,
         fact_hints: list[str] | None = None,
-        history: str = "",
     ) -> Iterator[StreamEvent]:
         """流式回答问题。
 
@@ -581,13 +628,17 @@ class AnswerQuestionUseCase:
 
         # ---- 3~4. 事实 + 组装（与非流式一致）----
         facts = self._load_facts(product_ids, retrieval)
-        prompt = self._build_prompt(
-            text, retrieval, facts, fact_hints=hints, history=history)
+        prompt = self._build_prompt(text, retrieval, facts, fact_hints=hints)
         category = self._category_of(facts, retrieval)
 
         # ---- 5. 流式生成 + 逐句护栏 ----
-        guard = StreamGuard(guardrail=self._guardrail, category=category)
+        # evidence 用于逐句核实数字：含无依据数字的句子直接不产出，
+        # 但不终止整条流（与非流式的「删句」语义保持一致）。
+        guard = StreamGuard(
+            guardrail=self._guardrail, category=category, evidence=prompt)
         llm_attempts = 0
+        #: A3：是否产出过非空白正文；流式下空流也必须标 refused。
+        emitted_any = False
 
         for attempt in range(self._guardrail_retries + 1):
             llm_attempts = attempt + 1
@@ -599,8 +650,11 @@ class AnswerQuestionUseCase:
                         prompt,
                         system_prompt=self._system_prompt(),
                         temperature=0.0,
+                        max_tokens=self._llm_max_tokens,
                     )
                 ):
+                    if sentence and sentence.strip():
+                        emitted_any = True
                     yield StreamEvent(kind="text", text=sentence)
             except Exception as exc:              # noqa: BLE001
                 logger.error("LLM 流式生成失败: %s", exc, exc_info=True)
@@ -651,6 +705,18 @@ class AnswerQuestionUseCase:
                 return
 
             # 通过
+            # ★ A3：空流不能算成功（推理模型 reasoning 吃满 max_tokens）。
+            if not emitted_any:
+                logger.warning("LLM 流式返回空正文，标拒答")
+                yield StreamEvent(
+                    kind="done", refused=True,
+                    refusal_reason="输出为空: 模型未产出正文",
+                    meta=self._meta(
+                        retrieval, t0, llm_called=True,
+                        intent_result=intent_result,
+                        llm_attempts=llm_attempts),
+                )
+                return
             yield StreamEvent(
                 kind="done", refused=False,
                 meta={
@@ -711,14 +777,18 @@ class AnswerQuestionUseCase:
             meta=meta or {"llm_called": False},
         )
 
-    @staticmethod
-    def _system_prompt() -> str:
-        """系统提示。把三条硬约束写进 prompt。
+    def _system_prompt(self) -> str:
+        """系统提示。把硬约束写进 prompt。
 
         注意：写进 prompt 只是「减少违规概率」，不能替代护栏。
         LLM 不保证听话，所以护栏必须独立成立。
+
+        ★ 版本（P1-c）：
+          v3 = 八条硬约束 + 「回答前自检」四条（默认，已通过 45 题主集与
+               24 题独立 held-out 验证）；
+          v2 = 只有八条硬约束（回滚用，PROMPT_VARIANT=v2）。
         """
-        return (
+        base = (
             "你是连锁健康食品门店的培训助教，回答新员工的问题。\n"
             "必须遵守：\n"
             "1. 只用【结构化事实】和【参考资料】里的内容作答，不要凭常识补充。\n"
@@ -735,6 +805,32 @@ class AnswerQuestionUseCase:
             "8. **涉及停药/替代药物时必须用劝阻性表述**："
             "写「不可擅自停药」「请遵医嘱」，不要写「可以停药」。"
         )
+        if self._prompt_variant in ("v3", "v4"):
+            base += (
+                "\n\n回答前自检（只自检，不要把自检过程写进回答）：\n"
+                "A. 涉及保健功能时，是否逐字使用了【结构化事实】里「批准功能」的原文？"
+                "同义词替换不算（例如目录写「缓解视觉疲劳」，就不能写成「缓解视疲劳」）。\n"
+                "B. 指出某个说法不能用时，是否同时给出了批准的规范替代说法？"
+                "（例如「减肥」→「有助于控制体内脂肪」）；"
+                "资料没给替代说法就直接说明「资料未给出规范替代」。\n"
+                "C. 问题缺少关键信息（哪款产品、服用时长、症状细节）时，"
+                "是否先问清 1~3 个问题，再给出当前能确定的通用原则？\n"
+                "D. 依据是否来自【结构化事实】/【参考资料】的条文，而不是员工经验、"
+                "个案或顾客反馈？后者只能当线索，不能当合规依据。"
+            )
+        if self._prompt_variant == "v4":
+            base += (
+                "\n\n再核对（v4）：\n"
+                "E. **先查资料再下结论**：逐条看【参考资料】是否已有直接依据；"
+                "只有确实没有才说「资料里没有这个信息」，不要因为问题涉及推断就跳过资料。\n"
+                "F. **评分/必答要素题**：逐条覆盖资料里的 E1/E2… 要素、权重与判定说明，"
+                "不要只答其中一部分。\n"
+                "G. **不要复述禁用词**：解释某说法为什么不能用时，用「绝对化用语」"
+                "「疾病治疗类表述」等类别名代替，不要原样写出禁用词。\n"
+                "H. **不要混用其他产品资料**：只使用与问题产品对应的【结构化事实】；"
+                "参考资料里其他产品的参数、人群不得安到当前产品上。"
+            )
+        return base
 
     def _refusal_reason(self, retrieval: RetrievalResult) -> str:
         if retrieval.failed and retrieval.degraded:
@@ -801,7 +897,6 @@ class AnswerQuestionUseCase:
         facts: list[ProductFacts],
         *,
         fact_hints: list[str] | None = None,
-        history: str = "",
     ) -> str:
         """分区组装 prompt。
 
@@ -822,10 +917,6 @@ class AnswerQuestionUseCase:
                 『有助于控制体内脂肪』，但本店在售产品无此批准功能」）。
                 这些放在**最前面**并标注为权威 —— 它们是图谱查出来的，
                 比文档段落可靠，且直接决定「法规上能不能说」。
-            history: 前几轮对话摘要。放在**参考资料之前、事实之后**：
-                它只用来理解指代（「第 1 点」指什么），
-                **优先级低于**已核实事实 —— 前几轮的说法可能不严谨，
-                不能让它覆盖本轮查到的事实。
         """
         parts: list[str] = []
 
@@ -868,36 +959,15 @@ class AnswerQuestionUseCase:
                 lines.append("")
             parts.append("\n".join(lines).strip())
 
-        # ---- 分区一点五：前几轮对话（只用于理解指代）----
-        #
-        # ★ 位置很关键：放在**已核实事实之后、参考资料之前**。
-        #   理由：前几轮的回答可能有措辞不严谨之处，
-        #   若放在事实之前或与之平级，模型会优先沿用旧说法，
-        #   而本轮图谱/目录查到的事实才是最权威的。
-        #
-        # ★ 也绝不放进召回：追问的检索目标仍是当前这句话。
-        if history and history.strip():
-            parts.append(
-                "【前几轮对话】（仅用于理解追问指代什么，"
-                "若与上方已核实事实冲突，**一律以已核实事实为准**）\n"
-                + history.strip()
-            )
-
         # ---- 分区二：参考资料（向量 / 关键词）----
         docs = [h for h in retrieval.fused if h.chunk is not None]
         if docs:
-            # ★ 重排（可选增强）：RRF 只看排名不看内容，重排按「问题-文档」
-            #   相关性重新打分，补上这个盲区。
-            #   取前 N 条送重排而不是全部：cross-encoder 延迟随条数线性增长。
-            #   重排不可用（未启用/模型缺失/推理失败）时适配器内部已降级，
-            #   这里无需再判断，直接拿到列表即可。
-            picked = self._pick_docs(question, docs)
             lines = [
                 "【参考资料】（来自培训文档，仅供参考）",
                 "⚠️ 以下材料已剔除错误示范。写作时不要使用否认句（如「不能说X」），"
                 "只做正面陈述。",
             ]
-            for i, hit in enumerate(picked, 1):
+            for i, hit in enumerate(docs[:self._context_docs], 1):
                 c: ChunkMeta = hit.chunk       # type: ignore[assignment]
                 body = _strip_bad_examples(c.text)
                 if not body:
@@ -912,30 +982,6 @@ class AnswerQuestionUseCase:
         parts.append(f"【员工的问题】\n{question}")
 
         return "\n\n".join(parts)
-
-    def _pick_docs(self, question: str, docs: list) -> list:
-        """选出进 prompt 的参考资料。
-
-        分两种情况：
-        - 未启用重排 / 重排不可用 → 取前 `rerank_top_k` 条（RRF 原顺序，与改造前一致）
-        - 启用重排 → 取前 `rerank_candidates` 条送重排，返回重排后的 `rerank_top_k` 条
-
-        ★ 为什么不在这里判断 reranker 是否「成功」：
-          降级逻辑放在适配器内部（模型缺失、推理异常都返回原顺序），
-          用例层只负责「调用或不调用」。这样职责单一，也避免两处各写一套降级规则。
-        """
-        if self._reranker is None:
-            return docs[:self._rerank_top_k]
-
-        candidates = docs[:self._rerank_candidates]
-        try:
-            return self._reranker.rerank(
-                question, candidates, top_k=self._rerank_top_k)
-        except Exception as exc:                       # noqa: BLE001
-            # 适配器应已内部降级，这里是最后一道保险：
-            # 重排出任何问题都不该让用户拿不到答案。
-            logger.warning("重排调用异常，降级为 RRF 原顺序: %s", exc)
-            return docs[:self._rerank_top_k]
 
     def _log_miss(self, question: str, retrieval: RetrievalResult) -> None:
         """记录未命中（FR-047）。

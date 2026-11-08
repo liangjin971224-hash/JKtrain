@@ -26,7 +26,15 @@ from interfaces.http.errors import (
     map_domain_error,
     map_infrastructure_error,
 )
-from interfaces.http.routers import ask, auth, drill, employee, exam, reports
+from interfaces.http.routers import (
+    ask,
+    auth,
+    drill,
+    employee,
+    exam,
+    ops,
+    reports,
+)
 from interfaces.http.schemas.models import HealthResponse
 
 logger = logging.getLogger(__name__)
@@ -114,6 +122,7 @@ def create_app() -> FastAPI:
     app.include_router(exam.router)
     app.include_router(employee.router)
     app.include_router(auth.router)
+    app.include_router(ops.router)
     app.include_router(reports.router)
 
     @app.get("/api/health", response_model=HealthResponse, tags=["运维"])

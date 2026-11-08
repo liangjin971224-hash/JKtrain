@@ -41,7 +41,10 @@ ASK_PY = (Path(__file__).resolve().parents[2]
 #:
 #: 不在此列的：`vector_collection`（包装层自己从 settings 取）、
 #: `top_k`（多跳用默认值）、`intent`（包装层不传，让用例自己分类）。
-MUST_FORWARD = ("fact_hints", "product_ids", "history")
+#:
+#: ★ 2026-11-08 合并：`history` 已从列表移除——多轮改为「改写问题」方案
+#:   （`conversation` + `query_rewriter`），不再把历史注进 prompt（D4）。
+MUST_FORWARD = ("fact_hints", "product_ids")
 
 
 @pytest.fixture(scope="module")
@@ -128,15 +131,15 @@ class TestRouterForwards:
 
 
 class TestQueryPlanForwards:
-    """多跳层内部的透传（`_run_step` → `_answer` → `answer_one`）。"""
+    """多跳层内部的透传（`_run_step` → `_answer` → `answer_one`）。
+
+    ★ 2026-11-08 合并：`history` 相关的两条断言已随 D4 退役
+      （多轮改用问题改写，不再透传历史字符串）。`seed_product_ids`
+      仍在用——多轮产品切换靠它把新主语带进每一跳。
+    """
 
     QP = (Path(__file__).resolve().parents[2]
           / "application" / "use_cases" / "query_plan.py")
-
-    def test_run_step_accepts_history(self) -> None:
-        from application.use_cases.query_plan import QueryPlanUseCase
-        sig = inspect.signature(QueryPlanUseCase._run_step)
-        assert "history" in sig.parameters
 
     def test_execute_accepts_seed_products(self) -> None:
         """★ 纯指代追问（「那它有什么禁忌」）全靠这个锚点。
@@ -147,15 +150,3 @@ class TestQueryPlanForwards:
         from application.use_cases.query_plan import QueryPlanUseCase
         sig = inspect.signature(QueryPlanUseCase.execute)
         assert "seed_product_ids" in sig.parameters
-
-    def test_answer_forwards_history(self) -> None:
-        src = self.QP.read_text(encoding="utf-8")
-        m = re.search(r"def _answer\((.*?)\)\s*->", src, re.S)
-        assert m and "history" in m.group(1), "`_answer` 签名缺 history"
-
-        start = src.find("def _answer(")
-        end = src.find("# ---------------- 比价", start)
-        body = src[start:end]
-        assert 'kwargs["history"]' in body, (
-            "_answer 接受了 history 但没放进 kwargs，等于没传"
-        )

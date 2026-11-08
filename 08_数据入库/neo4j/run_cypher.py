@@ -4,15 +4,18 @@ Neo4j Cypher 执行器
 注意：Neo4j HTTP API 一次事务只能提交一条语句（管理命令限制），所以逐条执行
 """
 import json
+import os
 import re
 import sys
 import urllib.request
 import base64
 
-NEO4J_HTTP = "http://127.0.0.1:7474"
-NEO4J_USER = "neo4j"
-NEO4J_PASSWORD = "12345678"
-DATABASE = "jiankangshujuku"
+# ★ 连接参数支持环境变量覆盖（2026-10-23 迁移时改）。
+#   换机器时不用改代码，设环境变量或改这里即可。
+NEO4J_HTTP = os.getenv("NEO4J_HTTP", "http://127.0.0.1:7474")
+NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
+NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "12345678")
+DATABASE = os.getenv("NEO4J_DATABASE", "jiankangshujuku")
 
 
 def build_auth():

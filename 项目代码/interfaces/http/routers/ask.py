@@ -6,33 +6,29 @@
 
 ★ 两者都走同一个用例，区别只在「整段返回」还是「逐句返回」。
   护栏在用例层已经强制，接口层不需要也不应该重复判断。
+
+★ 多轮问答（B2~B4）：只加「会话 + 改写 + 接口」三层。
+  `session_id` 缺失 / 开关关闭 / 非法时，下面的用例调用参数、
+  响应字段与原实现**完全一致**（响应模型用 exclude_unset 挡住新字段）。
+  改写后的独立问题走原链路，检索 / 融合 / 窗口 / 生成 / 护栏 / prompt
+  一行未改。
 """
 from __future__ import annotations
 
 import json
 import logging
+import re
+import time
 from collections.abc import Iterator
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 
-import logging
-from dataclasses import dataclass
-
-from fastapi import APIRouter, Depends
-
-from application.services.llm_query_planner import (
-    CachedQueryPlanner,
-    LLMQueryPlanner,
-)
-from application.services.semantic_efficacy import SemanticEfficacyMatcher
+from application.services.conversation import ConversationSession, ConversationTurn
+from application.services.query_rewriter import QueryRewriter, RewriteResult
 from application.use_cases.answer_question import AnswerQuestionUseCase
 from application.use_cases.query_plan import QueryPlanUseCase
 from config.assembly import Container
-from interfaces.http.ask_session_store import (
-    get_ask_session_store,
-    make_turn,
-)
 from interfaces.http.auth_deps import (
     Identity,
     current_identity,
@@ -49,9 +45,12 @@ from interfaces.http.schemas.models import (
 
 logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
-
 router = APIRouter(prefix="/api", tags=["问答"])
+
+#: session_id 只允许 8~64 位字母/数字/下划线/连字符。
+#: ★ 非法一律按「无会话」处理，不返回 4xx —— 前端老版本不带这个字段，
+#:   带了脏数据也不该让整个问答挂掉。
+_SESSION_ID_RE = re.compile(r"[A-Za-z0-9_-]{8,64}")
 
 
 def _build_use_case(container: Container) -> AnswerQuestionUseCase:
@@ -65,28 +64,48 @@ def _build_use_case(container: Container) -> AnswerQuestionUseCase:
             status_code=503,
             detail="LLM 未配置，问答功能不可用。请在 .env 填 QWEN_API_KEY 或 DEEPSEEK_API_KEY",
         )
-    settings = container.settings
     return AnswerQuestionUseCase(
         graph=container.graph,
         vector=container.vector,
         keyword=container.keyword,
+        # ★ 稀疏并集（P0-3）：只对配置的 collection 生效（默认案例库）。
+        sparse=container.sparse,
+        sparse_collections=frozenset(
+            c.strip() for c in container.settings.sparse_recall_collections.split(",")
+            if c.strip()),
+        min_sparse_score=container.settings.min_sparse_score,
+        # ★ 每路头部窗口（P1-a）：默认只对文档库开；配置置空即回滚纯 RRF。
+        path_head_collections=frozenset(
+            c.strip() for c in container.settings.path_head_collections.split(",")
+            if c.strip()),
+        # ★ 参考资料条数（P1-b）：默认 5，经答案级 A/B 后再调大。
+        context_docs=container.settings.context_docs,
+        # ★ 系统提示词版本（P1-c）：默认 v3（已通过主集 + 独立 held-out 验证）。
+        prompt_variant=container.settings.prompt_variant,
         llm=container.llm,
+        # ★ A3：给推理模型留足 token，避免 reasoning 吃满导致空正文。
+        llm_max_tokens=container.settings.llm_max_tokens,
         # ★ 传入仓储：召回为空时会写未命中日志（FR-047）。
         #   仓储为 None 时功能照常，只是不记日志。
         repository=container.repository,
-        # ★ 重排（可选）：容器里为 None 时用例自动走 RRF 原顺序。
-        #   这里显式传参，避免以后新增入口又漏了它
-        #   （历史上路由漏透传可选参数踩过 4 次）。
-        reranker=container.rerank,
-        rerank_candidates=settings.rerank_candidates,
-        rerank_top_k=settings.rerank_top_k,
+        # ★ rerank（可选）：容器未启用时为 None，链路与历史行为一致。
+        #   多跳复用同一个 uc，自动获得同样的重排行为（P5 单一生成路径纪律）。
+        rerank=container.rerank,
+        rerank_candidate_k=container.settings.rerank_candidate_k,
     )
 
 
 def _build_multi_hop(
     container: Container, uc: AnswerQuestionUseCase, settings,
+    default_product_ids: tuple[str, ...] = (),
 ) -> QueryPlanUseCase:
     """装配多跳用例。
+
+    Args:
+        default_product_ids: 多轮「产品切换」解析出的新产品 ID。
+            `QueryPlanUseCase.execute` 不接受 product_ids，而纠正类问句
+            （「不是这款，是 P002」）按设计**不改写句子**，只能靠它把
+            新主语带进每一跳。单轮路径恒为空元组，行为完全不变。
 
     ★ 把**已经装配好的** `uc` 作为单跳实现注入，而不是在这里重新 new：
 
@@ -98,7 +117,7 @@ def _build_multi_hop(
       然后护栏/阈值/意图在其中一条路径上失效（P5 踩过规则漂移）。
     """
     def answer_one(question: str, *, allowed_permissions=None,
-                   fact_hints=None, product_ids=(), history=""):
+                   fact_hints=None, product_ids=()):
         return uc.execute(
             question,
             vector_collection=settings.coll_training,
@@ -106,47 +125,19 @@ def _build_multi_hop(
                 allowed_permissions
                 if allowed_permissions is not None
                 else ("public", "internal")),
-            # ★★ 这三个必须透传（2026-10-23 与 10-24 两次实测踩到）：
-            #   漏 `fact_hints` → 多跳查到的事实传不到生成层，
-            #     接口里又编出「目录中没有改善体脂等表述」（直连用例却是对的）
-            #   漏 `product_ids` → 护栏拿不到产品类别，普通食品声称判不出来
-            #   漏 `history` → **追问接不上**，模型反问「您问的是哪一款」
-            #     （第 3 次踩同一个坑：参数透传不能靠记性）
+            # ★★ 这两个必须透传（2026-10-23 HTTP 链路实测暴露）：
+            #   漏掉 `fact_hints` 会让多跳查到的事实**传不到生成层**，
+            #   结果是接口里又编出「目录中没有改善体脂等表述」——
+            #   而直连用例的测试是好的。**单测绿 ≠ 接口可用**。
+            #   漏掉 `product_ids` 会让护栏拿不到产品类别，
+            #   普通食品的功能声称就判不出来。
             fact_hints=fact_hints,
-            product_ids=tuple(product_ids or ()),
-            history=history or "",
+            product_ids=tuple(product_ids or ()) or default_product_ids,
         )
-
-    settings = container.settings
-
-    # ★ LLM 多跳规划复核（可选）。
-    #   规则先跑；只有结果可疑（如多步却一个依赖都没判出来）时才让模型复核。
-    #   每次请求新建实例 = 每次请求一份预算，不会跨请求累计。
-    llm_planner = None
-    if settings.planner_use_llm and container.llm is not None:
-        planner = LLMQueryPlanner(
-            container.llm,
-            max_calls=settings.planner_max_calls,
-            max_steps=settings.planner_max_steps,
-        )
-        # 包一层缓存：同一问题 N 秒内复用拆解结果。
-        # ★ 只缓存「LLM 真的参与过」的结果 —— 规则直出本来就不贵，
-        #   缓存它反而会在问题微变时读到旧拆解。
-        if container.cache is not None:
-            planner = CachedQueryPlanner(
-                planner, container.cache,
-                ttl_sec=settings.planner_cache_ttl_sec)
-        llm_planner = planner
 
     return QueryPlanUseCase(
         answer_one=answer_one,
         graph=container.graph,
-        # ★ LLM 语义映射兜底：只在规则全失败且预算内才真正调用。
-        #   每次请求新建一个实例 = 每次请求一份预算（max_calls=1），
-        #   不会跨请求累计，也不会因为前面几次问答把额度用光而失效。
-        semantic_matcher=SemanticEfficacyMatcher(container.llm, max_calls=1),
-        llm_planner=llm_planner,
-        max_steps=settings.planner_max_steps,
     )
 
 
@@ -200,118 +191,154 @@ def _annotation_of(result) -> AnnotationResponse | None:
     )
 
 
-@dataclass
-class _SessionCtx:
-    """本次请求的会话上下文（只在本函数内传递）。"""
+# ===================================================================
+# 多轮问答：会话解析、改写、落轮次
+# ===================================================================
+def _resolve_session(
+    req: AskRequest, identity: Identity, container: Container,
+) -> ConversationSession | None:
+    """解析会话；返回 None 表示本轮按单轮处理。
 
-    session_id: str
-    #: 渲染好的历史文本（空 = 没有历史 / 已清空）
-    history: str = ""
-    #: 本轮开始前已有几轮（用于 meta 观测）
-    turns_before: int = 0
-    #: 本轮是否已计入（用于构造响应时显示"当前共几轮"）
-    turns_now: int = 0
-    #: 上一轮涉及的产品 ID。
-    #:
-    #: ★★ 这一项**必须进召回**，是历史里唯一的例外（2026-10-24 实测）：
-    #:    第 1 轮问「鱼油有什么功能」，第 2 轮问「那它有什么禁忌」——
-    #:    「它」指鱼油，但这句里**没有任何产品名**。
-    #:    若不给召回层这个 id，向量/关键词都搜不到鱼油，
-    #:    图谱也拿不到事实，模型只能反问"您问的是哪一款"。
-    #:    实测就是这么失败的。
-    #:
-    #:    为什么只带产品、不带其它历史：产品是**实体锚点**，
-    #:    带了它召回才准；带整段历史会把召回带偏（问禁忌却召回一堆功能描述）。
-    last_product_ids: tuple[str, ...] = ()
+    ★ 开关从**容器里的配置**取（装配时定下的，测试注入什么就用什么），
+      不用 `current_settings()` —— 那个读进程环境变量，测试覆盖不到。
 
-    @property
-    def has_history(self) -> bool:
-        return bool(self.history.strip())
-
-
-def _resolve_session(req: AskRequest, identity: Identity) -> _SessionCtx:
-    """取出/新建会话，并按需清空历史。
-
-    ★ 三条设计取舍（都为了"不要让会话机制本身成为新的故障源"）：
-
-      ① 会话读写**失败不影响问答**。存储是内存的，任何异常都只记日志，
-         然后当作"没有历史"继续。学员要的是答案，不是会话。
-      ② `new_conversation=true` 只清历史、不换 id。
-         前端不用改本地存的值，也避免"点了新对话但旧请求还在飞"造成串话。
-      ③ owner 用**工号**。知道 session_id 就能读别人对话（可能含过敏史、
-         用药情况），这是隐私，必须校验（演练那边踩过同类）。
+    ★ user_key 绑定工号与角色：同一个 session_id 换了身份就当新会话，
+      不泄露上一身份的上下文（TDD §5）。
     """
-    store = get_ask_session_store()
-    owner = identity.employee_no
+    settings = getattr(container, "settings", None)
+    if settings is None or not getattr(settings, "multi_turn_enabled", False):
+        return None
+
+    sid = (req.session_id or "").strip()
+    if not sid or _SESSION_ID_RE.fullmatch(sid) is None:
+        logger.info("忽略非法 session_id，按单轮处理")
+        return None
+
+    store = getattr(container, "conversation_store", None)
+    if store is None:
+        logger.warning("多轮会话存储未装配，降级为单轮")
+        return None
+
+    user_key = f"{identity.employee_no}:{identity.role}"
     try:
-        sess = store.get_or_create(req.session_id, owner)
-        if req.new_conversation:
-            store.reset(sess.session_id, owner)
-            logger.info("会话 %s 历史已按请求清空（新对话）", sess.session_id)
-            return _SessionCtx(session_id=sess.session_id)
-        return _SessionCtx(
-            session_id=sess.session_id,
-            history=sess.render_history(),
-            turns_before=len(sess.turns),
-            turns_now=len(sess.turns),
-            last_product_ids=sess.last_product_ids(),
-        )
-    except Exception as exc:                        # noqa: BLE001 会话不该拖垮问答
-        logger.warning("会话处理失败，按无历史继续: %s", exc)
-        return _SessionCtx(session_id="")
+        session = store.get_or_create(sid, user_key)
+        # ★ 前端点「新对话」：只清历史、不换 id（主干既有语义，合并后保留）。
+        if getattr(req, "new_conversation", False):
+            store.reset_session(sid, user_key)
+            session = store.get_or_create(sid, user_key)
+            logger.info("会话 %s 历史已按请求清空（新对话）", sid)
+        return session
+    except Exception as exc:                  # noqa: BLE001 store 异常降级单轮
+        logger.warning("会话读取失败，降级为单轮: %s: %s",
+                       type(exc).__name__, exc)
+        return None
 
 
-def _effective_product_ids(
-    req: AskRequest, sess: "_SessionCtx"
-) -> tuple[str, ...]:
-    """本轮召回该用哪些产品 ID。
+def _rewrite_question(
+    question: str, session: ConversationSession | None, container: Container,
+) -> tuple[str, RewriteResult | None]:
+    """有会话才改写；任何异常都退回原问题。"""
+    if session is None:
+        return question, None
+    try:
+        rewriter = QueryRewriter(
+            graph=container.graph, llm=container.llm, timeout_sec=2.0)
+        result = rewriter.rewrite(question, session)
+        return result.question, result
+    except Exception as exc:                  # noqa: BLE001 改写失败降级单轮
+        logger.warning("查询改写失败，回退原问题: %s: %s",
+                       type(exc).__name__, exc)
+        return question, None
 
-    规则（按优先级）：
-        ① 本轮显式选了产品（前端下拉框）→ 用它，**忽略历史**
-           （用户明确切换了话题对象，历史锚点必须让位）
-        ② 本轮没选、但有历史锚点 → 用历史锚点
-        ③ 都没有 → 空（正常全库检索）
 
-    ★ ①必须优先于②：用户手动选 P003 时，如果还沿用上一轮的 P001，
-      会答成一个他没问的产品 —— 这比"接不上"更糟。
+def _product_ids_for(req: AskRequest, rewrite: RewriteResult | None) -> tuple[str, ...]:
+    """改写器给出新产品 ID 时优先用它（产品切换只换 ID、不改句子）。"""
+    if rewrite is not None and rewrite.product_ids:
+        return rewrite.product_ids
+    return tuple(req.product_ids)
+
+
+def _intent_from_meta(meta: dict | None) -> str:
+    """从用例 meta 里取意图标签（多跳是 intents 数组）。"""
+    meta = meta or {}
+    label = str(meta.get("intent", "") or "")
+    if label:
+        return label
+    intents = meta.get("intents") or ()
+    return str(intents[0]) if intents else ""
+
+
+def _make_turn(
+    req: AskRequest, rewritten: str, *, answer: str,
+    cited=(), products=(), intent: str = "", refused: bool = False,
+) -> ConversationTurn:
+    """组装一轮记录。
+
+    ★ 只存 `answer`（合规正文 / 拒答话术），绝不写
+      `annotation.segments` —— 那里含违规原文，按约定不得入库。
     """
-    picked = tuple(req.product_ids or ())
-    if picked:
-        return picked
-    return tuple(sess.last_product_ids or ())
+    return ConversationTurn(
+        question=req.question,
+        rewritten=rewritten,
+        answer=str(answer or ""),
+        cited_chunk_ids=tuple(cited or ()),
+        product_ids=tuple(products or ()),
+        intent=str(intent or ""),
+        refused=bool(refused),
+    )
 
 
-def _record_turn(
-    req: AskRequest,
-    identity: Identity,
-    ctx: _SessionCtx,
-    answer: str,
-    *,
-    product_ids: tuple[str, ...] = (),
-    refused: bool = False,
-    intent: str = "",
-) -> None:
-    """把本轮问答记进会话。
+def _append_turn(store, session_id: str, turn: ConversationTurn) -> int:
+    """落一轮，返回轮次号；存储异常返回 0（本轮回答照常返回）。"""
+    try:
+        return int(store.append(session_id, turn) or 0)
+    except Exception as exc:                  # noqa: BLE001
+        logger.warning("多轮会话写入失败，本轮不保存: %s: %s",
+                       type(exc).__name__, exc)
+        return 0
 
-    ★ `answer` 必须是**合规版正文**。绝不能传 `annotation.segments` ——
-      那里含违规原文，回灌进 prompt 等于教模型说错话。
-    """
-    if not ctx.session_id:
+
+def _multi_turn_fields(
+    req: AskRequest, rewritten: str, turn_no: int,
+    rewrite: RewriteResult | None,
+) -> dict:
+    """多轮响应新增的五个字段（单轮路径不会调用）。"""
+    original = (req.question or "").strip()
+    return {
+        "session_id": req.session_id,
+        "rewritten_question": "" if rewritten == original else rewritten,
+        "turn": int(turn_no),
+        # 主干前端在用 history_turns 显示「已记 N 轮」，值等于 turn。
+        "history_turns": int(turn_no),
+        "multi_turn": True,
+        "rewrite_source": rewrite.source if rewrite is not None else "none",
+    }
+
+
+def _record_metrics(container: Container, t0: float, *,
+                    result=None, answer: str = "", refused: bool = False,
+                    meta: dict | None = None) -> None:
+    """D3：记录一次问答（失败不影响回答）。"""
+    metrics = getattr(container, "metrics", None)
+    if metrics is None:
         return
-    store = get_ask_session_store()
     try:
-        turn = make_turn(
-            req.question, answer,
-            product_ids=product_ids, intent=intent, refused=refused)
-        ok = store.append(ctx.session_id, identity.employee_no, turn)
-        if ok:
-            ctx.turns_now = min(
-                ctx.turns_before + 1, store.max_turns)
-    except Exception as exc:                        # noqa: BLE001
-        logger.warning("记录会话轮次失败（不影响回答）: %s", exc)
+        m = meta if meta is not None else (getattr(result, "meta", {}) or {})
+        text = (getattr(result, "answer", "") if result is not None else answer)
+        metrics.record_answer(
+            latency_ms=(time.perf_counter() - t0) * 1000,
+            refused=bool(getattr(result, "refused", False) if result is not None
+                         else refused),
+            blocked=bool(m.get("blocked_rules")),
+            empty=not (text or "").strip(),
+        )
+    except Exception as exc:                  # noqa: BLE001
+        logger.warning("运行指标记录失败（不影响回答）: %s: %s",
+                       type(exc).__name__, exc)
 
 
 @router.post("/ask", response_model=AskResponse, summary="知识问答",
+             response_model_exclude_unset=True,
              dependencies=[Depends(require_feature("ask"))])
 def ask(
     req: AskRequest,
@@ -329,43 +356,56 @@ def ask(
     - **`answer`** = 合规版正文，可直接对外（展示 / 复制 / 日志 / 转发）
     - **`annotation`** = 逐句明细，**含违规原文**，仅限前端渲染标红
       如果只要正文，忽略这个字段即可
+
+    ★ `response_model_exclude_unset=True`：没显式赋值的多轮字段不会
+      出现在单轮响应里，老前端拿到的 JSON 与改造前逐字节一致。
     """
     settings = current_settings()
     uc = _build_use_case(container)
+    t0 = time.perf_counter()
+    session = _resolve_session(req, identity, container)
+    rewritten, rewrite = _rewrite_question(req.question, session, container)
+    product_ids = _product_ids_for(req, rewrite)
+    store = getattr(container, "conversation_store", None)
+    sid = req.session_id or ""
 
-    # ---- 会话（多轮追问）----
-    #
-    # ★ 会话读写在**接口层**，不下沉到应用层。
-    #   理由：会话是"存哪里、留几轮、怎么过期"的存储问题，
-    #   应用层只需要一个渲染好的 history 字符串。
-    #   把存储下沉会让应用层依赖 HTTP 层的 session 概念。
-    sess = _resolve_session(req, identity)
+    # ★ 产品切换按设计不改写句子，多跳路径要把新 ID 透传给每一跳，
+    #   否则「不是这款，是 P002」在多跳下会被当成无主语的泛问。
+    #   单轮（无会话）时恒为空，原链路一字不变。
+    switch_ids: tuple[str, ...] = ()
+    if (session is not None and rewrite is not None
+            and rewrite.source == "rule" and rewrite.product_ids
+            and rewrite.question == (req.question or "").strip()):
+        switch_ids = rewrite.product_ids
 
     # ---- 多跳（拆子查询 / 前一步结果作后一步前提）----
     if req.multi_hop:
-        hop_uc = _build_multi_hop(container, uc, settings)
+        hop_uc = _build_multi_hop(container, uc, settings, switch_ids)
         hop = hop_uc.execute(
-            req.question,
+            rewritten,
             allowed_permissions=identity.role.retrieval_levels,
-            history=sess.history,
-            seed_product_ids=_effective_product_ids(req, sess),
         )
-        _record_turn(req, identity, sess, hop.answer,
-                     product_ids=hop.product_ids,
-                     refused=hop.refused,
-                     intent=str(hop.meta.get("intents", [""])[0]
-                                if hop.meta.get("intents") else ""))
+        _record_metrics(container, t0, result=hop)
+        extra: dict = {}
+        if session is not None and store is not None:
+            turn_no = _append_turn(store, sid, _make_turn(
+                req, rewritten,
+                answer=hop.answer,
+                cited=hop.cited_chunk_ids,
+                products=hop.product_ids,
+                intent=_intent_from_meta(hop.meta),
+                refused=hop.refused,
+            )) or len(session.turns) + 1
+            extra = _multi_turn_fields(req, rewritten, turn_no, rewrite)
         return AskResponse(
             answer=hop.answer,
             refused=hop.refused,
-            session_id=sess.session_id,
-            history_turns=sess.turns_now,
+            refusal_reason="",
             cited_chunk_ids=list(hop.cited_chunk_ids),
             product_ids=list(hop.product_ids),
             meta={
                 **hop.meta,
                 "multi_hop": True,
-                "history_turns_used": sess.turns_before,
                 "cheapest": (
                     {
                         "product_id": hop.cheapest.product_id,
@@ -377,38 +417,45 @@ def ask(
                 "notes": list(hop.notes),
             },
             hops=_hops_of(hop),
+            annotation=_annotation_of(hop),
+            **extra,
         )
 
     result = uc.execute(
-        req.question,
+        rewritten,
         vector_collection=settings.coll_training,
-        # ★ 本轮显式指定的产品优先；没指定就沿用上一轮的产品锚点。
-        #   这就是「那它有什么禁忌」里的"它"能接上的关键。
-        product_ids=_effective_product_ids(req, sess),
+        product_ids=product_ids,
         # ★★ 权限级别由**角色**决定，不接受前端声明（2026-10-23 修）。
         #    原实现用 req.allowed_permissions，学员传
         #    ["public","internal","restricted","confidential"]
         #    就能越权检索受限内容（FR-050 明确要求检索阶段过滤）。
         allowed_permissions=identity.role.retrieval_levels,
         top_k=req.top_k,
-        history=sess.history,
     )
+    _record_metrics(container, t0, result=result)
 
-    _record_turn(req, identity, sess, result.answer,
-                 product_ids=tuple(result.product_ids),
-                 refused=result.refused,
-                 intent=str(result.meta.get("intent", "")))
+    extra = {}
+    if session is not None and store is not None:
+        turn_no = _append_turn(store, sid, _make_turn(
+            req, rewritten,
+            answer=result.answer,
+            cited=result.cited_chunk_ids,
+            products=result.product_ids,
+            intent=_intent_from_meta(result.meta),
+            refused=result.refused,
+        )) or len(session.turns) + 1
+        extra = _multi_turn_fields(req, rewritten, turn_no, rewrite)
 
     return AskResponse(
         answer=result.answer,
         refused=result.refused,
         refusal_reason=result.refusal_reason,
-        session_id=sess.session_id,
-        history_turns=sess.turns_now,
         cited_chunk_ids=list(result.cited_chunk_ids),
         product_ids=list(result.product_ids),
-        meta={**result.meta, "history_turns_used": sess.turns_before},
+        meta=result.meta,
+        hops=[],
         annotation=_annotation_of(result),
+        **extra,
     )
 
 
@@ -427,66 +474,80 @@ def ask_stream(
         data: [DONE]
 
     ★ 前端必须按「逐行 data:」解析，不能用一次性 fetch().json()。
+    ★ 带 session 时，多轮字段挂在事件 payload 上；`done` 事件后落一轮，
+      下一轮追问就能接着上文。无 session 时 payload 一个键都不多。
     """
     settings = current_settings()
+    t0 = time.perf_counter()
+    session = _resolve_session(req, identity, container)
+    rewritten, rewrite = _rewrite_question(req.question, session, container)
+    product_ids = _product_ids_for(req, rewrite)
+    store = getattr(container, "conversation_store", None)
+    sid = req.session_id or ""
+
+    extra: dict = {}
+    if session is not None and store is not None:
+        try:
+            turn_no = store.next_turn(sid)
+        except Exception:                     # noqa: BLE001 存储异常不阻断流式
+            turn_no = len(session.turns) + 1
+        extra = _multi_turn_fields(req, rewritten, turn_no, rewrite)
+
     uc = _build_use_case(container)
 
-    # ★ 流式也要支持多轮。会话在生成器**外面**先解析好 ——
-    #   生成器是延迟执行的，在里面解析会让「session_id 什么时候生成的」
-    #   变得不可预测（万一客户端断开，可能根本没执行到）。
-    sess = _resolve_session(req, identity)
-
     def event_stream() -> Iterator[str]:
-        #: 累积正文。流式过程中我们只有增量，最后要拼起来才能记历史。
-        collected: list[str] = []
-        final: dict[str, object] = {}
+        answer_parts: list[str] = []
         try:
             for ev in uc.execute_stream(
-                req.question,
+                rewritten,
                 vector_collection=settings.coll_training,
-                product_ids=tuple(req.product_ids),
+                product_ids=product_ids,
                 # ★ 同上：权限由角色决定，不信前端
                 allowed_permissions=identity.role.retrieval_levels,
                 top_k=req.top_k,
-                history=sess.history,
             ):
-                if ev.kind == "text" and ev.text:
-                    collected.append(ev.text)
-                if ev.kind == "done":
-                    final = {
-                        "refused": ev.refused,
-                        "meta": ev.meta,
-                    }
                 payload = {
                     "kind": ev.kind,
                     "text": ev.text,
                     "refused": ev.refused,
                     "refusal_reason": ev.refusal_reason,
                     "meta": ev.meta,
-                    # 前端拿这个值存起来，下次请求带回才能追问
-                    "session_id": sess.session_id,
-                    "history_turns": sess.turns_now,
                 }
+                if ev.kind == "text" and (ev.text or "").strip():
+                    answer_parts.append(ev.text)
+                if ev.kind == "done":
+                    # ★ 指标不分是否多轮：所有流式请求都记。
+                    _record_metrics(
+                        container, t0, answer="".join(answer_parts),
+                        refused=bool(ev.refused), meta=ev.meta)
+                    if extra:
+                        # 只累积非空白正文；拒答也落轮次，让下一轮仍能承接场景。
+                        meta = ev.meta or {}
+                        _append_turn(store, sid, _make_turn(
+                            req, rewritten,
+                            answer="".join(answer_parts).strip(),
+                            cited=meta.get("cited_chunk_ids") or (),
+                            products=meta.get("product_ids") or (),
+                            intent=_intent_from_meta(meta),
+                            refused=bool(ev.refused),
+                        ))
+                if extra:
+                    payload.update(extra)
                 yield f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
-
-            # ★ 流结束后才记历史：中途断开就不记，避免"答了一半进上下文"
-            #
-            # ★ 产品 ID 从 done 事件的 meta 里取（`StreamEvent` 没有独立字段）。
-            #   不取的话这轮历史就没有产品锚点，下一句「那它有什么禁忌」
-            #   里的"它"接不上 —— 流式追问会失效，而非流式却是好的。
-            meta = final.get("meta") if isinstance(final.get("meta"), dict) else {}
-            _record_turn(
-                req, identity, sess, "".join(collected),
-                product_ids=tuple(meta.get("product_ids") or ()),
-                refused=bool(final.get("refused", False)),
-                intent=str(meta.get("intent", "")),
-            )
         except Exception as exc:                # noqa: BLE001
             # 流已经开始，无法再改 HTTP 状态码，只能发一个错误事件
             logger.error("流式问答失败: %s", exc, exc_info=True)
             err = {"kind": "done", "refused": True,
-                   "refusal_reason": f"服务异常: {type(exc).__name__}",
-                   "session_id": sess.session_id}
+                   "refusal_reason": f"服务异常: {type(exc).__name__}"}
+            _record_metrics(container, t0, answer="".join(answer_parts),
+                            refused=True)
+            if extra:
+                err.update(extra)
+                _append_turn(store, sid, _make_turn(
+                    req, rewritten,
+                    answer="".join(answer_parts).strip(),
+                    refused=True,
+                ))
             yield f"data: {json.dumps(err, ensure_ascii=False)}\n\n"
         finally:
             yield "data: [DONE]\n\n"

@@ -46,21 +46,15 @@ class AskRequest(BaseModel):
     #:   不做成「省性能」的开关 —— 单步问题本来就不会多跳，
     #:   规划器保证简单问题只有一步（有测试守着）。
     multi_hop: bool = Field(default=True, description="是否启用多跳拆解")
-    #: 会话 ID（多轮追问）。
-    #:
-    #: ★ 空或不传 = 后端新建一个会话，并在响应里返回 `session_id`。
-    #:   前端拿到后要在后续请求里带回来，追问才接得上。
-    #:
-    #: ★ 不传也不会出错：单轮问答完全可用（等价于「每次都是新对话」）。
-    #:   这样旧的调用方（curl、脚本）不需要改。
-    session_id: str = Field(
-        default="",
-        max_length=64,
-        description="会话 ID，用于多轮追问。首次不传，响应会返回新的")
+    #: 多轮会话 ID。★ 不传 = 单轮，行为完全不变；功能开关关闭时忽略。
+    #: 合法性由路由按 `[A-Za-z0-9_-]{8,64}` 再校验，非法按无会话处理。
+    session_id: str | None = Field(
+        default=None, max_length=64, description="多轮会话 ID（可选）")
     #: 是否清空该会话的历史（用户点「新对话」）。
     #:
     #: ★ 只清历史、不换 session_id：这样前端不用改本地存的值，
     #:   也避免"点了新对话但旧请求还在飞"导致串话。
+    #:   与 `session_id` 一起生效；无会话时为 no-op。
     new_conversation: bool = Field(
         default=False,
         description="为 true 时清空该会话历史，作为新对话开始")
@@ -141,11 +135,19 @@ class AskResponse(BaseModel):
     refused: bool = False
     refusal_reason: str = ""
     #: 本次问答所属的会话 ID。前端要存下来，下次请求带回去才能追问。
-    session_id: str = Field(
-        default="", description="会话 ID，用于后续追问时带回")
-    #: 本会话已有几轮历史（用于前端显示「已记 3 轮」之类提示）。
+    #: ★ 单轮（未开多轮/非法/开关关闭）时为 None，且因
+    #:   `response_model_exclude_unset=True` 不会出现在响应里。
+    session_id: str | None = None
+    #: 与原问题相同时留空，减少前端噪声。
+    rewritten_question: str = ""
+    #: 当前是第几轮（1-based）。前端可用它显示「已记 N 轮」。
+    turn: int = 0
+    #: 旧字段（主干前端在用）：本会话已积累的历史轮数，值等于 `turn`。
     history_turns: int = Field(
-        default=0, description="当前会话已积累的历史轮数")
+        default=0, description="当前会话已积累的历史轮数（= turn）")
+    multi_turn: bool = False
+    #: rule | llm | none
+    rewrite_source: str = "none"
     cited_chunk_ids: list[str] = Field(default_factory=list)
     product_ids: list[str] = Field(default_factory=list)
     meta: dict[str, Any] = Field(default_factory=dict)

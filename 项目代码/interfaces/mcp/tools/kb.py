@@ -45,9 +45,22 @@ def build_answer_use_case(container: Container) -> AnswerQuestionUseCase:
         keyword=container.keyword,
         llm=container.llm,
         repository=container.repository,
-        reranker=container.rerank,
-        rerank_candidates=getattr(settings, "rerank_candidates", 30),
-        rerank_top_k=getattr(settings, "rerank_top_k", 5),
+        # ★ 与 HTTP 侧同参数（合并后检索增强在用例内部的 RetrieveUseCase 里）
+        sparse=container.sparse,
+        sparse_collections=frozenset(
+            c.strip() for c in getattr(
+                settings, "sparse_recall_collections", "").split(",")
+            if c.strip()),
+        min_sparse_score=getattr(settings, "min_sparse_score", 0.02),
+        path_head_collections=frozenset(
+            c.strip() for c in getattr(
+                settings, "path_head_collections", "").split(",")
+            if c.strip()),
+        context_docs=getattr(settings, "context_docs", 5),
+        prompt_variant=getattr(settings, "prompt_variant", "v3"),
+        llm_max_tokens=getattr(settings, "llm_max_tokens", 2048),
+        rerank=container.rerank,
+        rerank_candidate_k=getattr(settings, "rerank_candidate_k", 20),
     )
 
 

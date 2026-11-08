@@ -33,7 +33,8 @@ COLL = {
     "self_test": "health_self_test",
 }
 
-EXPECT = {"training": 293, "case": 117, "question": 140, "self_test": 30}
+# P0-2（2026-11-07）：案例库切片由 117 块合并为 49 块（16 案例 × 3 + 1 附录块）
+EXPECT = {"training": 293, "case": 49, "question": 140, "self_test": 30}
 
 TRAINEE = 'permission_level in ["public","internal"]'
 MANAGER = 'permission_level in ["public","internal","restricted"]'
@@ -71,7 +72,7 @@ def check_permission(client, emb) -> bool:
     ]
     for q, name, flt in probes:
         v = emb.encode([q])[0]
-        res = client.search(collection_name=name, data=[v], limit=5,
+        res = client.search(collection_name=name, data=[v], limit=5, anns_field="vector",
                             filter=flt, output_fields=["doc_id", "section"])[0]
         # 学员视角下「训练库」允许有正文，但不允许出现答案类 section
         leak = [h for h in res
@@ -85,7 +86,7 @@ def check_permission(client, emb) -> bool:
     for key in ("case", "question", "self_test"):
         name = COLL[key]
         v = emb.encode(["客户询问产品"])[0]
-        res = client.search(collection_name=name, data=[v], limit=5,
+        res = client.search(collection_name=name, data=[v], limit=5, anns_field="vector",
                             filter=TRAINEE, output_fields=["doc_id"])[0]
         good = len(res) == 0
         ok &= good
@@ -96,7 +97,7 @@ def check_permission(client, emb) -> bool:
     for key in ("case", "question", "self_test"):
         name = COLL[key]
         v = emb.encode(["客户询问产品"])[0]
-        res = client.search(collection_name=name, data=[v], limit=3,
+        res = client.search(collection_name=name, data=[v], limit=3, anns_field="vector",
                             filter=MANAGER, output_fields=["doc_id"])[0]
         good = len(res) > 0
         ok &= good
@@ -135,7 +136,7 @@ def check_recall(client, emb) -> dict:
         if q["intent"] == "case":
             continue          # 案例留给第 4 项单独评
         v = emb.encode([q["query"]])[0]
-        res = client.search(collection_name=COLL["training"], data=[v], limit=5,
+        res = client.search(collection_name=COLL["training"], data=[v], limit=5, anns_field="vector",
                             filter=TRAINEE, output_fields=["doc_id", "section", "title"])[0]
 
         rank = 0
@@ -193,7 +194,7 @@ def check_case(client, emb) -> bool:
     ok_n = 0
     for q in qs:
         v = emb.encode([q["query"]])[0]
-        res = client.search(collection_name=COLL["case"], data=[v], limit=3,
+        res = client.search(collection_name=COLL["case"], data=[v], limit=3, anns_field="vector",
                             filter=MANAGER, output_fields=["doc_id", "section"])[0]
         top = res[0]["entity"]["doc_id"] if res else ""
         hit = top in q["labels"]
@@ -251,7 +252,7 @@ def check_stability(client, emb) -> bool:
         tops = set()
         for _ in range(3):
             v = emb.encode([q])[0]
-            res = client.search(collection_name=COLL["training"], data=[v], limit=1,
+            res = client.search(collection_name=COLL["training"], data=[v], limit=1, anns_field="vector",
                                 filter=TRAINEE, output_fields=["chunk_id"])[0]
             tops.add(res[0]["entity"]["chunk_id"] if res else "")
         good = len(tops) == 1

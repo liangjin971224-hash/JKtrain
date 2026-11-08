@@ -47,7 +47,11 @@ from collections.abc import Iterator
 
 from domain.rules.forbidden_claims import check_forbidden_claims
 from domain.rules.product_category import check_claim_allowed
-from domain.services.output_guardrail import GuardrailVerdict, OutputGuardrail
+from domain.services.output_guardrail import (
+    GuardrailVerdict,
+    OutputGuardrail,
+    ungrounded_numbers,
+)
 from domain.value_objects import ProductCategory
 
 logger = logging.getLogger(__name__)
@@ -212,14 +216,20 @@ class StreamGuard:
         *,
         guardrail: OutputGuardrail,
         category: ProductCategory | str | None = None,
+        evidence: str | None = None,
     ) -> None:
         """
         Args:
             guardrail: 完整护栏（复用三项检测的规则）。
             category: 产品类别。None 表示不涉及具体产品。
+            evidence: 模型收到的全部资料。给了就逐句核实数字——
+                含无依据数字的句子**不产出**，但流不终止。
+                None 表示不做数字核实。
         """
         self._guardrail = guardrail
         self._category = category
+        self._evidence = evidence
+        self._dropped: list[str] = []
         self._buffer = SentenceBuffer()
         self._full_text = ""
         self._emitted = ""
@@ -284,6 +294,8 @@ class StreamGuard:
             self._full_text += token
 
             for sentence in self._buffer.feed(token):
+                if self._should_drop(sentence):
+                    continue
                 if not self._check_sentence(sentence):
                     return          # 违规，终止
                 self._emitted += sentence
@@ -295,6 +307,8 @@ class StreamGuard:
             return
 
         for sentence in self._buffer.flush():
+            if self._should_drop(sentence):
+                continue
             if not self._check_sentence(sentence):
                 return
             self._emitted += sentence
@@ -311,9 +325,27 @@ class StreamGuard:
         self._full_text = ""
         self._emitted = ""
         self._recent_text = ""
+        self._dropped = []
         self._blocked = False
         self._block_reason = ""
         self._final_verdict = None
+
+    def _should_drop(self, sentence: str) -> bool:
+        """这一句是否因为数字无依据而被丢弃。
+
+        ★ 与 `_check_sentence` 的区别：**丢弃不等于违规**。
+          编造数字的句子不产出，但后面的句子照常产出——
+          实测中「售价 128 元」后面紧跟的往往正是「价格以门店标价为准」，
+          整条流截断会把这句有用的话一起丢掉。
+        """
+        if self._evidence is None:
+            return False
+        bad = ungrounded_numbers(sentence, self._evidence)
+        if not bad:
+            return False
+        self._dropped.extend(bad)
+        logger.warning("流式剔除无依据数字所在的句子: numbers=%s", list(bad))
+        return True
 
     # ---------------- 内部 ----------------
     def _check_sentence(self, sentence: str) -> bool:

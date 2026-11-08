@@ -45,6 +45,7 @@ class OpenAICompatibleAdapter(LanguageModelPort):
         base_url: str,
         model: str,
         timeout_sec: int = 30,
+        extra_payload: dict | None = None,
     ) -> None:
         """
         Args:
@@ -53,12 +54,17 @@ class OpenAICompatibleAdapter(LanguageModelPort):
             base_url: 形如 https://api.deepseek.com（不带 /chat/completions）。
             model: 模型名。
             timeout_sec: 单次调用超时。
+            extra_payload: 附加到请求体的字段（原样合并）。
+                ★ 用于推理模型的 `enable_thinking: false`：不关思考时
+                  qwen3.7-flash 单次生成可到 14s / 1200+ tokens，
+                  甚至把 max_tokens 全用在思考上、正文为空。
         """
         self._name = name
         self._api_key = api_key
         self._base_url = base_url.rstrip("/")
         self._model = model
         self._timeout = timeout_sec
+        self._extra = dict(extra_payload or {})
 
     @property
     def name(self) -> str:
@@ -88,6 +94,7 @@ class OpenAICompatibleAdapter(LanguageModelPort):
             "temperature": temperature,
             "max_tokens": max_tokens,
         }
+        payload.update(self._extra)
         data = self._post("/chat/completions", payload)
 
         try:
@@ -192,6 +199,7 @@ class OpenAICompatibleAdapter(LanguageModelPort):
             "max_tokens": max_tokens,
             "stream": True,
         }
+        payload.update(self._extra)
         yield from self._post_stream(payload)
 
     def _post_stream(self, payload: dict) -> Iterator[str]:

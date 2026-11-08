@@ -47,9 +47,12 @@ class Settings(BaseSettings):
     )
 
     # ---------------- Embedding ----------------
-    embed_model_dir: str = (
-        r"D:\ai260803\xiangmudaima\pytorch\model\bge-m3"
-    )
+    #: bge-m3 模型目录。
+    #:
+    #: ★ 默认值按「项目根目录../models/bge-m3」推导（迁移时改，2026-10-23）：
+    #:   原先硬编码 `D:\ai260803\...`，换机器必报错。
+    #:   你机器上模型放哪都行，用 .env 的 EMBED_MODEL_DIR 指定即可。
+    embed_model_dir: str = str(BASE_DIR.parent / "models" / "bge-m3")
     expected_embed_dim: int = 1024
     # 4096 序列长度下 8GB 显存必须按长度分桶编码，否则 OOM
     embed_max_seq_length: int = 4096
@@ -58,26 +61,79 @@ class Settings(BaseSettings):
     #   演示/PoC 场景必须开启；纯离线批处理可关掉。
     warmup_embedding: bool = True
 
-    # ---------------- Rerank（候选重排） ----------------
-    # 作用：对 RRF 融合后的候选重排，补「只看排名不看内容」的盲区。
-    #
-    # ★ 默认关闭。原因有二：
-    #   1) 模型约 2.2GB 显存，与 bge-m3（约 2.5GB）叠加后在 8GB 卡上余量紧张；
-    #   2) 需要先实测 R@1 是否真的提升，再决定长期开启。
-    # 开启方式：.env 里设 RERANK_ENABLED=true
+    # ---------------- 稀疏召回（P0-3 结论） ----------------
+    #: 是否启用 bge-m3 稀疏路（lexical_weights → Milvus SPARSE_FLOAT_VECTOR）。
+    #:
+    #: ★ 为什么需要（205 题全量实测，2026-11-07）：
+    #:   案例库 34 题，纯向量路 R@5=21/34，而稀疏单独 25/34、两路并集 28/34。
+    #:   失败模式是**表格型内容**（必答要素/权重、违禁正则、评分示例），
+    #:   合并成长块后向量表征被稀释，字面词权重反而抓得住。
+    #:   文档库相反（hybrid 105/131 > dense 98），所以并集只对案例库开。
+    sparse_recall_enabled: bool = True
+    #: 启用「RRF 头部 + 稀疏候选」并集窗口的 collection（逗号分隔）。
+    #: 空串表示所有 collection 都做并集（不推荐：文档库上无收益）。
+    sparse_recall_collections: str = "health_case_library"
+    #: 稀疏召回的绝对下限（IP 尺度）。
+    #:
+    #: ★ 这不是相关性阈值，只是**sanity floor**：
+    #:   实测可答/不可答查询的稀疏 top1 分数几乎完全重叠
+    #:   （可答中位 0.209 / 不可答最大 0.222），任何能拦住噪声的值
+    #:   都会误拒 60%+ 的正常查询。取 0.02 只拦「向量算坏了」的情况；
+    #:   拒答判断仍走规则 + LLM「证据不足」路径。
+    min_sparse_score: float = 0.02
+
+    # ---------------- 窗口构图（P1-a） ----------------
+    #: 启用「每路头部进窗口」的 collection（逗号分隔）。
+    #:
+    #: ★ 为什么需要（205 题离线模拟，2026-11-07）：
+    #:   文档库的 BM25 强项是精确串（编号、流程术语），但意图权重
+    #:   (0.1, 0.8, 0.1) 把 BM25 第 1 名压到 0.0016——约等于向量第 20 名的
+    #:   六分之一，gold 永远进不了前 5。把每路第 1 名直接拎进窗口，
+    #:   文档库 105 → 111。
+    #:   案例库相反（22 < 稀疏并集 26），走 `sparse_recall_collections`；
+    #:   题库 40/40 无变化，不配置即保持纯 RRF。
+    #:
+    #: 空串 = 全部回退纯 RRF（回滚开关）。与 `sparse_recall_collections`
+    #: 重叠时稀疏并集优先（构造时会告警）。
+    path_head_collections: str = "health_training_docs"
+
+    # ---------------- 参考资料条数（P1-b） ----------------
+    #: 提示词里放多少条参考资料（`retrieval.fused` 的前 N 条）。
+    #:
+    #: ★ 默认 5 是历史值；扩到 8/10 的覆盖收益（用 app_path_head_v1 的
+    #:   gold_rank 直接算）：5 → 177、8 → 181、10 → 185，其中案例库
+    #:   26 → 28 → 30。但多出来的段落是噪声，可能把答案带偏或触发护栏，
+    #:   必须经 `train/scripts/95_answer_ab.py` 的答案级 A/B 才能改默认。
+    #:   回滚：CONTEXT_DOCS=5。
+    context_docs: int = 5
+
+    # ---------------- 系统提示词版本（P1-c） ----------------
+    #: `v3` = 八条硬约束 + 「回答前自检」四条（默认，已验证）。
+    #: `v4` = v3 + 先查资料/必答要素/不复述禁用词/不串产品四条的**实验版**；
+    #:   100 题 A/B 未达门禁（65 vs 64，拒答 +1），**不作默认**，仅留作实验开关。
+    #: `v2` = 只有八条硬约束（回滚用）。
+    #:
+    #: ★ 验证（2026-11-07）：45 题 rubric 39→41（3 上 1 下，1 下为词形误报）；
+    #:   独立 held-out 24 题 17→19，禁用 3→1、拒答 1→0。
+    #:   代价：答案更长（+14%~37%）、延迟约 +20~30%。
+    #:   回滚：PROMPT_VARIANT=v2。
+    prompt_variant: str = "v3"
+
+    # ---------------- Rerank（可选重排序） ----------------
+    # ★ 默认 False：合入时零行为变更。收益经 train/scripts/81_retrieval_eval.py
+    #   评估达标（R@5 ≥ 基线+3pp，见 docs/PRD_检索质量优化）后再开启。
     rerank_enabled: bool = False
-    #: 本地模型目录（不走联网）。缺文件时适配器自动降级为原顺序。
-    rerank_model_dir: str = (
-        r"D://ai260803//xiangmudaima//pytorch//model//bge-reranker-v2-m3"
-    )
-    #: 送入重排的候选条数。太少无意义，太多延迟涨。
-    rerank_candidates: int = 20
-    #: 重排后保留条数（进 prompt 的参考资料数）。
-    rerank_top_k: int = 5
+    #: CrossEncoder 模型目录（bge-reranker-v2-m3，~2.2GB）。
+    #: 默认按「项目根目录/models/」推导，与 embed_model_dir 同一约定。
+    rerank_model_dir: str = str(BASE_DIR.parent / "models" / "bge-reranker-v2-m3")
+    #: 送入 rerank 的融合候选窗口大小（RRF 融合后取前 N 条重排）。
+    rerank_candidate_k: int = 20
     #: 前向批大小，控制峰值显存。
     rerank_batch_size: int = 8
     #: 模型侧最大序列长度。
     rerank_max_length: int = 512
+    #: 单次调用超过该秒数记 warning（软性观测；不做硬超时，见适配器注释）。
+    rerank_slow_warn_sec: float = 3.0
 
     # ---------------- LLM 多跳规划（可选增强） ----------------
     # 规则先跑，只有结果可疑时才让 LLM 复核「拆几步、谁依赖谁」。
@@ -104,7 +160,10 @@ class Settings(BaseSettings):
     # 为什么千问为主：
     #   阿里云百炼国内链路更稳，且 qwen-plus 中文表达更贴合本项目的
     #   「合规话术」场景（要说得像门店顾问，不能像说明书）。
-    llm_primary: str = "qwen"                 # qwen | deepseek | local
+    #
+    # ★ 四类后端按 `kind` 分派（见 `llm_endpoints`）：
+    #   http（千问/DeepSeek）/ ollama（推荐本地）/ local（transformers+4bit）
+    llm_primary: str = "qwen"                 # qwen | deepseek | local | ollama
     llm_fallback_enabled: bool = True
     llm_primary_retries: int = 1              # 切换前重试次数（不含首次）
     llm_timeout_sec: int = 30
@@ -118,6 +177,24 @@ class Settings(BaseSettings):
     deepseek_api_key: str = ""
     deepseek_base_url: str = "https://api.deepseek.com"
     deepseek_model: str = "deepseek-chat"
+
+    #: 是否在请求体里显式关闭推理模型的「思考」。
+    #:
+    #: ★ 必须默认开启（2026-11-07 实测）：qwen3.7-flash 不关思考时
+    #:   单次生成约 14s、completion 1200+ tokens；max_tokens 较小时
+    #:   思考会把额度耗尽导致正文为空。关闭后约 2s / 200 字。
+    #:   DeepSeek 的 flash 系模型同样受益（仍会返回 reasoning_content，
+    #:   但正文正常）。
+    #:   若换成不支持该参数的非推理模型且被 400 拒绝，设 false 关掉。
+    #:   ★ 只对 kind=http 的端点生效。
+    llm_disable_thinking: bool = True
+
+    #: 单次生成的 token 上限。
+    #:
+    #: ★ 默认 2048（原 1024）：推理模型在长 prompt 下可能把 1024 全花在
+    #:   reasoning 上，正文为空（finish_reason=length）。2048 留出余量；
+    #:   若仍偶发空正文，Fallback 适配器会把它当失败并切备用端点。
+    llm_max_tokens: int = 2048
 
     # ---------------- 本地大模型（可选） ----------------
     # 用途：内网 / 无外部 API / 离线批处理。在线问答速度不足（实测 2.4 tok/s）。
@@ -169,16 +246,12 @@ class Settings(BaseSettings):
     # ---------------- 任务队列（P3 批量生成） ----------------
     #: memory = 进程内队列（本地开发/测试，重启即丢）
     #: rabbitmq = RabbitMQ（跨进程、重启不丢、可多 worker）
-    #:
-    #: ★ 什么时候必须换 rabbitmq：
-    #:   批量生成成为常规操作（月度例行），或需要多 worker 分摊。
-    #:   当前 2 个员工时 memory 够用 —— 端口已抽好，切换只改配置。
     queue_backend: str = "memory"
     rabbitmq_url: str = ""
     #: 单任务最大尝试次数。
     queue_max_attempts: int = 3
     #: 消费者预取数 = 同时处理上限。
-    #: ★ 每个任务是一次 LLM 调用，并发太高会打满配额、吃紧 8GB 显存。
+    #: ★ 每个任务是一次 LLM 调用，并发太高会打满配额、吃紧显存。
     queue_prefetch: int = 2
     #: 是否在 Web 进程内启动消费者。
     #:
@@ -186,9 +259,6 @@ class Settings(BaseSettings):
     #:   uvicorn --workers 4 会起 4 个消费者，加上独立的 worker 进程，
     #:   同一批任务会被抢多次。虽然幂等能兜住不重复生成，
     #:   但会白跑 LLM、浪费配额。
-    #:
-    #: 正确做法：Web 进程设 `QUEUE_CONSUMER_IN_WEB=false`，
-    #:          另起独立 worker 进程（`scripts/run_worker.py`）。
     queue_consumer_in_web: bool = True
 
     # ---------------- 文件存储 ----------------
@@ -203,8 +273,9 @@ class Settings(BaseSettings):
 
     # ---------------- 内容资产 ----------------
     #: 情景案例目录（P5 演练用）。
-    #: ★ 改了案例 markdown 需重启服务才生效（接口层有进程内缓存）。
-    case_dir: str = r"D:\项目\某健康公司培训系统\06_正式内容\02_情景案例"
+    #: ★ 默认按「项目根目录../06_正式内容/02_情景案例」推导（迁移时改）。
+    #:   改了案例 markdown 需重启服务才生效（接口层有进程内缓存）。
+    case_dir: str = str(BASE_DIR.parent / "06_正式内容" / "02_情景案例")
 
     # ---------------- 认证（P8） ----------------
     #: 令牌签名密钥。
@@ -222,6 +293,18 @@ class Settings(BaseSettings):
     #:   关闭时未带令牌的请求按 X-Debug-Role 头处理。
     #:   生产环境绝不可关闭。
     auth_required: bool = True
+
+    # ---------------- 多轮问答（B2~B4，默认关闭） ----------------
+    #: 总开关。★ 默认 False：不带 `session_id`（或开关关闭）时
+    #: 走原来的单轮链路，答案与响应逐字节不变；关掉即回滚。
+    #: ★ 合并后生产默认 true（见 .env）；这里保持 false 以保护测试基线。
+    multi_turn_enabled: bool = False
+    #: 每个会话保留最近几轮（改写只读最近 3 轮，更多轮是噪声）。
+    multi_turn_max_turns: int = 3
+    #: 会话空闲过期时间（秒，30 分钟）。
+    multi_turn_ttl_sec: int = 1800
+    #: 进程内最多保留多少个会话（LRU 淘汰）。
+    multi_turn_max_sessions: int = 200
 
     #: 接口层配置
     http_host: str = "127.0.0.1"
@@ -275,6 +358,8 @@ class Settings(BaseSettings):
         """是否有可用的 LLM（云端配了 Key，或本地模型路径有效）。"""
         if self.llm_primary == "local":
             return self.local_llm_configured
+        if self.llm_primary == "ollama":
+            return self.ollama_configured
         return bool(self.qwen_api_key.strip() or self.deepseek_api_key.strip())
 
     @property
@@ -282,6 +367,8 @@ class Settings(BaseSettings):
         """主模型是否可用。"""
         if self.llm_primary == "local":
             return self.local_llm_configured
+        if self.llm_primary == "ollama":
+            return self.ollama_configured
         if self.llm_primary == "qwen":
             return bool(self.qwen_api_key.strip())
         return bool(self.deepseek_api_key.strip())
@@ -304,6 +391,8 @@ class Settings(BaseSettings):
 
         第一项是主模型，后续是备用。
         这样 `FallbackLanguageModelAdapter` 只需顺序遍历，不用关心谁是主备。
+
+        ★ 每个端点带 `kind`：http / ollama / local，装配根据此选适配器。
         """
         all_eps = {
             "qwen": {
@@ -359,7 +448,7 @@ class Settings(BaseSettings):
                         out.append({**ep, "kind": "http"})
             return out
 
-        out: list[dict[str, str]] = []
+        out = []
         primary = all_eps.get(self.llm_primary)
         if primary and primary["api_key"].strip():
             out.append({**primary, "kind": "http"})

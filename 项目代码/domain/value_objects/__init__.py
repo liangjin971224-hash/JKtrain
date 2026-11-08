@@ -52,6 +52,7 @@ from domain.value_objects.search_result import (
     FusedHit,
     KeywordHit,
     PermissionLevel,
+    RankedHit,
     VectorHit,
 )
 from domain.value_objects.severity import Severity
@@ -84,6 +85,7 @@ __all__ = [
     "ProductFacts",
     "ProductRef",
     "QuestionSnapshot",
+    "RankedHit",
     "RiskItem",
     "RiskLevel",
     "Role",

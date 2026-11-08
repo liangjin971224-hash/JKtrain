@@ -31,6 +31,8 @@ from typing import Callable
 from domain.ports import (
     GraphQueryPort,
     KeywordSearchPort,
+    RerankPort,
+    SparseSearchPort,
     VectorSearchPort,
 )
 from domain.services.rrf_fusion import reciprocal_rank_fusion, weights_for_intent
@@ -42,6 +44,7 @@ logger = logging.getLogger(__name__)
 PATH_GRAPH = "graph"
 PATH_VECTOR = "vector"
 PATH_KEYWORD = "keyword"
+PATH_SPARSE = "sparse"
 
 #: ★ 向量检索的最低可信相似度。
 #:
@@ -84,6 +87,45 @@ MIN_KEYWORD_SCORE = 14.0
 #: 取 0.35：真实相关的第 2~5 名通常能到 Top1 的 40% 以上，
 #: 而偶然命中通常在 20% 以下。
 MIN_KEYWORD_RELATIVE = 0.35
+
+#: 稀疏召回的绝对下限（IP 尺度）。
+#:
+#: ★ 不是相关性阈值，只是 sanity floor。实测（205 题）可答与不可答查询的
+#:   稀疏 top1 分数几乎完全重叠（可答中位 0.209 / 不可答最大 0.222），
+#:   任何能拦住噪声的值都会误拒 60%+ 正常查询。
+#:   拒答仍由规则 + LLM「证据不足」路径负责，这里只拦"向量算坏了"。
+MIN_SPARSE_SCORE = 0.02
+
+#: 并集窗口里保留多少条 RRF 结果在最前面（其余位置由稀疏填充）。
+#:
+#: ★ 这个数字是被**提示词长度**倒推出来的，不是拍的：
+#:   当时的 `answer_question` 只取 `fused[:5]`（`context_docs` 默认 5），
+#:   所以 6 位往后放什么都不影响 LLM。案例库 34 题实测覆盖：
+#:       app5 + sparse0（不做并集） 21/34
+#:       app4 + sparse1             22/34
+#:       app3 + sparse2             23/34
+#:       app2 + sparse3             24/34   ← 取这个
+#:       app1 + sparse4             25/34
+#:       app0 + sparse5             25/34
+#:   1+4 与 2+3 只差 1 题（噪声量级），选 2+3 是为了保留两条
+#:   「向量+BM25 共识」结果，防止稀疏在某个查询上整体跑偏时窗口全空。
+#:
+#: ★ 前提变更注意：P1-b 若把 `context_docs` 调大（8/10），这个值要重新标定
+#:   ——上面的分配实验只在 5 位窗口上做过。当前按 context_docs=5 保持 2。
+SPARSE_UNION_HEAD = 2
+
+#: 「每路头部进窗口」策略：每路先取前 N 条占住窗口头部，其余由 RRF 回填。
+#:
+#: ★ 为什么这条路对**文档库**有效（205 题离线模拟，2026-11-07）：
+#:   文档库的 BM25 强项是精确串（编号、流程术语），但「开放问答」权重
+#:   (0.1, 0.8, 0.1) 把 BM25 第 1 名压到 0.0016——只相当于向量第 20 名的
+#:   六分之一，gold 永远进不了前 5。把「每路第 1 名」直接拎进窗口，
+#:   等于绕开权重给精确匹配一个保底位。
+#:
+#:   离线模拟（文档库 131 题）：纯 RRF 105 → 每路头 1 = 111；
+#:   案例库相反（21 → 22，不如稀疏并集 26），所以**策略必须按库选**。
+#:   题库 40/40 无变化，不配置即保持纯 RRF。
+PATH_HEAD = 1
 
 #: 查询「可检索性」预检查。
 #:
@@ -173,6 +215,8 @@ class RetrievalResult:
     graph_hits: tuple[ProductRef, ...] = ()
     vector_hits: tuple[VectorHit, ...] = ()
     keyword_hits: tuple[KeywordHit, ...] = ()
+    #: 稀疏路命中（IP 分数）。仅对启用了并集的 collection 有值。
+    sparse_hits: tuple[VectorHit, ...] = ()
 
     fused: tuple[FusedHit, ...] = ()
 
@@ -187,8 +231,13 @@ class RetrievalResult:
 
     @property
     def failed(self) -> bool:
-        """三路全失败（或全部无有效结果）。"""
-        return not (self.graph_hits or self.vector_hits or self.keyword_hits)
+        """全部路都失败或全部无有效结果。
+
+        ★ 必须把 `sparse_hits` 算进来：否则"向量路降级、只有稀疏命中"
+          会被判成召回失败 → P4 直接拒答，稀疏收益全部作废。
+        """
+        return not (self.graph_hits or self.vector_hits
+                    or self.keyword_hits or self.sparse_hits)
 
     @property
     def is_degraded(self) -> bool:
@@ -198,7 +247,8 @@ class RetrievalResult:
     @property
     def total_raw_hits(self) -> int:
         """三路原始命中总数（未融合）。"""
-        return len(self.graph_hits) + len(self.vector_hits) + len(self.keyword_hits)
+        return (len(self.graph_hits) + len(self.vector_hits)
+                + len(self.keyword_hits) + len(self.sparse_hits))
 
     def top_doc_ids(self, n: int = 5) -> list[str]:
         """融合后的 Top-N doc_id，用于评测与日志。"""
@@ -217,6 +267,13 @@ class RetrieveUseCase:
         graph: GraphQueryPort | None = None,
         vector: VectorSearchPort | None = None,
         keyword: KeywordSearchPort | None = None,
+        rerank: RerankPort | None = None,
+        sparse: SparseSearchPort | None = None,
+        sparse_collections: frozenset[str] = frozenset(),
+        min_sparse_score: float = MIN_SPARSE_SCORE,
+        sparse_union_head: int = SPARSE_UNION_HEAD,
+        path_head_collections: frozenset[str] = frozenset(),
+        rerank_candidate_k: int = 20,
         min_vector_score: float = MIN_VECTOR_SCORE,
         min_keyword_score: float = MIN_KEYWORD_SCORE,
     ) -> None:
@@ -225,6 +282,20 @@ class RetrieveUseCase:
             graph: 图谱端口。None 表示该路不可用（P1 未完成时的降级）。
             vector: 向量端口。None 表示该路不可用。
             keyword: 关键词端口。None 表示该路不可用。
+            rerank: 重排序端口（可选）。None = 不重排，融合序即最终序。
+                ★ rerank 只重排「已过阈值与权限过滤」的文档块候选，
+                  不参与判空决策——拒答语义与无 rerank 时完全一致
+                  （docs/TDD_检索质量优化 §4.3）。
+            sparse: 稀疏端口（可选）。None = 不做稀疏召回。
+            sparse_collections: 启用「RRF 头部 + 稀疏候选」并集的 collection。
+                ★ 只对需要的库开（实测案例库 +7 题、文档库无收益）。
+            min_sparse_score: 稀疏召回的绝对下限（IP 尺度，仅 sanity floor）。
+            sparse_union_head: 并集窗口里保留多少条 RRF 结果在最前（见常量注释）。
+            path_head_collections: 启用「每路头部进窗口」的 collection。
+                ★ 只对文档库开（离线模拟 105→111）；案例库走稀疏并集、
+                  题库 40/40 无变化，都不配置。空集 = 全部走纯 RRF（回滚开关）。
+                ★ 与 `sparse_collections` 重叠时**稀疏并集优先**（构造时告警）。
+            rerank_candidate_k: 送入重排的融合候选窗口大小。
             min_vector_score: 向量召回的最低可信相似度。
             min_keyword_score: 关键词召回的绝对分数下限。
                 ★ 与语料规模相关，语料大幅扩张后需重新校准。
@@ -232,6 +303,18 @@ class RetrieveUseCase:
         self._graph = graph
         self._vector = vector
         self._keyword = keyword
+        self._rerank = rerank
+        self._sparse = sparse
+        self._sparse_collections = frozenset(sparse_collections)
+        self._min_sparse_score = min_sparse_score
+        self._sparse_union_head = max(sparse_union_head, 0)
+        self._path_head_collections = frozenset(path_head_collections)
+        overlap = self._sparse_collections & self._path_head_collections
+        if overlap:
+            logger.warning(
+                "collection %s 同时配置了稀疏并集与每路头部窗口，"
+                "按「稀疏并集优先」处理", sorted(overlap))
+        self._rerank_candidate_k = max(rerank_candidate_k, 1)
         self._min_vector_score = min_vector_score
         self._min_keyword_score = min_keyword_score
 
@@ -310,16 +393,54 @@ class RetrieveUseCase:
         if err:
             degraded[PATH_KEYWORD] = err
 
-        # ---- 融合 ----
-        fused = self._fuse(
+        # ---- 稀疏路（仅对配置的 collection）----
+        sparse_hits: list[VectorHit] = []
+        if self._sparse is not None and vector_collection in self._sparse_collections:
+            sparse_hits, err, ms = self._run_path(
+                PATH_SPARSE,
+                lambda: self._retrieve_sparse(
+                    text, vector_collection, allowed_permissions, top_k),
+            )
+            elapsed[PATH_SPARSE] = ms
+            if err:
+                degraded[PATH_SPARSE] = err
+
+        # ---- 融合（+ 稀疏并集 + 可选 rerank）----
+        # _fuse 返回全量融合序；rerank（若装配）在截断前对窗口内重排，
+        # 最后才按 fused_limit 截断——让 rerank 有完整候选池可施展。
+        fused_all = self._fuse(
             query=text,
             intent=intent,
             graph_hits=graph_hits,
             vector_hits=vector_hits,
             keyword_hits=keyword_hits,
             weights=weights,
-            limit=fused_limit,
         )
+
+        # ★ 稀疏并集（P0-3）：把稀疏命中并入窗口，而不是让它们参与 RRF 排序。
+        #   实测 RRF 会把「单路第 1、另一路第 15」的块稀释掉
+        #   （案例库：稀疏单独 25/34 → 并进 RRF 后 21/34）。
+        if sparse_hits:
+            fused_all = self._union_sparse(fused_all, sparse_hits, fused_limit)
+        elif vector_collection in self._path_head_collections:
+            # ★ 每路头部进窗口（P1-a）：文档库的 BM25 精确串被意图权重压到
+            #   20 名开外，直接把每路第 1 名拎进窗口头部（离线模拟 105→111）。
+            fused_all = self._union_path_heads(
+                fused_all,
+                (
+                    (PATH_VECTOR, vector_hits),
+                    (PATH_KEYWORD, keyword_hits),
+                ),
+                fused_limit,
+            )
+
+        import time as _time
+
+        t_r = _time.perf_counter()
+        fused_ranked = self._rerank_fused(text, fused_all)
+        if self._rerank is not None and fused_all:
+            elapsed["rerank"] = (_time.perf_counter() - t_r) * 1000
+        fused = fused_ranked[:fused_limit]
 
         result = RetrievalResult(
             query=text,
@@ -327,6 +448,7 @@ class RetrieveUseCase:
             graph_hits=tuple(graph_hits),
             vector_hits=tuple(vector_hits),
             keyword_hits=tuple(keyword_hits),
+            sparse_hits=tuple(sparse_hits),
             fused=tuple(fused),
             degraded=degraded,
             elapsed_ms=elapsed,
@@ -334,9 +456,10 @@ class RetrieveUseCase:
         )
 
         logger.info(
-            "三路召回完成: intent=%s, graph=%d, vector=%d, keyword=%d, "
+            "三路召回完成: intent=%s, graph=%d, vector=%d, keyword=%d, sparse=%d, "
             "fused=%d, degraded=%s, elapsed_ms=%s",
             intent, len(graph_hits), len(vector_hits), len(keyword_hits),
+            len(sparse_hits),
             len(fused), list(degraded) or "无",
             {k: round(v, 1) for k, v in elapsed.items()},
         )
@@ -427,7 +550,8 @@ class RetrieveUseCase:
         category_words = (
             r"鱼油|辅酶Q10|辅酶|蛋白粉|乳清蛋白|大豆蛋白|钙维生素D|钙片|"
             r"褪黑素|益生菌|代餐奶昔|固体饮料|膳食纤维|胶原蛋白|维生素C|"
-            r"叶黄素|氨糖|蜂胶|螺旋藻|黑芝麻丸|芝麻丸"
+            r"叶黄素|氨糖|蜂胶|螺旋藻|破壁灵芝孢子粉|灵芝孢子粉|孢子粉|"
+            r"黑芝麻丸|芝麻丸"
         )
 
         candidates: list[str] = []
@@ -530,6 +654,148 @@ class RetrieveUseCase:
             )
         return kept
 
+    def _retrieve_sparse(
+        self,
+        query: str,
+        collection: str,
+        allowed_permissions: tuple[str, ...] | None,
+        top_k: int,
+    ) -> list[VectorHit]:
+        """稀疏召回（bge-m3 lexical_weights → IP）。
+
+        ★ 阈值只做 sanity floor：实测可答/不可答查询的稀疏 top1 分数
+          几乎完全重叠，任何能拦噪声的值都会误拒 60%+ 正常查询
+          （详见 `MIN_SPARSE_SCORE` 注释）。
+        """
+        if self._sparse is None:
+            raise RuntimeError("稀疏端口未装配")
+        if not collection:
+            raise ValueError("未指定 vector_collection")
+
+        hits = self._sparse.search_sparse(
+            query,
+            collection=collection,
+            top_k=top_k,
+            allowed_permissions=allowed_permissions,
+        )
+        kept = [h for h in hits if h.score >= self._min_sparse_score]
+        if len(kept) < len(hits):
+            logger.debug(
+                "稀疏召回按 floor %.2f 过滤: %d → %d",
+                self._min_sparse_score, len(hits), len(kept),
+            )
+        return kept
+
+    def _union_sparse(
+        self,
+        fused_all: list[FusedHit],
+        sparse_hits: list[VectorHit],
+        fused_limit: int,
+    ) -> list[FusedHit]:
+        """把稀疏命中并入融合窗口（**覆盖优先**，不参与 RRF 重排）。
+
+        构图（实测口径，205 题案例库）：
+            窗口 = RRF 头部(sparse_union_head 条) + 稀疏未重复命中 + RRF 尾部回填
+        ★ 头部条数由**提示词只取前 5 条**倒推（见 `SPARSE_UNION_HEAD`）；
+          若将来提示词扩容，该常量要跟着改，否则稀疏仍进不了 LLM。
+
+        ★ 为什么不把稀疏当作第 4 路丢进 RRF：
+          RRF 只用名次，1/(60+rank) 会把「单路第 1、另一路第 15」的块
+          稀释成"两边都中等"的水平。实测案例库：稀疏单独 25/34，
+          并进 RRF 后回落到 21/34，而并集窗口能到 28/34。
+
+        ★ `fused_score` 语义：稀疏来源的条目恒为 0.0，并在
+          `sources` 里标 `sparse`。因此**并集生效时 fused 的顺序是
+          「覆盖优先」而非「分数降序」**，下游不得按 fused_score 重排。
+        """
+        head = min(self._sparse_union_head, fused_limit)
+        window: list[FusedHit] = list(fused_all[:head])
+        seen = {h.chunk_id for h in window}
+
+        for hit in sparse_hits:
+            if len(window) >= fused_limit:
+                break
+            cid = hit.chunk.chunk_id if hit.chunk is not None else ""
+            if not cid or cid in seen:
+                continue
+            seen.add(cid)
+            window.append(FusedHit(
+                chunk_id=cid,
+                fused_score=0.0,
+                chunk=hit.chunk,
+                sources=(PATH_SPARSE,),
+            ))
+
+        for hit in fused_all[head:]:
+            if len(window) >= fused_limit:
+                break
+            if hit.chunk_id in seen:
+                continue
+            seen.add(hit.chunk_id)
+            window.append(hit)
+
+        return window
+
+    def _union_path_heads(
+        self,
+        fused_all: list[FusedHit],
+        path_hits: tuple[tuple[str, list], ...],
+        fused_limit: int,
+    ) -> list[FusedHit]:
+        """把每路头部若干条提到窗口最前面（**覆盖优先**，其余按 RRF 回填）。
+
+        构图（205 题离线模拟口径）：
+            窗口 = 向量头 PATH_HEAD 条 + 关键词头 PATH_HEAD 条 + RRF 回填
+
+        ★ 为什么需要（文档库 131 题，2026-11-07）：
+          「开放问答」权重 (0.1, 0.8, 0.1) 下 BM25 第 1 名只有 0.0016，
+          约等于向量第 20 名的六分之一——「BM25 精确命中、向量没命中」
+          的题 gold 被压到 20 名开外。每路头 1 相当于给精确匹配保底一个位。
+          模拟：文档库纯 RRF 105 → 111；案例库 21 → 22（不如稀疏并集 26，
+          所以本策略只按库配置，不做全局默认）。题库 40/40 无变化。
+
+        ★ 与 `_union_sparse` 一样，`fused_score` 是 RRF 原分而非窗口顺序分；
+          下游不得按 `fused_score` 重排（窗口顺序 = 覆盖优先）。
+
+        Args:
+            fused_all: 完整 RRF 融合序（含全部候选）。
+            path_hits: (路名, 该路命中列表)，按优先级排列。
+            fused_limit: 窗口大小。
+
+        Returns:
+            至多 `fused_limit` 条、跨路去重的窗口。
+        """
+        by_id = {h.chunk_id: h for h in fused_all}
+        window: list[FusedHit] = []
+        seen: set[str] = set()
+
+        for path_name, hits in path_hits:
+            for hit in hits[:PATH_HEAD]:
+                if len(window) >= fused_limit:
+                    return window
+                cid = hit.chunk.chunk_id if hit.chunk is not None else ""
+                if not cid or cid in seen:
+                    continue
+                seen.add(cid)
+                # 复用 RRF 条目的分数与 sources；理论上头部命中必在 fused_all 里
+                # （向量/关键词权重恒 > 0），兜底构造是为了不因权重误配丢块。
+                window.append(by_id.get(cid) or FusedHit(
+                    chunk_id=cid,
+                    fused_score=0.0,
+                    chunk=hit.chunk,
+                    sources=(path_name,),
+                ))
+
+        for hit in fused_all:
+            if len(window) >= fused_limit:
+                break
+            if hit.chunk_id in seen:
+                continue
+            seen.add(hit.chunk_id)
+            window.append(hit)
+
+        return window
+
     # ---------------- 降级包装 ----------------
     @staticmethod
     def _run_path(
@@ -565,7 +831,6 @@ class RetrieveUseCase:
         vector_hits: list[VectorHit],
         keyword_hits: list[KeywordHit],
         weights: tuple[float, float, float],
-        limit: int,
     ) -> list[FusedHit]:
         """RRF 融合**文档块**两路（向量 + 关键词）。
 
@@ -615,5 +880,59 @@ class RetrieveUseCase:
                 chunk=chunk_index.get(doc_id),      # type: ignore[arg-type]
                 sources=tuple(sources.get(doc_id, ())),
             )
-            for doc_id, score in fused_pairs[:limit]
+            for doc_id, score in fused_pairs
         ]
+
+    # ---------------- 重排序（可选） ----------------
+    def _rerank_fused(self, query: str, fused: list[FusedHit]) -> list[FusedHit]:
+        """对融合结果做 CrossEncoder 重排（装配了 rerank 端口时）。
+
+        语义约束（docs/TDD_检索质量优化 §4.3）：
+          · 只调整顺序，不增删条目——下游拿到的集合与无 rerank 时完全相同；
+          · rerank 异常 → 原样返回（记 warning），问答链路不中断；
+          · 无正文的候选（chunk=None）不送模型，按原序排在窗口尾部。
+
+        Returns:
+            与输入**同集合**的 FusedHit 列表（顺序可能不同）。
+        """
+        if self._rerank is None or len(fused) < 2:
+            return fused
+
+        window = fused[: self._rerank_candidate_k]
+        tail = fused[len(window):]
+
+        pairs: list[tuple[str, str]] = []
+        no_text: list[FusedHit] = []
+        for h in window:
+            text = (h.chunk.text if h.chunk is not None else "").strip()
+            if text:
+                pairs.append((h.chunk_id, text))
+            else:
+                no_text.append(h)
+        if len(pairs) < 2:
+            return fused                            # 无可重排的有效文本
+
+        try:
+            ranked = self._rerank.rerank(query, pairs)
+        except Exception as exc:              # noqa: BLE001 rerank 失败必须降级
+            logger.warning("rerank 失败，保持融合原序: %s: %s",
+                           type(exc).__name__, exc)
+            return fused
+
+        by_id = {h.chunk_id: h for h in window}
+        out: list[FusedHit] = []
+        seen: set[str] = set()
+        for rh in ranked:
+            h = by_id.get(rh.chunk_id)
+            if h is not None and h.chunk_id not in seen:
+                out.append(h)
+                seen.add(h.chunk_id)
+        # 防御性兜底（端口契约是不增不减）：端口没返回的候选——
+        # 含全部 no_text 项——按窗口原序补回尾部。★ 不能再单独 += no_text，
+        # 否则空正文候选会被加两次（测试抓过这个重复 bug）。
+        for h in window:
+            if h.chunk_id not in seen:
+                out.append(h)
+                seen.add(h.chunk_id)
+        out += tail
+        return out

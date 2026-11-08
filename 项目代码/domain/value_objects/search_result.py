@@ -94,3 +94,19 @@ class FusedHit:
     chunk: ChunkMeta | None = None
     # 该结果来自哪几路召回，便于排查"为什么这条排前面"
     sources: tuple[str, ...] = field(default_factory=tuple)
+
+
+@dataclass(frozen=True, slots=True)
+class RankedHit:
+    """rerank 后的一条命中。
+
+    `rerank_score` 是 CrossEncoder 的相关性分（无固定量纲，只在同一次
+    调用内部可比）。`original_rank` 记录重排前的名次（0 起），
+    便于排查「rerank 把什么顶上来了」。
+
+    ★ 与 VectorHit.score 一样：这是**检索分数**，不允许进摘要卡。
+    """
+
+    chunk_id: str
+    rerank_score: float
+    original_rank: int = 0

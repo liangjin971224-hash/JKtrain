@@ -13,6 +13,7 @@ from tests.fakes.fake_keyword import FakeKeywordSearchPort
 from tests.fakes.fake_llm import FailOnCallLLM, FakeLanguageModelPort
 from tests.fakes.fake_rerank import ExplodingRerankPort, FakeRerankPort
 from tests.fakes.fake_repository import FakeRepositoryPort
+from tests.fakes.fake_sparse import FakeSparseSearchPort
 from tests.fakes.fake_vector import FakeVectorSearchPort
 
 __all__ = [
@@ -24,6 +25,7 @@ __all__ = [
     "FakeRerankPort",
     "ExplodingRerankPort",
     "FakeRepositoryPort",
+    "FakeSparseSearchPort",
     "FakeVectorSearchPort",
     "InMemoryFileStorage",
     "now_iso",
