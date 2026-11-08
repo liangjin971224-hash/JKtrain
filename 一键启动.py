@@ -88,13 +88,20 @@ def get_json(url: str) -> dict[str, Any] | None:
 
 
 def app_ready(url: str) -> bool:
-    """同时校验应用身份及七个端口，避免把其他服务认成本项目。"""
+    """校验应用身份与必需端口，避免把其他服务认成本项目。
+
+    ★ 不能要求 `pending_ports` 为空：合并后 `rerank` 默认关闭、
+      `task_queue`/`checkpoint_saver` 在部分部署下可缺，它们都是**可选**端口。
+      只要「必需端口全部就绪、且没有必需端口处于 pending」即可。
+    """
     health = get_json(url + "/api/health") or {}
     document = get_json(url + "/openapi.json") or {}
+    ready = set(health.get("ready_ports", []))
+    pending = set(health.get("pending_ports") or {})
     return (document.get("info", {}).get("title") == "健康顾问培训系统"
             and health.get("status") == "ok"
-            and REQUIRED_PORTS <= set(health.get("ready_ports", []))
-            and not health.get("pending_ports"))
+            and REQUIRED_PORTS <= ready
+            and not (REQUIRED_PORTS & pending))
 
 
 def spawn(command: list[str], log_name: str,
@@ -259,7 +266,8 @@ def main() -> int:
         print("[启动] 应用正在加载 bge-m3 模型…", flush=True)
         process = spawn([str(PYTHON), "-u", "serve.py"], "deployment-server.log", env)
         (APP / "deployment-server.pid").write_text(str(process.pid), encoding="utf-8")
-        wait_for("培训应用（7/7 端口）", lambda: app_ready(url), args.timeout, process)
+        wait_for(f"培训应用（{len(REQUIRED_PORTS)} 个必需端口）", lambda: app_ready(url),
+                 args.timeout, process)
     print(f"\n[成功] {url}/\n学员：E001 / trainee123\n主管：M001 / admin123", flush=True)
     print("停止应用：python 一键启动.py --stop", flush=True)
     if not args.check and not args.no_browser:

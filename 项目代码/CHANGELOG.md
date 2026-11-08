@@ -416,3 +416,28 @@ HTTP 真链路：两个问题都跑通，法规说对了，比价如实说无法
 - `scripts/ci_gate.py`：3 条门禁全 PASS
 - 删除 `test_rerank_integration.py`（测旧「答案层重排」，已由
   `test_rerank_retrieve.py` 覆盖）；`test_param_forwarding.py` 退役 `history`
+
+## 两库合并收尾（2026-11-08）
+
+### 修复（浏览器验收发现）
+- **前端不生成会话 ID**：合并后后端契约是「不传 `session_id` = 单轮且不返回 id」，
+  而主干前端等后端发 id → 首问拿不到 id，追问永远按单轮走（实测「那孕妇能吃吗」被拒答）。
+  新增 `ensureAskSession()`（`web-<uuid>`，持久化），提问无条件携带。
+- **状态栏「就绪 10/7 端口」**：分母写死 7，改为只展示实际数量，健康判定 ≥8 必需端口。
+- **回答 Markdown 原样显示**：新增 `mdToHtml()`——先按行转义 HTML 再套标签，
+  支持加粗/行内代码/无序列表/引用；气泡加 `.md` 样式（原 `pre-wrap` 会翻倍空行）。
+- **静态资源被缓存**：`index.html` 给 app.js / style.css 加 `?v=20261108b`。
+- **`一键启动.py` 永远判不就绪**：`app_ready()` 要求 `pending_ports` 为空，
+  但 `rerank` 默认关闭即 pending → 冷启动必然超时。改为「必需端口就绪且无必需端口 pending」。
+
+### 变更
+- `models/`（bge-m3 / bge-m3-ft-v1 / bge-reranker-v2-m3，约 7.1GB）搬入主干，`.env` 指向本地。
+- 新增 `tests/test_interfaces/test_frontend_multi_turn_and_markdown.py`（7 例，静态检查）。
+
+### 验收
+```
+pytest                  : 1797 passed / 0 failed / 47 skipped
+浏览器（IAB）           : 登录 / 首问 / 追问改写 / 新对话 / 演练 16 案例 /
+                          试卷 / 日报未命中 7 高频 / 月报面板
+一键启动                : --check / --no-browser / --stop 全部通过
+```

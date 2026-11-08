@@ -223,8 +223,10 @@ async function checkHealth() {
     const h = await api('/api/health');
     const ready = h.ready_ports.length;
     const llm = h.llm_endpoints.length ? h.llm_endpoints.join('→') : '未配置';
-    setStatus(ready >= 6 ? 'ok' : 'warn',
-              `就绪 ${ready}/7 端口　LLM ${llm}　护栏 ${h.guardrail_rules['禁用词规则数']} 条`);
+    // ★ 合并后端口 7→10（+sparse/task_queue/checkpoint_saver），
+    //   分母写死 7 会显示成「10/7」。按必需端口判断健康，只展示实际数。
+    setStatus(ready >= 8 ? 'ok' : 'warn',
+              `就绪 ${ready} 个端口　LLM ${llm}　护栏 ${h.guardrail_rules['禁用词规则数']} 条`);
   } catch (e) {
     setStatus('bad', '无法连接后端：' + e.message);
   }
@@ -365,6 +367,24 @@ function renderMeta(meta) {  if (!meta || !Object.keys(meta).length) { metaEl.in
 const SESSION_KEY = 'jk_ask_session';
 let ASK_SESSION = localStorage.getItem(SESSION_KEY) || '';
 
+/**
+ * 确保有会话 ID（合并后新增）。
+ *
+ * ★ 为什么由前端生成：合并进来的多轮后端契约是「不传 session_id = 单轮」，
+ *   它**不会**替调用方新建会话（单轮基线逐字节不变的要求）。
+ *   所以第一次提问前必须有 id，否则前端永远拿不到 id，追问永远接不上。
+ *   格式按后端校验：`[A-Za-z0-9_-]{8,64}`。
+ */
+function ensureAskSession() {
+  if (!ASK_SESSION) {
+    const rand = (crypto.randomUUID && crypto.randomUUID()) ||
+      `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    ASK_SESSION = `web-${rand.replace(/-/g, '')}`.slice(0, 48);
+    localStorage.setItem(SESSION_KEY, ASK_SESSION);
+  }
+  return ASK_SESSION;
+}
+
 function setAskSession(sid, turns) {
   if (sid) {
     ASK_SESSION = sid;
@@ -431,8 +451,8 @@ async function askOnce() {
     //   （2026-10-23 修越权时已从 schema 删除该字段，前端再传也是死参数）。
     multi_hop: true,
   };
-  // ★ 带上会话，后端才能接上历史（没有就留空，后端会新建）
-  if (ASK_SESSION) body.session_id = ASK_SESSION;
+  // ★ 带上会话，后端才能改写追问（没有就现场生成一个并记住）
+  body.session_id = ensureAskSession();
 
   // 清掉上一轮的诊断信息（meta / badge 是全局单块，只显示最近一次）
   metaEl.innerHTML = '';
@@ -480,7 +500,7 @@ function renderTurn(ui, r) {
   const ann = r.annotation;
 
   if (!ann || !ann.segments || !ann.segments.length) {
-    ui.body.textContent = r.answer || '';
+    setAnswerHtml(ui.body, r.answer || '');
     ui.body.className = 'chat-a';
     return;
   }
@@ -566,7 +586,7 @@ async function askStream(body, ui) {
 
       if (ev.kind === 'text' && ev.text) {
         text += ev.text;
-        target.textContent = text;
+        setAnswerHtml(target, text);
         target.scrollIntoView({ block: 'nearest' });
       } else if (ev.kind === 'done') {
         // ★ 流式每帧都会带 session_id（同一个值），取到即存
@@ -668,6 +688,62 @@ async function loadCases() {
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (m) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+}
+
+/* ================================================================
+ * 回答的轻量 Markdown 渲染
+ * ================================================================
+ * 模型输出带 `**加粗**`、`* 列表`、`> 引用`，直接 textContent 会原样显示符号。
+ *
+ * ★ 安全边界：先按行 **转义 HTML**，再套自己的标签 ——
+ *   绝不对模型原文做 innerHTML，模型输出属于不可信内容。
+ * ★ 只支持这四种：加粗 / 行内代码 / 无序列表 / 引用；标题降级为段落。
+ */
+function mdInline(escaped) {
+  return escaped
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+function mdToHtml(text) {
+  const lines = String(text || '').split('\n');
+  const out = [];
+  let inList = false;
+  const closeList = () => { if (inList) { out.push('</ul>'); inList = false; } };
+
+  for (const raw of lines) {
+    const line = raw.replace(/[ \t]+$/, '');
+    if (!line.trim()) { closeList(); continue; }
+
+    const li = /^\s*[*-]\s+(.*)$/.exec(line);
+    if (li) {
+      if (!inList) { out.push('<ul>'); inList = true; }
+      out.push(`<li>${mdInline(escapeHtml(li[1]))}</li>`);
+      continue;
+    }
+    closeList();
+
+    const bq = /^\s*>\s?(.*)$/.exec(line);
+    if (bq) {
+      out.push(`<blockquote>${mdInline(escapeHtml(bq[1]))}</blockquote>`);
+      continue;
+    }
+    const h = /^\s*#{1,4}\s+(.*)$/.exec(line);
+    if (h) {
+      out.push(`<p class="md-h">${mdInline(escapeHtml(h[1]))}</p>`);
+      continue;
+    }
+    out.push(`<p>${mdInline(escapeHtml(line))}</p>`);
+  }
+  closeList();
+  return out.join('');
+}
+
+/** 把纯文本答案写进气泡（渲染 Markdown）。 */
+function setAnswerHtml(el, text) {
+  if (!el) return;
+  el.classList.add('md');
+  el.innerHTML = mdToHtml(text);
 }
 
 function renderChat(state) {
