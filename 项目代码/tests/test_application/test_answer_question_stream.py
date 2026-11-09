@@ -282,12 +282,12 @@ class TestStreamGuardrail:
 # 4. 缺警示语：全流结束后才发现
 # ===================================================================
 class TestMissingWarningAfterStream:
-    def test_missing_warning_detected_at_end(self) -> None:
-        """缺警示语无法在中途判定，必须在 done 事件里报出。
+    def test_missing_warning_repaired_at_end(self) -> None:
+        """缺警示语无法在中途判定，全流结束后补发，不再标拒答。
 
-        ★ 这是流式的固有局限：
-          警示语通常在最后一句。若中途要求每句都有，第一句就被拦。
-          所以只能全流结束后补一次完整检查。
+        ★ 与非流式的「补回警示语」保持一致：
+          用户已经看到一条有用的回答，最后补上法定警示语即可，
+          不应因为「警示语在最后一句」把整条回答判成拒答。
         """
         uc = _build(llm=_ChunkedLLM("这款鱼油有助于维持血脂健康水平。",
                                     chunk=4))
@@ -296,8 +296,10 @@ class TestMissingWarningAfterStream:
             product_ids=("P001",)))
 
         done = [c for c in chunks if c.kind == "done"]
-        assert done[0].refused is True
-        assert "警示" in done[0].refusal_reason
+        assert done[0].refused is False
+        assert done[0].meta.get("repaired_warning") is True
+        emitted = "".join(c.text for c in chunks if c.kind == "text")
+        assert "不能代替药物治疗疾病" in emitted
 
     def test_warning_present_passes(self) -> None:
         uc = _build(llm=_ChunkedLLM(

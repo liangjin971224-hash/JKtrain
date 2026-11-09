@@ -387,6 +387,13 @@ class EmployeeView(BaseModel):
     active: bool = True
 
 
+class SetEmployeeActiveRequest(BaseModel):
+    """启用/停用员工档案。"""
+
+    employee_no: str = Field(..., min_length=1)
+    active: bool = Field(...)
+
+
 class ImportEmployeesRequest(BaseModel):
     """批量导入员工。
 
@@ -495,6 +502,28 @@ class SetActiveRequest(BaseModel):
 
     employee_no: str = Field(..., min_length=1)
     active: bool = Field(...)
+
+
+class ResetPasswordRequest(BaseModel):
+    """主管重置某员工密码。"""
+
+    employee_no: str = Field(..., min_length=1)
+    new_password: str = Field(..., min_length=6, max_length=128)
+
+
+class CreateAccountRequest(BaseModel):
+    """主管为已存在员工开通账号。"""
+
+    employee_no: str = Field(..., min_length=1)
+    role: str = Field("trainee", description="trainee / manager")
+    password: str = Field(..., min_length=6, max_length=128)
+
+
+class ChangePasswordRequest(BaseModel):
+    """员工修改自己的密码。"""
+
+    old_password: str = Field(..., min_length=1, max_length=128)
+    new_password: str = Field(..., min_length=6, max_length=128)
 
 
 class AuditLogView(BaseModel):

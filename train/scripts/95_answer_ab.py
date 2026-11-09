@@ -96,6 +96,7 @@ def _build_uc(container, settings, context_docs: int, prompt_variant: str):
         repository=None,
         rerank=container.rerank,
         rerank_candidate_k=settings.rerank_candidate_k,
+        answer_repair_enabled=settings.answer_repair_enabled,
     )
 
 
@@ -153,11 +154,14 @@ def run_variant(
             meta = result.meta or {}
             finish_reason = meta.get("finish_reason", "")
             llm_attempts = meta.get("llm_attempts", 0)
+            repair_used = bool(meta.get("repair_used", False))
+            repair_signals = list(meta.get("repair_signals", []))
         except Exception as exc:            # noqa: BLE001 单题失败不能中断整批
             answer, refused = "", True
             refusal_reason = f"{type(exc).__name__}: {exc}"
             context_ids, elapsed = [], time.perf_counter() - t0
             finish_reason, llm_attempts = "error", 0
+            repair_used, repair_signals = False, []
 
         scored = score60.score_one(item, answer)
         detail = {
@@ -168,6 +172,8 @@ def run_variant(
             "refusal_reason": refusal_reason,
             "finish_reason": finish_reason,
             "llm_attempts": llm_attempts,
+            "repair_used": repair_used,
+            "repair_signals": repair_signals,
             "context_ids": context_ids,
             "gold_in_context": bool(golds & set(context_ids)),
             "elapsed_s": round(elapsed, 3),
@@ -200,6 +206,8 @@ def summarize(details: list[dict]) -> dict:
         "forbidden_questions": forbidden,
         "refused": refused,
         "refusal_rate": round(refused / n, 4) if n else 0.0,
+        "repair_triggered": sum(1 for d in details if d.get("repair_signals")),
+        "repair_used": sum(1 for d in details if d.get("repair_used")),
         "gold_in_context": gold_ctx,
         "gold_in_context_rate": round(gold_ctx / n, 4) if n else 0.0,
         "avg_answer_chars": round(statistics.mean(chars), 1) if chars else 0.0,
@@ -329,6 +337,7 @@ def main() -> int:
         print(f"  {variant:2d} docs | 通过 {r['passed']:2d}/{r['n']} "
               f"({r['pass_rate']:.3f}) | 缺要点 {r['missed_points']:2d} | "
               f"禁用 {r['forbidden_questions']} | 拒答 {r['refused']} | "
+              f"补全 {r['repair_used']}/{r['repair_triggered']} | "
               f"gold在上下文 {r['gold_in_context']}/{r['n']} | "
               f"平均 {r['avg_answer_chars']:.0f} 字 | P50 {r['p50_elapsed_s']}s")
 
@@ -391,6 +400,9 @@ def main() -> int:
     all_gates = list(gates.values())
     if external is not None:
         all_gates.append(external["gate"])
+    # 单变体（只跑基线）没有比较门禁，正常入档即成功。
+    if not all_gates:
+        return 0
     return 0 if any(g["verdict"] == "PASS" for g in all_gates) else 1
 
 

@@ -1,0 +1,43 @@
+{
+  "label": "a_repair_on_smoke",
+  "eval_set": "train\\data\\eval_questions_v4_100_revised2.jsonl",
+  "n_queries": 10,
+  "variants": [
+    5
+  ],
+  "prompt_variant": "v3",
+  "results": {
+    "5": {
+      "n": 10,
+      "passed": 8,
+      "pass_rate": 0.8,
+      "missed_points": 3,
+      "forbidden_questions": 0,
+      "refused": 0,
+      "refusal_rate": 0.0,
+      "repair_triggered": 1,
+      "repair_used": 1,
+      "gold_in_context": 10,
+      "gold_in_context_rate": 1.0,
+      "avg_answer_chars": 269.7,
+      "p50_elapsed_s": 3.23
+    }
+  },
+  "comparisons": {},
+  "gates": {},
+  "external_baseline": null,
+  "llm_ready": true,
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage",
+    "task_queue",
+    "checkpoint_saver"
+  ],
+  "generated_at": "2026-11-09T10:31:44+08:00"
+}

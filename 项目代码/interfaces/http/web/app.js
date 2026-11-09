@@ -145,7 +145,7 @@ function applyAuthUI() {
   // ★ 新页签必须同时加到这里，否则会被隐藏（前端硬编码，后端仍会二次校验）。
   //   月度报告用 `drill` 权限：主管可看所有人，学员只看自己。
   const allowed = AUTH.is_manager
-    ? ['ask', 'drill', 'exam_manage', 'daily_write']
+    ? ['ask', 'drill', 'exam_manage', 'daily_write', 'employee_view']
     : ['ask', 'drill', 'daily_write'];
 
   document.querySelectorAll('.tab').forEach((tab) => {
@@ -153,6 +153,10 @@ function applyAuthUI() {
     const ok = !feat || allowed.includes(feat);
     tab.hidden = !ok;
   });
+
+  // 修改密码：任何登录用户都可用
+  const pwdBtn = $('changePwdBtn');
+  if (pwdBtn) pwdBtn.hidden = false;
 
   // 如果当前停留的页签被隐藏了，切回问答
   const active = document.querySelector('.tab.active');
@@ -200,6 +204,8 @@ function bootAfterLogin() {
   syncBatchVisibility();
   // 学员工号下拉要带 token 才能拉，所以放登录后
   loadTraineeOptions();
+  // 账号管理仅主管可见；数据也只在登录后拉
+  if (AUTH.is_manager) loadAccounts();
 }
 
 $('loginBtn')?.addEventListener('click', doLogin);
@@ -1980,4 +1986,235 @@ function syncBatchVisibility() {
 // ★ 登出 / 切页签时停轮询（否则定时器会在后台一直打接口）
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) batchStopPoll();
+});
+
+/* ================================================================
+ * 六、账号管理（主管）+ 修改密码
+ *
+ * 导入只建档案；账号由主管在「账号」页显式开通，避免默认密码窗口期。
+ * 密码输入走 type=password 对话框，不用 prompt() 明文回显。
+ * ================================================================ */
+
+/** 密码对话框：返回 Promise<string|null>，取消返回 null。 */
+function askPassword(title) {
+  return new Promise((resolve) => {
+    const mask = $('pwdMask');
+    const input = $('pwdInput');
+    const err = $('pwdErr');
+    $('pwdTitle').textContent = title;
+    input.value = '';
+    err.textContent = '';
+    mask.hidden = false;
+    input.focus();
+
+    const done = (value) => {
+      mask.hidden = true;
+      $('pwdOk').removeEventListener('click', onOk);
+      $('pwdCancel').removeEventListener('click', onCancel);
+      input.removeEventListener('keydown', onKey);
+      resolve(value);
+    };
+    const onOk = () => {
+      const v = input.value;
+      if (v.length < 6) { err.textContent = '密码至少 6 位'; return; }
+      done(v);
+    };
+    const onCancel = () => done(null);
+    const onKey = (e) => { if (e.key === 'Enter') onOk(); };
+    $('pwdOk').addEventListener('click', onOk);
+    $('pwdCancel').addEventListener('click', onCancel);
+    input.addEventListener('keydown', onKey);
+  });
+}
+
+let ACC_LOADING = false;
+
+async function loadAccounts() {
+  const body = $('accBody');
+  const hint = $('accHint');
+  if (!body || ACC_LOADING) return;
+  ACC_LOADING = true;
+  hint.textContent = '加载中…';
+  try {
+    const [employees, accounts] = await Promise.all([
+      api('/api/employees?active_only=false&limit=500'),
+      api('/api/accounts?limit=1000'),
+    ]);
+    const accByNo = new Map(accounts.map((a) => [a.employee_no, a]));
+    const fragment = document.createDocumentFragment();
+    if (!employees.length) {
+      hint.textContent = '还没有员工档案，请先导入员工。';
+      body.replaceChildren(fragment);
+      return;
+    }
+    hint.textContent = `共 ${employees.length} 人，${accounts.length} 个账号`;
+    employees.forEach((e) => {
+      const a = accByNo.get(e.employee_no);
+      const tr = document.createElement('tr');
+      const roleText = a ? (a.role === 'manager' ? '主管' : '学员') : '—';
+      const accState = a ? (a.active ? '启用' : '停用') : '未开通';
+      const empState = e.active === false ? '停用' : '在职';
+      tr.innerHTML = `
+        <td>${escapeHtml(e.employee_no)}</td>
+        <td>${escapeHtml(e.name || '')}</td>
+        <td>${a ? '已开通' : '<span class="acc-state">未开通</span>'}</td>
+        <td>${escapeHtml(roleText)}</td>
+        <td>${escapeHtml(accState)}</td>
+        <td>${escapeHtml(empState)}</td>
+        <td></td>`;
+      const ops = tr.lastElementChild;
+      const addBtn = (label, fn, cls = 'btn ghost mini-btn') => {
+        const b = document.createElement('button');
+        b.className = cls;
+        b.textContent = label;
+        b.addEventListener('click', fn);
+        ops.appendChild(b);
+      };
+      if (!a) {
+        addBtn('开通', () => createAccount(e.employee_no), 'btn primary mini-btn');
+      } else {
+        addBtn('重置密码', () => resetPassword(e.employee_no));
+        addBtn(a.active ? '停用账号' : '启用账号',
+               () => toggleAccount(e.employee_no, !a.active));
+      }
+      addBtn(e.active === false ? '启用档案' : '停用档案',
+             () => toggleEmployee(e.employee_no, e.active === false));
+      fragment.appendChild(tr);
+    });
+    body.replaceChildren(fragment);
+  } catch (e) {
+    hint.textContent = '加载失败：' + e.message;
+  } finally {
+    ACC_LOADING = false;
+  }
+}
+
+async function createAccount(employeeNo) {
+  const pwd = await askPassword(`为 ${employeeNo} 设置初始密码`);
+  if (pwd === null) return;
+  try {
+    await api('/api/accounts/create', {
+      method: 'POST',
+      body: JSON.stringify({ employee_no: employeeNo, role: 'trainee', password: pwd }),
+    });
+    await loadAccounts();
+  } catch (e) { alert('开通失败：' + e.message); }
+}
+
+async function resetPassword(employeeNo) {
+  const pwd = await askPassword(`重置 ${employeeNo} 的密码`);
+  if (pwd === null) return;
+  try {
+    await api('/api/accounts/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ employee_no: employeeNo, new_password: pwd }),
+    });
+    alert('已重置');
+  } catch (e) { alert('重置失败：' + e.message); }
+}
+
+async function toggleAccount(employeeNo, active) {
+  if (!confirm(`${active ? '启用' : '停用'} ${employeeNo} 的登录账号？`)) return;
+  try {
+    await api('/api/accounts/active', {
+      method: 'POST',
+      body: JSON.stringify({ employee_no: employeeNo, active }),
+    });
+    await loadAccounts();
+  } catch (e) { alert('操作失败：' + e.message); }
+}
+
+async function toggleEmployee(employeeNo, active) {
+  if (!confirm(`${active ? '启用' : '停用'} ${employeeNo} 的员工档案？`)) return;
+  try {
+    await api('/api/employees/active', {
+      method: 'POST',
+      body: JSON.stringify({ employee_no: employeeNo, active }),
+    });
+    await loadAccounts();
+  } catch (e) { alert('操作失败：' + e.message); }
+}
+
+async function changeOwnPassword() {
+  const oldPwd = await askPassword('输入当前密码');
+  if (oldPwd === null) return;
+  const newPwd = await askPassword('设置新密码');
+  if (newPwd === null) return;
+  try {
+    await api('/api/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ old_password: oldPwd, new_password: newPwd }),
+    });
+    alert('密码已修改');
+  } catch (e) { alert('修改失败：' + e.message); }
+}
+
+$('accRefreshBtn')?.addEventListener('click', loadAccounts);
+$('changePwdBtn')?.addEventListener('click', changeOwnPassword);
+document.querySelectorAll('.tab').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    if (tab.dataset.panel === 'account' && AUTH.is_manager) loadAccounts();
+  });
+});
+
+/* ================================================================
+ * 七、助教 Agent（只读）
+ * ================================================================ */
+function renderAgentTimeline(box, items, kind) {
+  box.replaceChildren();
+  if (!items || !items.length) {
+    const tip = document.createElement('div');
+    tip.className = 'empty-tip';
+    tip.textContent = '（无）';
+    box.appendChild(tip);
+    return;
+  }
+  items.forEach((item, index) => {
+    const div = document.createElement('div');
+    div.className = 'agent-step';
+    if (kind === 'plan') {
+      div.textContent = `${index + 1}. ${item.tool}${item.reason ? ' · ' + item.reason : ''}`;
+    } else {
+      const denied = item.denied ? '（无权限）' : '';
+      div.textContent = `${index + 1}. ${item.tool} · ${item.ok ? '成功' : '失败'}${denied} · ${Math.round(item.elapsed_ms || 0)}ms`;
+      if (!item.ok) div.classList.add('bad');
+    }
+    box.appendChild(div);
+  });
+}
+
+async function runAgent() {
+  const question = $('agentQuestion').value.trim();
+  if (!question) { $('agentHint').textContent = '请输入问题'; return; }
+
+  const btn = $('agentRunBtn');
+  btn.disabled = true;
+  btn.textContent = '执行中…';
+  $('agentResult').hidden = true;
+  $('agentHint').textContent = 'Agent 正在执行…';
+
+  try {
+    const r = await api('/api/agent/chat', {
+      method: 'POST',
+      body: JSON.stringify({ question }),
+    });
+    $('agentHint').textContent = '';
+    $('agentResult').hidden = false;
+    renderAgentTimeline($('agentPlan'), r.plan || [], 'plan');
+    renderAgentTimeline($('agentSteps'), r.steps || [], 'step');
+    $('agentAnswer').innerHTML = mdToHtml(r.answer || '');
+    $('agentMeta').textContent = r.refused
+      ? ('已拒答：' + (r.refusal_reason || '未说明原因'))
+      : ('引用：' + ((r.citations || []).join('、') || '无'));
+  } catch (e) {
+    $('agentHint').textContent = '执行失败：' + e.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '执行';
+  }
+}
+
+$('agentRunBtn')?.addEventListener('click', runAgent);
+$('agentQuestion')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') runAgent();
 });

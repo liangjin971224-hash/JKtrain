@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-11-09T10:17:22",
+  "eval_old": "D:\\AI260803\\大健康企业内部培训\\train\\data\\eval_questions_v4_100_revised.jsonl",
+  "eval_new": "D:\\AI260803\\大健康企业内部培训\\train\\data\\eval_questions_v4_100_revised2.jsonl",
+  "runs": [
+    {
+      "baseline_old_ruler": 73,
+      "rubric_fixes_only": 74,
+      "calibrated": 78,
+      "run": "a_ab_r1_20261108_200158"
+    },
+    {
+      "baseline_old_ruler": 70,
+      "rubric_fixes_only": 72,
+      "calibrated": 76,
+      "run": "a_ab_r2_20261108_202017"
+    },
+    {
+      "baseline_old_ruler": 72,
+      "rubric_fixes_only": 75,
+      "calibrated": 76,
+      "run": "a_ab_r3_20261108_204000"
+    }
+  ],
+  "median": {
+    "baseline_old_ruler": 72,
+    "rubric_fixes_only": 74,
+    "calibrated": 76
+  },
+  "categories": {
+    "missed_points": 43,
+    "gold_not_in_context": 26,
+    "refused": 1
+  },
+  "persistent_failures": [
+    "ev2-04",
+    "ev2-25",
+    "ev2-35",
+    "gen-C01_s06-paraphrase",
+    "gen-C02_s01-paraphrase",
+    "gen-C04_s11-paraphrase",
+    "gen-C05_s14-scenario",
+    "gen-C06_s23-paraphrase",
+    "gen-C08_s41-paraphrase",
+    "gen-C10_s53-scenario",
+    "gen-C11_s59-paraphrase",
+    "gen-C13_s72-paraphrase",
+    "gen-C16_s102-scenario",
+    "gen-C16_s92-scenario",
+    "hq-03"
+  ]
+}

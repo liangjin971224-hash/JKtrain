@@ -139,11 +139,44 @@ class TestCompliantPhrases:
         "适宜人群是血脂偏高者",
         "不适宜人群包括少年儿童、孕妇、乳母",
         "产品类别是保健食品，批准文号国食健注G20250012",
+        # 教学/警示语境里的类别名与否定式（2026-11-09 实测误拒）
+        "「防癌」不能讲，属于疾病治疗类禁用词",
+        "保健食品不能声称治疗作用",
+        "本品不能替代药物，服用治疗药物请咨询医生",
+        "不建议先停一段时间，应先咨询医生",
     ])
     def test_standard_scripts_pass(self, text: str) -> None:
         result = check_forbidden_claims(text)
         assert not result.has_critical, (
             f"标准话术被误判: {text}\n"
+            f"命中: {[v.matched for v in result.violations]}"
+        )
+
+
+# ===================================================================
+# 时间/疗程承诺 + 停药：真违规要拦，教学提及要放行
+# ===================================================================
+class TestTimePromiseStopMedication:
+    @pytest.mark.parametrize("text", [
+        "吃几个月就能停",
+        "吃几个月就能停药",
+        "一年左右就能停",
+        "三个疗程就能停药",
+        "先停一段时间观察观察",
+    ])
+    def test_bare_time_promise_is_blocked(self, text: str) -> None:
+        result = check_forbidden_claims(text)
+        assert result.has_critical, f"诱导停药漏检: {text}"
+
+    @pytest.mark.parametrize("text", [
+        "不能吃几个月就停药，必须遵医嘱",
+        "不建议先停一段时间，应先咨询医生",
+        "资料里的错误说法是「吃几个月就能停药」，不能照用",
+    ])
+    def test_teaching_or_negated_context_passes(self, text: str) -> None:
+        result = check_forbidden_claims(text)
+        assert not result.has_critical, (
+            f"教学/否定语境被误判: {text}\n"
             f"命中: {[v.matched for v in result.violations]}"
         )
 

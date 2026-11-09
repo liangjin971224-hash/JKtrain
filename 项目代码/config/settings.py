@@ -196,6 +196,15 @@ class Settings(BaseSettings):
     #:   若仍偶发空正文，Fallback 适配器会把它当失败并切备用端点。
     llm_max_tokens: int = 2048
 
+    #: 条件式答案补全（A4）。
+    #: 默认 false；只有 A/B 证明「通过率提升且拒答/禁用不增」后才改默认。
+    #: 只影响非流式问答；流式仍走原链路（补全需要拿到完整初稿）。
+    answer_repair_enabled: bool = False
+
+    #: 培训助教 Agent（只读版）开关。
+    #: 默认 false；本地 .env 打开，生产按需开启。
+    agent_enabled: bool = False
+
     # ---------------- 本地大模型（可选） ----------------
     # 用途：内网 / 无外部 API / 离线批处理。在线问答速度不足（实测 2.4 tok/s）。
     # 启用方式：LLM_PRIMARY=local

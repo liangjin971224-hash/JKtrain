@@ -27,6 +27,7 @@ from interfaces.http.errors import (
     map_infrastructure_error,
 )
 from interfaces.http.routers import (
+    agent,
     ask,
     auth,
     drill,
@@ -118,6 +119,7 @@ def create_app() -> FastAPI:
 
     # ---------------- 路由 ----------------
     app.include_router(ask.router)
+    app.include_router(agent.router)
     app.include_router(drill.router)
     app.include_router(exam.router)
     app.include_router(employee.router)

@@ -33,7 +33,7 @@ from interfaces.http.auth_deps import (
     current_identity,
     require_feature,
 )
-from interfaces.http.deps import current_settings, get_container
+from interfaces.http.deps import get_container
 from interfaces.http.schemas.models import (
     BuildPaperRequest,
     ExportResponse,
@@ -53,14 +53,14 @@ _bank_cache: dict[str, list] = {}
 
 
 def _load_bank(container: Container, stage: str) -> list:
-    """从 Milvus 取题库（带缓存）。"""
+    """从 Milvus 取题库（带缓存；Agent 组卷工具复用）。"""
     if stage in _bank_cache:
         return _bank_cache[stage]
 
     if container.milvus_client is None:
         raise HTTPException(503, detail="Milvus 未就绪，无法读取题库")
 
-    settings = current_settings()
+    settings = container.settings
     rows = container.milvus_client.query(
         collection_name=settings.coll_question,
         filter="id >= 0",
@@ -74,6 +74,11 @@ def _load_bank(container: Container, stage: str) -> list:
     _bank_cache[stage] = bank
     logger.info("题库已加载并缓存: stage=%s, %d 题", stage, len(bank))
     return bank
+
+
+def load_question_bank(container: Container, stage: str) -> list:
+    """公开别名：Agent 组卷工具复用同一份题库缓存。"""
+    return _load_bank(container, stage)
 
 
 def _get_repo(container: Container):

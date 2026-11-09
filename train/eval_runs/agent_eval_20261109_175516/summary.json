@@ -1,0 +1,17 @@
+{
+  "n": 20,
+  "passed": 19,
+  "pass_rate": 0.95,
+  "plan_ok": 20,
+  "plan_accuracy": 1.0,
+  "forbidden_count": 0,
+  "cross_user_leaks": 0,
+  "gate": "PASS",
+  "gates": {
+    "passed>=16": true,
+    "plan_accuracy>=0.8": true,
+    "forbidden==0": true,
+    "cross_user==0": true
+  },
+  "generated_at": "2026-11-09T17:55:16"
+}

@@ -59,6 +59,7 @@ def build_answer_use_case(container: Container) -> AnswerQuestionUseCase:
         context_docs=getattr(settings, "context_docs", 5),
         prompt_variant=getattr(settings, "prompt_variant", "v3"),
         llm_max_tokens=getattr(settings, "llm_max_tokens", 2048),
+        answer_repair_enabled=getattr(settings, "answer_repair_enabled", False),
         rerank=container.rerank,
         rerank_candidate_k=getattr(settings, "rerank_candidate_k", 20),
     )

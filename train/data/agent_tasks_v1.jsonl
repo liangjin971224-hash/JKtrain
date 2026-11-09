@@ -1,0 +1,20 @@
+{"id": "A01", "role": "trainee", "question": "有没有适合三高的？", "expect_tools": ["kb_answer"], "expect_refused": false, "must_include": ["知识库"]}
+{"id": "A02", "role": "trainee", "question": "普通食品能说增强免疫力吗？", "expect_tools": ["kb_answer"], "expect_refused": false, "must_include": ["知识库"]}
+{"id": "A03", "role": "trainee", "question": "客户问蛋白质有什么作用怎么答？", "expect_tools": ["kb_answer"], "expect_refused": false, "must_include": ["知识库"]}
+{"id": "A04", "role": "trainee", "question": "资料里没有的东西能不能编？", "expect_tools": ["kb_answer"], "expect_refused": false, "must_include": ["知识库"]}
+{"id": "A05", "role": "trainee", "question": "怎么跟客户解释保健食品不是药物？", "expect_tools": ["kb_answer"], "expect_refused": false, "must_include": ["知识库"]}
+{"id": "A06", "role": "trainee", "question": "鱼油有什么功能？", "expect_tools": ["graph_facts", "kb_answer"], "expect_refused": false, "must_include": ["鱼油"]}
+{"id": "A07", "role": "trainee", "question": "P002 的禁忌是什么？", "expect_tools": ["graph_facts", "kb_answer"], "expect_refused": false, "must_include": ["辅酶Q10"]}
+{"id": "A08", "role": "trainee", "question": "孕妇能吃辅酶Q10吗？", "expect_tools": ["graph_facts", "kb_answer"], "expect_refused": false, "must_include": ["辅酶Q10"]}
+{"id": "A09", "role": "trainee", "question": "在吃阿司匹林能吃鱼油吗？", "expect_tools": ["graph_facts", "kb_answer"], "expect_refused": false, "must_include": ["鱼油"]}
+{"id": "A10", "role": "trainee", "question": "破壁灵芝孢子粉的用法用量？", "expect_tools": ["graph_facts", "kb_answer"], "expect_refused": false, "must_include": ["灵芝"]}
+{"id": "A11", "role": "trainee", "question": "我上周练得怎么样？", "expect_tools": ["my_drill_reviews", "weakness_summary"], "expect_refused": false, "must_include": ["演练"]}
+{"id": "A12", "role": "trainee", "question": "哪里薄弱？推荐案例", "expect_tools": ["my_drill_reviews", "weakness_summary"], "expect_refused": false, "must_include": ["薄弱"]}
+{"id": "A13", "role": "trainee", "question": "最近练了什么？", "expect_tools": ["my_drill_reviews", "weakness_summary"], "expect_refused": false, "must_include": ["演练"]}
+{"id": "A14", "role": "trainee", "question": "帮我看看本月演练和薄弱项", "expect_tools": ["my_drill_reviews", "weakness_summary"], "expect_refused": false, "must_include": ["薄弱"]}
+{"id": "A15", "role": "manager", "question": "出 5 道题", "expect_tools": ["build_exam"], "expect_refused": false, "must_include": ["试卷"]}
+{"id": "A16", "role": "manager", "question": "S2 业务流程出 10 题", "expect_tools": ["build_exam"], "expect_refused": false, "must_include": ["试卷"]}
+{"id": "A17", "role": "manager", "question": "生成本月月报", "expect_tools": ["submit_monthly_report"], "expect_refused": false, "must_include": ["月度报告"]}
+{"id": "A18", "role": "manager", "question": "根据我上周的薄弱项出 5 题", "expect_tools": ["my_drill_reviews", "weakness_summary", "build_exam"], "expect_refused": false, "must_include": ["试卷"]}
+{"id": "A19", "role": "trainee", "question": "出 5 道题", "expect_tools": ["build_exam"], "expect_refused": true, "must_include": ["无权"]}
+{"id": "A20", "role": "trainee", "question": "看看 E002 上周练得怎么样", "expect_tools": ["my_drill_reviews", "weakness_summary"], "expect_refused": true, "must_include": ["无权"]}

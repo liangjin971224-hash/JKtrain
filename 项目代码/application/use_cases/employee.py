@@ -77,7 +77,8 @@ class ListEmployeesUseCase:
         self._repo = repository
 
     def execute(self, *, role: str, requester: str = "",
-                team: str = "", limit: int = 500) -> list[EmployeeProfile]:
+                team: str = "", limit: int = 500,
+                active_only: bool = True) -> list[EmployeeProfile]:
         """列员工。
 
         ★ 学员只能看到自己：传入 requester 时就按本人过滤。
@@ -85,7 +86,8 @@ class ListEmployeesUseCase:
         from domain.rules.data_permission import can_view_employee
 
         if role in ("manager", "head_teacher", "admin"):
-            return self._repo.list_employees(team=team, limit=limit)
+            return self._repo.list_employees(
+                team=team, active_only=active_only, limit=limit)
 
         # 学员：只返回自己
         me = self._repo.get_employee(requester)

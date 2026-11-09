@@ -67,6 +67,41 @@ def check_settings(settings: Settings) -> CheckResult:
     )
 
 
+_DEFAULT_AUTH_SECRET = "dev-only-insecure-secret-change-me-32bytes"
+
+
+def check_security(settings: Settings) -> CheckResult:
+    """生产环境安全基线（本地环境不阻塞）。"""
+    if settings.app_env == "local":
+        return CheckResult(
+            name="安全基线", status="ok",
+            detail="本地环境，安全项不阻塞（上线前必须逐项检查）",
+        )
+
+    problems: list[str] = []
+    secret = settings.auth_secret or ""
+    if secret == _DEFAULT_AUTH_SECRET or len(secret) < 32:
+        problems.append("AUTH_SECRET 仍是默认值或长度不足 32")
+    if not settings.auth_required:
+        problems.append("AUTH_REQUIRED=false")
+    if "*" in settings.cors_origins:
+        problems.append("CORS_ORIGINS 含 *")
+    if problems:
+        return CheckResult(
+            name="安全基线", status="fail",
+            detail="；".join(problems),
+            hint=(
+                "生产环境必须：AUTH_SECRET 换随机 32+ 字符；"
+                "AUTH_REQUIRED=true；CORS_ORIGINS 收窄到实际域名；"
+                "并确认演示账号已删除或改密。"
+            ),
+        )
+    return CheckResult(
+        name="安全基线", status="ok",
+        detail="密钥/鉴权/CORS 已配置",
+    )
+
+
 def check_neo4j(settings: Settings) -> CheckResult:
     """Neo4j 连通性与目标库是否有数据。"""
     try:
@@ -254,6 +289,7 @@ def check_cache(settings: Settings) -> CheckResult:
 # ===================================================================
 ALL_CHECKS = (
     check_settings,
+    check_security,
     check_neo4j,
     check_milvus,
     check_embedding,

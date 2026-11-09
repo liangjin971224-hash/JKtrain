@@ -803,3 +803,57 @@ select.input.mini { min-width: 148px; }
   line-height: 1.5;
   word-break: break-word;
 }
+
+/* ---------------- 移动端（门店手机/窄窗口） ---------------- */
+@media (max-width: 720px) {
+  .topbar { padding: 10px 12px; gap: 8px; }
+  .topbar h1 { font-size: 14px; }
+  .topbar .sub { display: none; }
+  .tabs {
+    padding: 0 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab { padding: 10px 12px; white-space: nowrap; }
+  main { padding: 14px 12px 48px; }
+  .card { padding: 14px 12px; }
+  .row { flex-wrap: wrap; }
+  .case-list { grid-template-columns: 1fr; }
+  .msg .bubble { max-width: 92%; }
+  .login-box { width: min(92vw, 340px); }
+  table { display: block; overflow-x: auto; }
+}
+
+/* ---------------- 账号管理表 ---------------- */
+.acc-table-wrap { overflow-x: auto; }
+.acc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.acc-table th,
+.acc-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+.acc-table th { color: var(--text-2); font-weight: 600; background: var(--bg); }
+.acc-table td .btn { margin-right: 4px; }
+.acc-state { font-size: 12px; color: var(--text-3); }
+
+/* ---------------- 助教 Agent ---------------- */
+.agent-block { margin: 16px 0; }
+.agent-block h3 { margin: 0 0 8px; font-size: 13px; color: var(--text-2); }
+.agent-timeline { display: flex; flex-direction: column; gap: 6px; }
+.agent-step {
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+}
+.agent-step.bad { border-color: #fecaca; background: #fef2f2; color: #b91c1c; }
+.agent-answer {
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  line-height: 1.7;
+}

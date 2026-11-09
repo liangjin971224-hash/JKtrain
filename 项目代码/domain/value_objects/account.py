@@ -70,6 +70,8 @@ class AuditAction(StrEnum):
     #: 因为它直接改变权限，审计价值高于普通业务操作
     ACCOUNT_ROLE = "account_role"
     ACCOUNT_ACTIVE = "account_active"
+    ACCOUNT_PASSWORD = "account_password"
+    ACCOUNT_CREATE = "account_create"
     PERMISSION_DENIED = "permission_denied"
 
 

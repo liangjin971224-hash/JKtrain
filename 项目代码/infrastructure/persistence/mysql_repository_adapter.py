@@ -1317,6 +1317,18 @@ class MySqlRepositoryAdapterFull(MySqlRepositoryAdapterP7):
                     raise ValueError(f"账号不存在: {employee_no}")
             conn.commit()
 
+    def set_account_password(self, employee_no: str, password_hash: str) -> None:
+        """重置密码（只写哈希，不碰角色/启停用）。"""
+        with self._conn() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "UPDATE employee_account SET password_hash = %s "
+                    "WHERE employee_no = %s",
+                    (password_hash, employee_no))
+                if cur.rowcount == 0:
+                    raise ValueError(f"账号不存在: {employee_no}")
+            conn.commit()
+
     def touch_last_login(self, employee_no: str) -> None:
         with self._conn() as conn:
             with conn.cursor() as cur:

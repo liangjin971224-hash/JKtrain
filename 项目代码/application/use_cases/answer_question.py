@@ -34,6 +34,8 @@ import re
 import time
 from collections.abc import Iterator
 
+from application.services.answer_repair import build_repair_prompt, detect_gaps
+from application.services.query_expansion import expand_query
 from application.types import StreamEvent, UseCaseResult
 from application.use_cases.retrieve import RetrievalResult, RetrieveUseCase
 from domain.ports import GraphQueryPort, LanguageModelPort
@@ -47,6 +49,7 @@ from domain.services.output_guardrail import (
     OutputGuardrail,
     strip_ungrounded_sentences,
 )
+from domain.rules.warning_text import WARNING_TEXT
 from domain.services.rrf_fusion import INTENT_WEIGHTS
 from domain.services.stream_guard import StreamGuard
 from domain.value_objects import (
@@ -243,6 +246,7 @@ class AnswerQuestionUseCase:
         intent_classifier: IntentClassifier | None = None,
         rerank=None,
         rerank_candidate_k: int = 20,
+        answer_repair_enabled: bool = False,
     ) -> None:
         """
         Args:
@@ -256,6 +260,8 @@ class AnswerQuestionUseCase:
             path_head_collections: 启用「每路头部进窗口」的 collection
                 （P1-a，默认由配置给文档库开启；空集 = 纯 RRF 回滚）。
             guardrail_retries: 护栏拦截后的重试次数。
+            answer_repair_enabled: 是否对「可判定缺失」的初稿追加一次补全
+                （默认关；只影响非流式，流式仍需走原链路）。
 
             ★ 为什么需要重试（端到端实测发现）：
               即使 temperature=0，同一输入两次调用也可能得到不同措辞。
@@ -301,6 +307,9 @@ class AnswerQuestionUseCase:
         self._prompt_variant = (prompt_variant or "v2").strip().lower()
         self._guardrail = guardrail or OutputGuardrail()
         self._guardrail_retries = max(guardrail_retries, 0)
+        #: 条件式答案补全（A4）。默认关，A/B 通过后才改默认。
+        self._answer_repair_enabled = bool(answer_repair_enabled)
+        self._min_keyword_score = float(min_keyword_score)
         #: 仓储（可选）。有值时，召回为空会写未命中日志（FR-047）
         self._repo = repository
         #: 意图分类器（默认纯规则，不调 LLM —— 见 `intent_classifier` 模块注释）
@@ -358,9 +367,9 @@ class AnswerQuestionUseCase:
         # ---- 0. 意图分类（★ 决定三路权重）----
         intent_result = self._resolve_intent(text, intent)
 
-        # ---- 1. 三路召回 ----
+        # ---- 1. 三路召回（口语词扩展只影响检索，不改写原问题）----
         retrieval = self._retriever.execute(
-            text,
+            expand_query(text),
             intent=intent_result.label,
             product_ids=product_ids,
             vector_collection=vector_collection,
@@ -520,6 +529,58 @@ class AnswerQuestionUseCase:
                 annotation=annotation,      # 全违规时也要保留标注，供前端展示
             )
 
+        # ---- 6.5 条件式答案补全（A4，默认关）----
+        # 只在可判定缺失时追加一次生成；补全结果必须重新过护栏和数字核实。
+        repair_signals: tuple = ()
+        repair_used = False
+        if self._answer_repair_enabled and last_text.strip():
+            evidence_texts = tuple(
+                hit.chunk.text for hit in retrieval.fused if hit.chunk is not None
+            )[: self._context_docs]
+            keyword_score_max = max(
+                (h.score for h in retrieval.keyword_hits), default=0.0)
+            vector_score_max = max(
+                (h.score for h in retrieval.vector_hits), default=0.0)
+            try:
+                repair_signals = detect_gaps(
+                    text,
+                    last_text,
+                    evidence_texts,
+                    keyword_score_max=keyword_score_max,
+                    vector_score_max=vector_score_max,
+                    min_keyword_score=self._min_keyword_score,
+                )
+            except Exception as exc:      # noqa: BLE001 检测失败不能影响回答
+                logger.warning("答案补全信号检测失败，跳过补全: %s", exc)
+                repair_signals = ()
+            if repair_signals:
+                repair_prompt = build_repair_prompt(
+                    prompt, last_text, repair_signals)
+                try:
+                    repair_gen = self._llm.generate(
+                        repair_prompt,
+                        system_prompt=self._system_prompt(),
+                        temperature=0.0,
+                        max_tokens=self._llm_max_tokens,
+                    )
+                    repaired, _ = strip_ungrounded_sentences(
+                        repair_gen.text, prompt)
+                    repair_verdict = self._guardrail.check(
+                        repaired, category=category)
+                    if repaired.strip() and not repair_verdict.blocked:
+                        last_text = repaired
+                        gen = repair_gen
+                        verdict = repair_verdict
+                        repair_used = True
+                    else:
+                        logger.info(
+                            "答案补全未采纳: empty=%s blocked=%s",
+                            not repaired.strip(),
+                            repair_verdict.blocked,
+                        )
+                except Exception as exc:      # noqa: BLE001 补全失败保留初稿
+                    logger.warning("答案补全失败，保留初稿: %s", exc)
+
         # ---- 7. 正常返回 ----
         # ★ A3 不变量：refused=False 时正文必须非空。推理模型可能把
         #   max_tokens 全花在 reasoning 上（finish_reason=length），
@@ -549,7 +610,9 @@ class AnswerQuestionUseCase:
             meta=self._meta(retrieval, t0, llm_called=True,
                             intent_result=intent_result,
                             finish_reason=gen.finish_reason,
-                            llm_attempts=attempts),
+                            llm_attempts=attempts,
+                            repair_signals=[s.code for s in repair_signals],
+                            repair_used=repair_used),
         )
 
     # ---------------- 内部 ----------------
@@ -600,9 +663,9 @@ class AnswerQuestionUseCase:
         # ---- 0. 意图分类（★ 与非流式同一条路径，不能各判各的）----
         intent_result = self._resolve_intent(text, intent)
 
-        # ---- 1. 三路召回（与非流式一致）----
+        # ---- 1. 三路召回（与非流式一致，含口语词扩展）----
         retrieval = self._retriever.execute(
-            text,
+            expand_query(text),
             intent=intent_result.label,
             product_ids=product_ids,
             vector_collection=vector_collection,
@@ -687,7 +750,26 @@ class AnswerQuestionUseCase:
             # 全流结束后的完整检查（补缺警示语）
             fv = guard.final_verdict
             if fv is not None and fv.blocked:
-                # 已产出内容无法撤回，只能报 refused 让调用方提示
+                # 已产出内容无法撤回。若唯一问题是缺法定警示语，
+                # 补发警示语即可（与非流式的「补回警示语」一致），
+                # 不再把一条已经答对的内容标成拒答。
+                if emitted_any and set(fv.rule_ids) == {"WARN-01"}:
+                    logger.info("流式结果仅缺法定警示语，补发后正常结束")
+                    yield StreamEvent(
+                        kind="text", text=f"\n\n{WARNING_TEXT}。")
+                    yield StreamEvent(
+                        kind="done", refused=False,
+                        refusal_reason="已补回法定警示语",
+                        meta=self._meta(
+                            retrieval, t0, llm_called=True,
+                            intent_result=intent_result,
+                            blocked_rules=fv.rule_ids,
+                            repaired_warning=True,
+                            llm_attempts=llm_attempts),
+                    )
+                    return
+
+                # 其他问题：已产出内容无法撤回，只能报 refused 让调用方提示
                 logger.warning(
                     "流式结束后护栏拦截（第 %d 次）: %s",
                     llm_attempts, fv.reason[:80],

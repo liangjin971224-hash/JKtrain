@@ -1,0 +1,43 @@
+{
+  "label": "a_repair_off_r1",
+  "eval_set": "train\\data\\eval_questions_v4_100_revised2.jsonl",
+  "n_queries": 100,
+  "variants": [
+    5
+  ],
+  "prompt_variant": "v3",
+  "results": {
+    "5": {
+      "n": 100,
+      "passed": 73,
+      "pass_rate": 0.73,
+      "missed_points": 49,
+      "forbidden_questions": 0,
+      "refused": 2,
+      "refusal_rate": 0.02,
+      "repair_triggered": 0,
+      "repair_used": 0,
+      "gold_in_context": 71,
+      "gold_in_context_rate": 0.71,
+      "avg_answer_chars": 391.5,
+      "p50_elapsed_s": 3.79
+    }
+  },
+  "comparisons": {},
+  "gates": {},
+  "external_baseline": null,
+  "llm_ready": true,
+  "ready_ports": [
+    "graph",
+    "vector",
+    "keyword",
+    "sparse",
+    "llm",
+    "repository",
+    "cache",
+    "file_storage",
+    "task_queue",
+    "checkpoint_saver"
+  ],
+  "generated_at": "2026-11-09T10:41:16+08:00"
+}

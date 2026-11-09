@@ -7,8 +7,8 @@
 ────────────────────────────────────────────────────────────────────
 1. **惰性加载**：`import sentence_transformers` + 模型加载要数秒，
    不能在模块导入或 __init__ 里做。首次 `rerank()` 才初始化。
-2. **GPU 失败回退 CPU**：本机无 N 卡时走 CPU；20 条候选约几百毫秒，
-   问答总延迟可接受（实测见 train/eval_runs/ 的 rerank 延迟记录）。
+2. **设备逐级回退**：Intel XPU → CUDA → CPU。实测 20 候选
+   XPU 1.78s / CPU 3.9s（2026-11-09 探针），仍高于默认关闭的 1s 门槛。
 3. **失败抛 RerankError**：由 RetrieveUseCase 捕获并降级为原排序——
    rerank 挂了问答不能挂。
 4. 离线模式：TRANSFORMERS_OFFLINE/HF_HUB_OFFLINE，与向量路一致，
@@ -71,21 +71,26 @@ class BgeRerankerAdapter(RerankPort):
         from sentence_transformers import CrossEncoder
 
         logger.info("首次加载 reranker: %s", self._model_dir)
-        try:
-            model = CrossEncoder(self._model_dir, max_length=self._max_length,
-                                 device="cuda")
-        except Exception as exc:              # noqa: BLE001 无卡/显存不足 → CPU
-            logger.warning(
-                "reranker GPU 加载失败（%s），回退 CPU。", exc)
+        # 本机是 Intel XPU（无 CUDA）；先试 XPU，再 CUDA，最后 CPU。
+        # 实测 20 候选：XPU 1.78s / CPU 3.9s（2026-11-09 探针）。
+        last_exc: Exception | None = None
+        for device in ("xpu", "cuda", "cpu"):
             try:
-                model = CrossEncoder(self._model_dir,
-                                     max_length=self._max_length, device="cpu")
-            except Exception as cpu_exc:      # noqa: BLE001 统一转端口契约
-                raise RerankError(
-                    f"reranker 加载失败: {type(cpu_exc).__name__}: {cpu_exc}"
-                ) from cpu_exc
-        self._model = model
-        return model
+                model = CrossEncoder(
+                    self._model_dir, max_length=self._max_length, device=device)
+                if device != "xpu":
+                    logger.info("reranker 使用 %s", device)
+                else:
+                    logger.info("reranker 使用 Intel XPU")
+                self._model = model
+                return model
+            except Exception as exc:          # noqa: BLE001 逐级回退
+                last_exc = exc
+                logger.warning("reranker %s 加载失败（%s），尝试下一设备",
+                               device, exc)
+        raise RerankError(
+            f"reranker 加载失败: {type(last_exc).__name__}: {last_exc}"
+        ) from last_exc
 
     # ---------------- 端口实现 ----------------
     def rerank(

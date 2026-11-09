@@ -17,6 +17,7 @@ from config.startup_check import (
     check_embedding,
     check_milvus,
     check_neo4j,
+    check_security,
 )
 
 
@@ -157,3 +158,37 @@ class TestCheckCache:
         r = check_cache(_settings(tmp_path))
         assert r.status == "warn"
         assert r.blocking is False
+
+
+# ===================================================================
+# Security baseline
+# ===================================================================
+class TestCheckSecurity:
+    def test_local_env_is_not_blocked(self, tmp_path) -> None:
+        r = check_security(_settings(tmp_path, app_env="local"))
+        assert r.status == "ok"
+
+    def test_production_with_default_secret_fails(self, tmp_path) -> None:
+        r = check_security(_settings(tmp_path, app_env="production"))
+        assert r.status == "fail"
+        assert "AUTH_SECRET" in r.detail
+
+    def test_production_with_cors_star_fails(self, tmp_path) -> None:
+        r = check_security(_settings(
+            tmp_path,
+            app_env="production",
+            auth_secret="x" * 40,
+            cors_origins=("*",),
+        ))
+        assert r.status == "fail"
+        assert "CORS" in r.detail
+
+    def test_production_with_hardened_config_passes(self, tmp_path) -> None:
+        r = check_security(_settings(
+            tmp_path,
+            app_env="production",
+            auth_secret="x" * 40,
+            auth_required=True,
+            cors_origins=("https://training.example.com",),
+        ))
+        assert r.status == "ok"

@@ -13,6 +13,7 @@ from fastapi.testclient import TestClient
 from config.assembly import Container
 from config.settings import Settings
 from domain.value_objects.account import EmployeeAccount
+from domain.value_objects.employee import EmployeeProfile
 from infrastructure.auth.adapters import BcryptPasswordHasher, HmacTokenSigner
 from interfaces.http import deps
 from interfaces.http.app import create_app
@@ -63,6 +64,14 @@ class AuthRepo(FakeRepositoryPort):
         self.accounts[employee_no] = EmployeeAccount(
             employee_no=a.employee_no, role=a.role,
             password_hash=a.password_hash, active=active)
+
+    def set_account_password(self, employee_no: str, password_hash: str) -> None:
+        a = self.accounts.get(employee_no)
+        if a is None:
+            raise ValueError(f"账号不存在: {employee_no}")
+        self.accounts[employee_no] = EmployeeAccount(
+            employee_no=a.employee_no, role=a.role,
+            password_hash=password_hash, active=a.active)
 
     def touch_last_login(self, employee_no: str) -> None:
         pass
@@ -351,6 +360,155 @@ class TestAccountRules:
 # ===================================================================
 # 6. 审计日志
 # ===================================================================
+class TestAccountCreate:
+    def test_manager_creates_account_and_login(self, client, repo) -> None:
+        repo.save_employee(EmployeeProfile(employee_no="X001", name="张三"))
+        token = _login(client, "M001", "admin123")
+        r = client.post(
+            "/api/accounts/create",
+            json={"employee_no": "X001", "role": "trainee",
+                  "password": "start123"},
+            headers=_h(token),
+        )
+        assert r.status_code == 200, r.text
+        assert r.json()["role"] == "trainee"
+        assert "password" not in r.text.lower()
+        _login(client, "X001", "start123")
+
+    def test_duplicate_account_409(self, client, repo) -> None:
+        repo.save_employee(EmployeeProfile(employee_no="X001", name="张三"))
+        token = _login(client, "M001", "admin123")
+        payload = {"employee_no": "X001", "password": "start123"}
+        assert client.post("/api/accounts/create", json=payload,
+                           headers=_h(token)).status_code == 200
+        assert client.post("/api/accounts/create", json=payload,
+                           headers=_h(token)).status_code == 409
+
+    def test_unknown_employee_404(self, client) -> None:
+        token = _login(client, "M001", "admin123")
+        r = client.post(
+            "/api/accounts/create",
+            json={"employee_no": "X999", "password": "start123"},
+            headers=_h(token),
+        )
+        assert r.status_code == 404
+
+    def test_trainee_cannot_create(self, client) -> None:
+        token = _login(client, "E001", "trainee123")
+        r = client.post(
+            "/api/accounts/create",
+            json={"employee_no": "E001", "password": "start123"},
+            headers=_h(token),
+        )
+        assert r.status_code == 403
+
+    def test_invalid_role_400(self, client, repo) -> None:
+        repo.save_employee(EmployeeProfile(employee_no="X001", name="张三"))
+        token = _login(client, "M001", "admin123")
+        r = client.post(
+            "/api/accounts/create",
+            json={"employee_no": "X001", "role": "admin",
+                  "password": "start123"},
+            headers=_h(token),
+        )
+        assert r.status_code == 400
+
+    def test_short_password_422(self, client, repo) -> None:
+        repo.save_employee(EmployeeProfile(employee_no="X001", name="张三"))
+        token = _login(client, "M001", "admin123")
+        r = client.post(
+            "/api/accounts/create",
+            json={"employee_no": "X001", "password": "123"},
+            headers=_h(token),
+        )
+        assert r.status_code == 422
+
+    def test_create_not_in_audit_password(self, client, repo) -> None:
+        repo.save_employee(EmployeeProfile(employee_no="X001", name="张三"))
+        token = _login(client, "M001", "admin123")
+        client.post(
+            "/api/accounts/create",
+            json={"employee_no": "X001", "password": "start123"},
+            headers=_h(token),
+        )
+        assert any(a.action == "account_create" for a in repo.audits)
+        assert all("start123" not in str(a.detail) for a in repo.audits)
+
+
+class TestPasswordManagement:
+    def test_manager_resets_password(self, client) -> None:
+        token = _login(client, "M001", "admin123")
+        r = client.post(
+            "/api/accounts/reset-password",
+            json={"employee_no": "E001", "new_password": "newpass123"},
+            headers=_h(token),
+        )
+        assert r.status_code == 200, r.text
+        assert "password" not in r.text.lower()
+
+        old = client.post("/api/auth/login",
+                          json={"employee_no": "E001", "password": "trainee123"})
+        assert old.status_code == 401
+        _login(client, "E001", "newpass123")
+
+    def test_trainee_cannot_reset_others(self, client) -> None:
+        token = _login(client, "E001", "trainee123")
+        r = client.post(
+            "/api/accounts/reset-password",
+            json={"employee_no": "M001", "new_password": "newpass123"},
+            headers=_h(token),
+        )
+        assert r.status_code == 403
+
+    def test_self_change_password(self, client) -> None:
+        token = _login(client, "E001", "trainee123")
+        r = client.post(
+            "/api/auth/change-password",
+            json={"old_password": "trainee123", "new_password": "newpass123"},
+            headers=_h(token),
+        )
+        assert r.status_code == 200, r.text
+        _login(client, "E001", "newpass123")
+
+    def test_wrong_old_password_rejected(self, client) -> None:
+        token = _login(client, "E001", "trainee123")
+        r = client.post(
+            "/api/auth/change-password",
+            json={"old_password": "wrong", "new_password": "newpass123"},
+            headers=_h(token),
+        )
+        assert r.status_code == 400
+
+    def test_same_password_rejected(self, client) -> None:
+        token = _login(client, "E001", "trainee123")
+        r = client.post(
+            "/api/auth/change-password",
+            json={"old_password": "trainee123", "new_password": "trainee123"},
+            headers=_h(token),
+        )
+        assert r.status_code == 400
+
+    def test_short_password_rejected(self, client) -> None:
+        token = _login(client, "E001", "trainee123")
+        r = client.post(
+            "/api/auth/change-password",
+            json={"old_password": "trainee123", "new_password": "123"},
+            headers=_h(token),
+        )
+        assert r.status_code == 422
+
+    def test_password_not_in_audit_detail(self, client, repo) -> None:
+        token = _login(client, "M001", "admin123")
+        client.post(
+            "/api/accounts/reset-password",
+            json={"employee_no": "E001", "new_password": "newpass123"},
+            headers=_h(token),
+        )
+        actions = [a.action for a in repo.audits]
+        assert "account_password" in actions
+        assert all("newpass123" not in str(a.detail) for a in repo.audits)
+
+
 class TestAuditLog:
     def test_login_recorded(self, client, repo) -> None:
         _login(client, "M001", "admin123")

@@ -16,7 +16,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from application.use_cases.auth import LoginUseCase
 from config.assembly import Container
 from domain.exceptions import AuthenticationError, PermissionDeniedError
-from domain.value_objects.account import AuditAction, AuditLogEntry, AuditResult
+from domain.value_objects.account import (
+    AuditAction,
+    AuditLogEntry,
+    AuditResult,
+    EmployeeAccount,
+)
 from interfaces.http.auth_deps import (
     Identity,
     current_identity,
@@ -26,9 +31,12 @@ from interfaces.http.deps import current_settings, get_container
 from interfaces.http.schemas.models import (
     AccountView,
     AuditLogView,
+    ChangePasswordRequest,
     ChangeRoleRequest,
+    CreateAccountRequest,
     LoginRequest,
     LoginResponse,
+    ResetPasswordRequest,
     SetActiveRequest,
 )
 
@@ -168,6 +176,115 @@ def set_active(
                 "启用" if req.active else "停用",
                 req.employee_no, identity.employee_no)
     return _account_view(repo, req.employee_no)
+
+
+@router.post("/accounts/create", response_model=AccountView,
+             summary="开通账号（主管）")
+def create_account(
+    req: CreateAccountRequest,
+    identity: Identity = Depends(require_feature("employee_view")),
+    container: Container = Depends(get_container),
+) -> AccountView:
+    """为已导入的员工开通登录账号。
+
+    ★ 导入只建档案、不自动发默认密码；账号由主管在这里显式开通，
+    避免「一批默认密码」的安全窗口期。
+    """
+    repo = _repo(container)
+    if not (hasattr(repo, "save_account") and hasattr(repo, "get_account")
+            and hasattr(repo, "get_employee")):
+        raise HTTPException(503, detail="仓储不支持账号开通")
+    hasher = getattr(container, "password_hasher", None)
+    if hasher is None:
+        raise HTTPException(503, detail="密码服务未就绪")
+
+    if req.role not in ("trainee", "manager"):
+        raise HTTPException(400, detail=f"角色非法: {req.role}")
+    if repo.get_employee(req.employee_no) is None:
+        raise HTTPException(404, detail=f"员工档案不存在，请先导入: {req.employee_no}")
+    if repo.get_account(req.employee_no) is not None:
+        raise HTTPException(409, detail=f"账号已存在: {req.employee_no}")
+
+    password = req.password.strip()
+    if len(password) < 6:
+        raise HTTPException(400, detail="密码至少 6 位")
+
+    repo.save_account(EmployeeAccount(
+        employee_no=req.employee_no,
+        role=req.role,
+        password_hash=hasher.hash(password),
+        active=True,
+    ))
+    _audit(container, identity, AuditAction.ACCOUNT_CREATE, req.employee_no,
+           detail={"role": req.role})
+    logger.info("开通账号: %s (%s) by %s",
+                req.employee_no, req.role, identity.employee_no)
+    return _account_view(repo, req.employee_no)
+
+
+@router.post("/accounts/reset-password", response_model=AccountView,
+             summary="重置密码（主管）")
+def reset_password(
+    req: ResetPasswordRequest,
+    identity: Identity = Depends(require_feature("employee_view")),
+    container: Container = Depends(get_container),
+) -> AccountView:
+    """主管重置某员工密码。
+
+    ★ 不返回、不记录明文或哈希；审计只记「重置」这个动作。
+    """
+    repo = _repo(container)
+    if not hasattr(repo, "set_account_password") or not hasattr(repo, "get_account"):
+        raise HTTPException(503, detail="仓储不支持密码重置")
+    hasher = getattr(container, "password_hasher", None)
+    if hasher is None:
+        raise HTTPException(503, detail="密码服务未就绪")
+
+    account = repo.get_account(req.employee_no)
+    if account is None:
+        raise HTTPException(404, detail=f"账号不存在: {req.employee_no}")
+
+    new_password = req.new_password.strip()
+    if hasher.verify(new_password, account.password_hash):
+        raise HTTPException(400, detail="新密码不能与旧密码相同")
+
+    repo.set_account_password(req.employee_no, hasher.hash(new_password))
+    _audit(container, identity, AuditAction.ACCOUNT_PASSWORD, req.employee_no,
+           detail={"mode": "reset"})
+    logger.info("重置密码: %s by %s", req.employee_no, identity.employee_no)
+    return _account_view(repo, req.employee_no)
+
+
+@router.post("/auth/change-password", summary="修改自己的密码")
+def change_password(
+    req: ChangePasswordRequest,
+    identity: Identity = Depends(current_identity),
+    container: Container = Depends(get_container),
+) -> dict:
+    """员工修改自己的密码（需校验旧密码）。"""
+    repo = _repo(container)
+    if not hasattr(repo, "set_account_password") or not hasattr(repo, "get_account"):
+        raise HTTPException(503, detail="仓储不支持密码修改")
+    hasher = getattr(container, "password_hasher", None)
+    if hasher is None:
+        raise HTTPException(503, detail="密码服务未就绪")
+
+    account = repo.get_account(identity.employee_no)
+    if account is None:
+        raise HTTPException(401, detail="账号不存在")
+
+    if not hasher.verify(req.old_password, account.password_hash):
+        raise HTTPException(400, detail="旧密码不正确")
+
+    new_password = req.new_password.strip()
+    if hasher.verify(new_password, account.password_hash):
+        raise HTTPException(400, detail="新密码不能与旧密码相同")
+
+    repo.set_account_password(identity.employee_no, hasher.hash(new_password))
+    _audit(container, identity, AuditAction.ACCOUNT_PASSWORD, identity.employee_no,
+           detail={"mode": "self"})
+    logger.info("修改密码: %s", identity.employee_no)
+    return {"ok": True}
 
 
 # ===================================================================

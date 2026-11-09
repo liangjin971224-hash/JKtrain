@@ -497,6 +497,25 @@ def review_report(
             "note": req.note or "",
             "reviewed_by": getattr(identity, "employee_no", "") or "",
         }), cfg)
+        # 人工复核走的是图，不是批量 worker；同步一下批量任务表，
+        # 否则批量进度会一直停在 pending_review。
+        if decision == "approve":
+            repo = container.repository
+            if (hasattr(repo, "get_report_task")
+                    and hasattr(repo, "upsert_report_task")):
+                try:
+                    task = repo.get_report_task(trailer, period)
+                    if task:
+                        repo.upsert_report_task(
+                            task_id=str(task.get("task_id")
+                                        or f"{trailer}:{period}"),
+                            trainee_id=trailer,
+                            period=period,
+                            status="done",
+                            thread_id=thread_id,
+                        )
+                except Exception as task_exc:       # noqa: BLE001 辅助状态不阻断复核
+                    logger.warning("同步报告任务状态失败: %s", task_exc)
     except Exception as exc:                       # noqa: BLE001
         logger.error("复核失败 thread=%s: %s: %s",
                      thread_id, type(exc).__name__, exc, exc_info=True)

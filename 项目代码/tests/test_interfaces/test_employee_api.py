@@ -166,6 +166,51 @@ class TestEmployeeImport:
         assert rows[0]["employee_no"] == "E001"
 
 
+class TestEmployeeActive:
+    def _import(self, client, mgr) -> None:
+        r = client.post("/api/employees/import", headers=mgr, json={
+            "rows": [
+                {"工号": "E001", "姓名": "张三"},
+                {"工号": "E002", "姓名": "王五"},
+            ],
+        })
+        assert r.status_code == 200
+
+    def test_manager_deactivates_and_filter_works(self, client, mgr) -> None:
+        self._import(client, mgr)
+        r = client.post("/api/employees/active", headers=mgr,
+                        json={"employee_no": "E001", "active": False})
+        assert r.status_code == 200, r.text
+        assert r.json()["active"] is False
+
+        active = client.get("/api/employees", headers=mgr).json()
+        assert [e["employee_no"] for e in active] == ["E002"]
+
+        all_rows = client.get("/api/employees?active_only=false",
+                              headers=mgr).json()
+        by_no = {e["employee_no"]: e for e in all_rows}
+        assert by_no["E001"]["active"] is False
+        assert by_no["E002"]["active"] is True
+
+    def test_trainee_cannot_deactivate(self, client, tra) -> None:
+        r = client.post("/api/employees/active", headers=tra,
+                        json={"employee_no": "E001", "active": False})
+        assert r.status_code == 403
+
+    def test_unknown_employee_404(self, client, mgr) -> None:
+        r = client.post("/api/employees/active", headers=mgr,
+                        json={"employee_no": "X999", "active": False})
+        assert r.status_code == 404
+
+    def test_cannot_deactivate_self(self, client, mgr) -> None:
+        client.post("/api/employees/import", headers=mgr, json={
+            "rows": [{"工号": "M001", "姓名": "主管"}],
+        })
+        r = client.post("/api/employees/active", headers=mgr,
+                        json={"employee_no": "M001", "active": False})
+        assert r.status_code == 400
+
+
 # ===================================================================
 # 2. ★ 日报：草稿可改 / 提交后冻结
 # ===================================================================

@@ -75,6 +75,7 @@ def main() -> int:
         context_docs=s.context_docs, prompt_variant=s.prompt_variant,
         llm=c.llm, repository=None, rerank=c.rerank,
         rerank_candidate_k=s.rerank_candidate_k, llm_max_tokens=s.llm_max_tokens,
+        answer_repair_enabled=s.answer_repair_enabled,
     )
     rewriter = QueryRewriter(graph=c.graph, llm=c.llm)
     store = ConversationStore()

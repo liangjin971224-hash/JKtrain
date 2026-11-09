@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>健康顾问培训系统</title>
-<link rel="stylesheet" href="/static/style.css?v=20261108b">
+<link rel="stylesheet" href="/static/style.css?v=20261109c">
 </head>
 <body>
 
@@ -47,6 +47,7 @@
     <div class="who" id="who" hidden>
       <span id="whoName"></span>
       <span class="role-tag" id="whoRole"></span>
+      <button id="changePwdBtn" class="btn ghost mini-btn" hidden>修改密码</button>
       <button id="logoutBtn" class="btn ghost mini-btn">退出</button>
     </div>
   </div>
@@ -54,10 +55,12 @@
 
 <nav class="tabs">
   <button class="tab active" data-panel="ask" data-feature="ask">知识问答</button>
+  <button class="tab" data-panel="agent" data-feature="ask">助教 Agent</button>
   <button class="tab" data-panel="drill" data-feature="drill">情景演练</button>
   <button class="tab" data-panel="exam" data-feature="exam_manage">试卷</button>
   <button class="tab" data-panel="daily" data-feature="daily_write">日报</button>
   <button class="tab" data-panel="report" data-feature="drill">月度报告</button>
+  <button class="tab" data-panel="account" data-feature="employee_view" hidden>账号</button>
 </nav>
 
 <main>
@@ -131,6 +134,40 @@
   </section>
 
   <!-- ============ 情景演练 ============ -->
+  <!-- ============ 助教 Agent（只读） ============ -->
+  <section id="panel-agent" class="panel">
+    <div class="card">
+      <div class="card-head">
+        <h2>助教 Agent</h2>
+        <span class="badge" id="agentBadge">只读</span>
+      </div>
+      <div class="row">
+        <input id="agentQuestion" class="input" style="flex:1"
+               placeholder="例如：我上周练得怎么样？哪里薄弱？推荐 3 个案例">
+        <button id="agentRunBtn" class="btn primary">执行</button>
+      </div>
+      <div class="row small">
+        <span>只读工具：知识库 / 图谱 / 演练评阅 / 薄弱项；不会写库，也不改演练台词。</span>
+      </div>
+      <div id="agentHint" class="empty-tip"></div>
+      <div id="agentResult" hidden>
+        <div class="agent-block">
+          <h3>执行计划</h3>
+          <div id="agentPlan" class="agent-timeline"></div>
+        </div>
+        <div class="agent-block">
+          <h3>执行步骤</h3>
+          <div id="agentSteps" class="agent-timeline"></div>
+        </div>
+        <div class="agent-block">
+          <h3>回答</h3>
+          <div id="agentAnswer" class="agent-answer"></div>
+        </div>
+        <div id="agentMeta" class="empty-tip"></div>
+      </div>
+    </div>
+  </section>
+
   <section id="panel-drill" class="panel">
     <div class="card">
       <div class="card-head">
@@ -420,8 +457,51 @@
       <div id="rpSuggestion"></div>
     </div>
   </section>
+
+  <!-- ============ 账号管理（主管） ============ -->
+  <section id="panel-account" class="panel">
+    <div class="card">
+      <div class="card-head">
+        <h2>账号管理</h2>
+        <button id="accRefreshBtn" class="btn ghost mini-btn">刷新</button>
+      </div>
+      <div class="row small">
+        <span>导入员工后在这里「开通」账号；档案停用与账号停用分开控制。</span>
+      </div>
+      <div id="accHint" class="empty-tip"></div>
+      <div class="acc-table-wrap">
+        <table class="acc-table">
+          <thead>
+            <tr>
+              <th>工号</th><th>姓名</th><th>账号</th><th>角色</th>
+              <th>账号状态</th><th>档案</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="accBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 </main>
 
-<script src="/static/app.js?v=20261108b"></script>
+<!-- ============ 密码对话框（不明文回显） ============ -->
+<div id="pwdMask" class="login-mask" hidden>
+  <div class="login-box">
+    <div class="login-brand">
+      <h2 id="pwdTitle">输入密码</h2>
+    </div>
+    <label class="login-field">
+      <span>密码（至少 6 位）</span>
+      <input id="pwdInput" class="input" type="password" autocomplete="new-password">
+    </label>
+    <div id="pwdErr" class="login-err"></div>
+    <div class="row">
+      <button id="pwdOk" class="btn primary">确定</button>
+      <button id="pwdCancel" class="btn ghost">取消</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/app.js?v=20261109d"></script>
 </body>
 </html>

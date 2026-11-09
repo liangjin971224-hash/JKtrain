@@ -54,45 +54,10 @@ _SESSION_ID_RE = re.compile(r"[A-Za-z0-9_-]{8,64}")
 
 
 def _build_use_case(container: Container) -> AnswerQuestionUseCase:
-    """按当前容器装配问答用例。
+    """按当前容器装配问答用例（与 Agent 入口共用同一套参数）。"""
+    from interfaces.http.use_case_factory import build_answer_use_case
 
-    ★ 每请求新建用例对象是可以的——它是**轻量**的（只持有端口引用），
-      昂贵的模型加载在端口里，已经由容器复用。
-    """
-    if container.llm is None:
-        raise HTTPException(
-            status_code=503,
-            detail="LLM 未配置，问答功能不可用。请在 .env 填 QWEN_API_KEY 或 DEEPSEEK_API_KEY",
-        )
-    return AnswerQuestionUseCase(
-        graph=container.graph,
-        vector=container.vector,
-        keyword=container.keyword,
-        # ★ 稀疏并集（P0-3）：只对配置的 collection 生效（默认案例库）。
-        sparse=container.sparse,
-        sparse_collections=frozenset(
-            c.strip() for c in container.settings.sparse_recall_collections.split(",")
-            if c.strip()),
-        min_sparse_score=container.settings.min_sparse_score,
-        # ★ 每路头部窗口（P1-a）：默认只对文档库开；配置置空即回滚纯 RRF。
-        path_head_collections=frozenset(
-            c.strip() for c in container.settings.path_head_collections.split(",")
-            if c.strip()),
-        # ★ 参考资料条数（P1-b）：默认 5，经答案级 A/B 后再调大。
-        context_docs=container.settings.context_docs,
-        # ★ 系统提示词版本（P1-c）：默认 v3（已通过主集 + 独立 held-out 验证）。
-        prompt_variant=container.settings.prompt_variant,
-        llm=container.llm,
-        # ★ A3：给推理模型留足 token，避免 reasoning 吃满导致空正文。
-        llm_max_tokens=container.settings.llm_max_tokens,
-        # ★ 传入仓储：召回为空时会写未命中日志（FR-047）。
-        #   仓储为 None 时功能照常，只是不记日志。
-        repository=container.repository,
-        # ★ rerank（可选）：容器未启用时为 None，链路与历史行为一致。
-        #   多跳复用同一个 uc，自动获得同样的重排行为（P5 单一生成路径纪律）。
-        rerank=container.rerank,
-        rerank_candidate_k=container.settings.rerank_candidate_k,
-    )
+    return build_answer_use_case(container)
 
 
 def _build_multi_hop(

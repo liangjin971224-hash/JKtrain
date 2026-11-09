@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import replace
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -42,6 +43,7 @@ from interfaces.http.schemas.models import (
     MissLogsResponse,
     ReviewRequest,
     SaveSummaryRequest,
+    SetEmployeeActiveRequest,
     SummaryView,
 )
 
@@ -89,6 +91,7 @@ def _to_view(s) -> SummaryView:
 def list_employees(
     team: str = "",
     limit: int = 500,
+    active_only: bool = True,
     identity: Identity = Depends(current_identity),
     container: Container = Depends(get_container),
 ) -> list[EmployeeView]:
@@ -103,7 +106,8 @@ def list_employees(
     try:
         rows = uc.execute(role=identity.role.value,
                           requester=identity.employee_no,
-                          team=team, limit=limit)
+                          team=team, limit=limit,
+                          active_only=active_only)
     except DataPermissionError as exc:
         raise HTTPException(403, detail=str(exc)) from exc
 
@@ -144,6 +148,42 @@ def import_employees(
         raise HTTPException(403, detail=str(exc)) from exc
 
     return ImportResultResponse(**result)
+
+
+@router.post("/employees/active", response_model=EmployeeView,
+             summary="启用/停用员工档案",
+             dependencies=[Depends(require_feature("employee_import"))])
+def set_employee_active(
+    req: SetEmployeeActiveRequest,
+    identity: Identity = Depends(current_identity),
+    container: Container = Depends(get_container),
+) -> EmployeeView:
+    """启用/停用员工档案。
+
+    ★ 只改档案，不改登录账号；「档案停用」与「账号停用」是两件事：
+      离职后档案要保留可查，登录权限由 `/api/accounts/active` 单独控制。
+    """
+    repo = _get_repo(container)
+    profile = repo.get_employee(req.employee_no)
+    if profile is None:
+        raise HTTPException(404, detail=f"员工不存在: {req.employee_no}")
+    if req.employee_no == identity.employee_no and not req.active:
+        raise HTTPException(400, detail="不能停用自己的档案")
+
+    updated = replace(profile, active=req.active)
+    repo.save_employee(updated)
+    logger.info("员工档案%s: %s by %s",
+                "启用" if req.active else "停用",
+                req.employee_no, identity.employee_no)
+    return EmployeeView(
+        employee_no=updated.employee_no,
+        name=updated.name,
+        hire_date=updated.hire_date,
+        position=updated.position,
+        team=updated.team,
+        mentor=updated.mentor,
+        active=updated.active,
+    )
 
 
 # ===================================================================
