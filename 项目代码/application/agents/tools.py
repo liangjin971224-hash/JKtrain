@@ -321,6 +321,7 @@ def _parse_quota(raw: Any) -> dict[int, int]:
 def make_build_exam_tool(
     use_case_factory: Callable[[], Any] | None,
     bank_loader: Callable[[str], list] | None = None,
+    default_persist: bool = True,
 ) -> ToolSpec:
     def handler(args: dict[str, Any], identity: AgentIdentity) -> dict[str, Any]:
         if use_case_factory is None:
@@ -335,7 +336,7 @@ def make_build_exam_tool(
         total = max(1, min(50, total))
         title = str(args.get("title") or f"{stage} Agent 小测").strip()
         trainee_no = str(args.get("trainee_no") or "").strip()
-        persist = bool(args.get("persist", True))
+        persist = bool(args.get("persist", default_persist))
 
         try:
             bank = bank_loader(stage) if bank_loader else None
@@ -462,6 +463,7 @@ def build_agent_registry(
     case_catalog: CaseCatalog | None,
     exam_use_case_factory: Callable[[], Any] | None = None,
     exam_bank_loader: Callable[[str], list] | None = None,
+    exam_default_persist: bool = True,
     report_use_case_factory: Callable[[], Any] | None = None,
 ) -> ToolRegistry:
     tools = [
@@ -472,7 +474,7 @@ def build_agent_registry(
     ]
     if exam_use_case_factory is not None:
         tools.append(make_build_exam_tool(
-            exam_use_case_factory, exam_bank_loader))
+            exam_use_case_factory, exam_bank_loader, exam_default_persist))
     if report_use_case_factory is not None:
         tools.append(make_monthly_report_tool(report_use_case_factory))
     return ToolRegistry(tools)

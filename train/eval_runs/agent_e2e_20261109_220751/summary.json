@@ -1,0 +1,14 @@
+{
+  "n": 10,
+  "passed": 10,
+  "pass_rate": 1.0,
+  "forbidden_count": 0,
+  "p95_elapsed_s": 9.72,
+  "gate": "PASS",
+  "gates": {
+    "passed>=8": true,
+    "forbidden==0": true,
+    "no_unexpected_refusal": true
+  },
+  "generated_at": "2026-11-09T22:07:51"
+}

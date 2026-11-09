@@ -12,6 +12,7 @@ from typing import Any
 
 _PRODUCT_RE = re.compile(r"P\d{3}", re.IGNORECASE)
 _TRAINEE_RE = re.compile(r"[EM]\d{3}")
+_PERIOD_RE = re.compile(r"\d{4}-\d{2}")
 _ALIAS_RE = re.compile(
     r"(鱼油|辅酶Q10|蛋白粉|乳清蛋白|孢子粉|螺旋藻|钙维生素D|褪黑素|"
     r"益生菌|叶黄素|氨糖|蜂胶|胶原蛋白|维生素C|代餐奶昔|固体饮料)"
@@ -19,10 +20,6 @@ _ALIAS_RE = re.compile(
 _DRILL_WORDS = (
     "练得", "演练", "评阅", "薄弱", "哪里不", "推荐案例", "练哪个",
     "上周", "本月练", "最近练",
-)
-_PRODUCT_WORDS = (
-    "禁忌", "不适宜", "能吃", "同服", "功能", "批准", "适宜人群",
-    "用法", "用量", "规格", "产品", "副作用",
 )
 _EXAM_WORDS = ("组卷", "出题", "小测", "试卷", "考一下", "几道题", "测验")
 _EXAM_RE = re.compile(r"\d+\s*(?:道|题)")
@@ -47,14 +44,14 @@ def plan_steps(question: str, *, max_steps: int = 4) -> list[PlannedStep]:
         steps.append(PlannedStep(tool=tool, args=args, reason=reason))
 
     drill = any(word in q for word in _DRILL_WORDS)
-    product = any(word in q for word in _PRODUCT_WORDS)
     exam = any(word in q for word in _EXAM_WORDS) or bool(_EXAM_RE.search(q))
     report = any(word in q for word in _REPORT_WORDS)
     product_match = _PRODUCT_RE.search(q)
     alias_match = _ALIAS_RE.search(q)
     trainee_match = _TRAINEE_RE.search(q)
     trainee_no = trainee_match.group(0) if trainee_match else ""
-    has_product = bool(product or product_match or alias_match)
+    # 只有明确的产品 ID/别名才查图谱；「副作用/禁忌」这类泛词交给知识库。
+    has_product = bool(product_match or alias_match)
     days = 7 if "上周" in q else 30
     action = exam or report
 
@@ -75,7 +72,10 @@ def plan_steps(question: str, *, max_steps: int = 4) -> list[PlannedStep]:
         add("build_exam", args, "需要生成一份练习试卷（主管）")
 
     if report:
-        args = {"period": "上个月" if "上个月" in q else ""}
+        period_match = _PERIOD_RE.search(q)
+        period = (period_match.group(0) if period_match
+                  else ("上个月" if "上个月" in q else ""))
+        args = {"period": period}
         if trainee_no:
             args["trainee_no"] = trainee_no
         add("submit_monthly_report", args,

@@ -60,6 +60,11 @@ class TestPlanner:
         graph = next(s for s in steps if s.tool == "graph_facts")
         assert graph.args["alias"] == "鱼油"
 
+    def test_generic_side_effect_question_does_not_call_graph(self) -> None:
+        tools = [s.tool for s in plan_steps(
+            "客户问「纯天然，没有副作用」这种话能不能说？")]
+        assert tools == ["kb_answer"]
+
     def test_unknown_question_falls_back_to_kb(self) -> None:
         tools = [s.tool for s in plan_steps("帮我看看这个怎么办")]
         assert tools == ["kb_answer"]
@@ -79,6 +84,12 @@ class TestPlanner:
     def test_report_question_plans_submit(self) -> None:
         steps = plan_steps("生成本月月报")
         assert [s.tool for s in steps] == ["submit_monthly_report"]
+
+    def test_report_question_extracts_period_and_trainee(self) -> None:
+        steps = plan_steps("生成 E001 2026-09 月报")
+        assert [s.tool for s in steps] == ["submit_monthly_report"]
+        assert steps[0].args["period"] == "2026-09"
+        assert steps[0].args["trainee_no"] == "E001"
 
     def test_weakness_to_exam_combines_tools(self) -> None:
         steps = plan_steps("根据薄弱项出 5 题")
